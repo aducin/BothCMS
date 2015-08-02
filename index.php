@@ -1,9 +1,12 @@
 <?php
+ob_start();
 include_once $_SERVER['DOCUMENT_ROOT'].'/ProjektCap3/prestapdo.php';
-include_once $_SERVER['DOCUMENT_ROOT'].'/ProjektCap3/helpers.inc.php';
+include_once $_SERVER['DOCUMENT_ROOT'].'/ProjektCap3/clas2.php';
 if(isset($_GET['action'])and $_GET['action']=='Usuń wpis')
 {
-	deleteMod($_GET['idMod'], $oldpdo);
+	$list= new OldLists;
+	$result= $list->deleteMod($_GET['idMod']);
+	unset($list);
 	header('Location:.');
 	exit();
 }
@@ -28,9 +31,7 @@ if (!isset($_SESSION['zalogowany'])){
 			$login=' Użytkownik: '.$finalResult['login'];
 			$_SESSION['zalogowany']=1;
 			$result->closeCursor();
-			$text= 'Witamy w systemie CMS obu paneli!';
-			htmlout($text);
-			htmlout($login);
+			echo'Witamy w systemie CMS obu paneli! '.$login;
 		}
 		if(!isset($_SESSION['zalogowany'])){
 			header('Location:logowanie.html');
@@ -40,7 +41,8 @@ if (!isset($_SESSION['zalogowany'])){
 }
 try
 {
-	$result =selectWholeManufacturer($oldpdo);
+	$list= new OldLists;
+	$result= $list->selectWholeManufacturer();
 }
 catch (PDOException $e)
 {
@@ -53,7 +55,7 @@ foreach ($result as $row)
 }
 try
 {
-	$result =selectWholeCategory($newpdo);
+	$result= $list->getWholeCategory();
 }
 catch (PDOException $e)
 {
@@ -64,532 +66,384 @@ foreach ($result as $row)
 {
 	$categories[]= array('id'=>$row['id_category'], 'name'=>$row['meta_title']);
 }
-$modyfy=selectModyfy($oldpdo);
-foreach ($modyfy as $mod)
+$result= $list->selectModyfy();
+foreach ($result as $mod)
 {
-	$mods[]= array('id'=>$mod['id_number'], 'nazwa'=>$mod['name'], 'data'=>$mod['date']);
+	$mods[]= array('id'=>$mod['id_number'], 'nazwa'=>$mod['name'], 'data'=>$mod['date'], 'cena'=>$mod['price']);
 }
+unset($list);
 include 'Searchform.html.php';
+if(isset($_GET['action'])&&$_GET['action']=='zamówienia')
+{
+	header('Location:index2.php');
+	exit();
+}
 
 if(isset($_GET['changeTabOldAdd']))
 {
-	$row=checkIfTag($_POST['newtagText'], $oldpdo);
-	$checkedTagId=$row['id_tag'];
-	if($checkedTagId!=0)
-	{
-		insertTag($checkedTagId, $_POST['id'], $oldpdo);
-	}
-	else{
-		createTag($checkedTagId, $_POST['newtagText'], $oldpdo);
-		$row=checkIfTag($_POST['newtagText'], $oldpdo);
-		$checkedTagId=$row['id_tag'];
-		insertTag($checkedTagId, $_POST['id'], $oldpdo);
+	$oldTry= new OldProduct;
+	$Query = $oldTry->checkIfTag($_POST['newtagText'], $oldpdo);
+	$QueryResult = $Query->fetch();
+	if($QueryResult[0]!=0){
+		$Query2 = $oldTry->insertTag($QueryResult[0], $_POST['id'], $oldpdo);
+	} else {
+		$Query2 = $oldTry->createTag($QueryResult[0], $_POST['newtagText'], $oldpdo);
+		$Query3 = $oldTry->checkIfTag($_POST['newtagText'], $oldpdo);
+		$QueryResult = $Query3->fetch();
+		$Query4 = $oldTry->insertTag($QueryResult[0], $_POST['id'], $oldpdo);
 	}
 	include 'confirmation.html.php';
 }
 if(isset($_GET['changeTabNewAdd']))
 {
-	$row=checkIfTag($_POST['newtagText'], $newpdo);
-	$checkedTagId=$row['id_tag'];
-	if($checkedTagId!=0)
-	{
-		insertTag($checkedTagId, $_POST['id'], $newpdo);
-	}
-	else{
-		createTag($checkedTagId, $_POST['newtagText'], $newpdo);
-		$row=checkIfTag($_POST['newtagText'], $newpdo);
-		$checkedTagId=$row['id_tag'];
-		insertTag($checkedTagId, $_POST['id'], $newpdo);
+	$oldTry= new NewProduct;
+	$Query = $oldTry->checkIfTag($_POST['newtagText'], $newpdo);
+	$QueryResult = $Query->fetch();
+	if($QueryResult[0]!=0){
+		$Query2 = $oldTry->insertTag($QueryResult[0], $_POST['id'], $newpdo);
+	} else {
+		$Query2 = $oldTry->createTag($QueryResult[0], $_POST['newtagText'], $newpdo);
+		$Query3 = $oldTry->checkIfTag($_POST['newtagText'], $newpdo);
+		$QueryResult = $Query3->fetch();
+		$Query4 = $oldTry->insertTag($QueryResult[0], $_POST['id'], $newpdo);
 	}
 	include 'confirmation.html.php';
 }
 if(isset($_GET['changeTabNewCut']))
 {
-	$row=checkIfTag($_POST['textCut'], $newpdo);
-	$checkedTagId=$row['id_tag'];
-	if($checkedTagId!=0){
-	deleteTag($checkedTagId, $_POST['id'], $newpdo);
-	include 'confirmation.html.php';
+	$Try= new NewProduct;
+	$Query = $Try->checkIfTag($_POST['textCut'], $newpdo);
+	$QueryResult = $Query->fetch();
+	if($QueryResult[0]!=0){
+		$Query2 = $Try->deleteTag($QueryResult[0], $_POST['id'], $newpdo);
 	} else{
-	echo'<b>'.'Chciałeś usunąć TAG, którego nie ma w bazie, pustaku...'.'</b>';}
-}
-if(isset($_GET['changeTabOldCut']))
-{
-	$row=checkIfTag($_POST['textCut'], $oldpdo);
-	$checkedTagId=$row['id_tag'];
-	if($checkedTagId!=0){
-	deleteTag($checkedTagId, $_POST['id'], $oldpdo);
-	include 'confirmation.html.php';
-	} else{
-	echo'<b>'.'Chciałeś usunąć TAG, którego nie ma w bazie, pustaku...'.'</b>';}
-}
-if(isset($_GET['editformBoth']))
-{
-	if ($_POST['text']=='')
-	{
-		echo 'Brak aktualnego wpisu: <b>nazwa produktu!</b>';
-		exit();
+		echo'<b>'.'Chciałeś usunąć TAG, którego nie ma w bazie, pustaku...'.'</b>';}	
 	}
-	elseif ($_POST['quantity']=='')
+	if(isset($_GET['changeTabOldCut']))
 	{
-		echo 'Brak aktualnego wpisu: <b>nowa liczba produktu!</b>';
-		exit();
-	}
-	else try
-	{
-		updatePrice($_POST['id'], $_POST['nominalPriceNew'], $newpdo);
-	}
-	catch (PDOExceptioon $e)
-	{
-		echo 'Aktualizacja nowej ceny nie powiodła się: ' . $e->getMessage();
-		exit();
-	}
-	try 
-	{
-		updateQuantity($_POST['quantity'], $_POST['id'], $newpdo);
-
-	}
-	catch (PDOExceptioon $e)
-	{
-		echo 'Aktualizacja stanu w nowej bazie nie powiodła się: ' . $e->getMessage();
-		exit();
-	}
-	try
-	{
-		updateProductName($_POST['text'], $_POST['id'], $newpdo);
-	}
-	catch (PDOExceptioon $e)
-	{
-		echo 'Aktualizacja nazwy w nowej bazie nie powiodła się: ' . $e->getMessage();
-		exit();
-	}
-	try
-	{
-	$row=confirmation($_POST['id'], $newpdo);
-	$quantity= $row['quantity'];
-	}
-	catch (PDOExceptioon $e)
-	{
-		echo 'Pobranie uaktualnionych danych nie powiodło się: ' . $e->getMessage();
-		exit();
-	}
-	try
-	{
-		updatePrice($_POST['id'], $_POST['nominalPriceOld'], $oldpdo);
-	}
-	catch (PDOExceptioon $e)
-	{
-		echo 'Aktualizacja starej ceny nie powiodła się: ' . $e->getMessage();
-		exit();
-	}
-	try
-	{
-		updateQuantity($_POST['quantity'], $_POST['id'], $oldpdo);
-		
-	}
-	catch (PDOExceptioon $e)
-	{
-		echo 'Aktualizacja stanu w starej bazie nie powiodła się: ' . $e->getMessage();
-		exit();
-	}
-	try
-	{
-		updateProductName($_POST['text'], $_POST['id'], $oldpdo);
-	}
-	catch (PDOExceptioon $e)
-	{
-		echo 'Aktualizacja nazwy w starej bazie nie powiodła się: ' . $e->getMessage();
-		exit();
-	}
-	try
-	{
-	$row=confirmation($_POST['id'], $oldpdo);
-	$idOld= $row['id_product'];
-	$quantityOld= $row['quantity'];
-	}
-	catch (PDOExceptioon $e)
-	{
-		echo 'Pobranie uaktualnionych danych nie powiodło się: ' . $e->getMessage();
-		exit();
-	}
-	include 'confirmation.html.php';
-	exit();
-}
-if(isset($_GET['editcompleteformold']))
-{
-	if ($_POST['text']=='')
-	{
-		echo 'Musisz podać nazwę produktu!';
-		exit();
-	}
-	elseif ($_POST['quantity']=='')
-	{
-		echo 'Musisz podać nową ilość produktu!';
-		exit();
-	}
-	else try
-	{
-		if (isset($_POST['zmiana'])and $_POST['zmiana']== "zmianaNazwy"){
-			insertModyfy($_POST['id'], $_POST['text'], $oldpdo);
+		$Try= new OldProduct;
+		$Query = $Try->checkIfTag($_POST['textCut'], $oldpdo);
+		$QueryResult = $Query->fetch();
+		if($QueryResult[0]!=0){
+			$Query2 = $Try->deleteTag($QueryResult[0], $_POST['id'], $oldpdo);
+		} else{
+			echo'<b>'.'Chciałeś usunąć TAG, którego nie ma w bazie, pustaku...'.'</b>';}	
 		}
-		updateProductName($_POST['text'], $_POST['id'], $oldpdo);
-		updateDesc($_POST['description'], $_POST['id'], $oldpdo);
-		updateDesc_short($_POST['description_short'], $_POST['id'], $oldpdo);
-		updateLink($_POST['link'], $_POST['id'], $oldpdo);
-		updateMeta_title($_POST['meta_title'], $_POST['id'], $oldpdo);
-		updateMeta_desc($_POST['meta_description'], $_POST['id'], $oldpdo);
-		updateQuantity($_POST['quantity'], $_POST['id'], $oldpdo);
-		updateIndex($_POST['active'], $_POST['id'], $oldpdo);
-		updateIndexShop($_POST['active'], $_POST['id'], $oldpdo);
-		updateActive($_POST['active'], $_POST['id'], $oldpdo);
-		updateActiveShop($_POST['active'], $_POST['id'], $oldpdo);
-		updateCondition($_POST['condition'], $_POST['id'], $oldpdo);
-		updateConditionShop($_POST['condition'], $_POST['id'], $oldpdo);
-	}
-	catch (PDOExceptioon $e)
-	{
-		echo 'Aktualizacja nazwy nie powiodła się: ' . $e->getMessage();
-		exit();
-	}
-	try
-	{
-		updateManufacturer($_POST['author'], $_POST['id'], $oldpdo);
-	}
-	catch (PDOExceptioon $e)
-	{
-		echo 'Aktualizacja producenta nie powiodła się: ' . $e->getMessage();
-		exit();
-	}
-	try
-	{
-		updatePrice($_POST['id'], $_POST['nominalPriceOld'], $oldpdo);
-	}
-	catch (PDOExceptioon $e)
-	{
-		echo 'Aktualizacja starej ceny nie powiodła się: ' . $e->getMessage();
-		exit();
-	}
-	deleteCategory($_POST['id'], $oldpdo);
-	if(isset($_POST['categories']))
-	{
-		insertCategory($_POST['categories'], $_POST['id'], $oldpdo);
-	} else {echo'Nie znaleziono kategorii do zapisania!';
-	}
-	deleteWholeTag($_POST['id'], $oldpdo);
-	foreach ($_POST['tagText'] as $tagText){
-		$row=checkIfTag($tagText, $oldpdo);
-		$checkedTagId=$row['id_tag'];
-		if($checkedTagId!=0)
+		if(isset($_GET['editformBoth']))
 		{
-			insertTag($checkedTagId, $_POST['id'], $oldpdo);
+			if ($_POST['text']=='')
+			{
+				echo 'Brak aktualnego wpisu: <b>nazwa produktu!</b>';
+				exit();
+			}
+			elseif ($_POST['quantity']=='')
+			{
+				echo 'Brak aktualnego wpisu: <b>nowa liczba produktu!</b>';
+				exit();
+			}
+			else try
+			{
+				$newTry= new NewProduct;
+				$newQuery = $newTry->updateBoth($_POST['id'], $_POST['nominalPriceNew'], $_POST['text'], $_POST['quantity'], $newpdo);
+				$newQuery2 = $newTry->confirmation($_POST['id'], $newpdo);
+				$quantityNew= $newQuery2["quantity"];
+			}
+			catch (PDOExceptioon $e)
+			{
+				echo 'Aktualizacja nowych danych nie powiodła się: ' . $e->getMessage();
+				exit();
+			}
+			try
+			{
+				$oldTry= new OldProduct;
+				$oldQuery = $oldTry->updateBoth($_POST['id'], $_POST['nominalPriceOld'], $_POST['text'], $_POST['quantity'],$oldpdo);
+				$oldQuery2 = $oldTry->confirmation($_POST['id'], $oldpdo);
+				$idOld= $oldQuery2["id_product"];
+				$quantityOld= $oldQuery2["quantity"];
+			}
+			catch (PDOExceptioon $e)
+			{
+				echo 'Aktualizacja starych danych nie powiodła się: ' . $e->getMessage();
+				exit();
+			}
+			include 'confirmation.html.php';
+			exit();
 		}
-		else{
-			createTag($checkedTagId, $tagText, $oldpdo);
-			$row=checkIfTag($tagText, $oldpdo);
-			$checkedTagId=$row['id_tag'];
-			insertTag($checkedTagId, $_POST['id'], $oldpdo);
-		}
-	}
-	try
-	{
-	$row=confirmation($_POST['id'], $oldpdo);
-	$idOld= $row['id_product'];
-	$quantityOld= $row['quantity'];
-	}
-	catch (PDOExceptioon $e)
-	{
-		echo 'Pobranie uaktualnionych danych nie powiodło się: ' . $e->getMessage();
-		exit();
-	}
-	if (isset($_POST['howManyBases'])and $_POST['howManyBases']== 'obie'){
-		updateProductName($_POST['text'], $_POST['id'], $newpdo);
-		updateDesc($_POST['description'], $_POST['id'], $newpdo);
-		updateDesc_short($_POST['description_short'], $_POST['id'], $newpdo);
-		updateLink($_POST['link'], $_POST['id'], $newpdo);
-		updateMeta_title($_POST['meta_title'], $_POST['id'], $newpdo);
-		updateMeta_desc($_POST['meta_description'], $_POST['id'], $newpdo);
-		updateQuantity($_POST['quantity'], $_POST['id'], $newpdo);
-		updateIndex($_POST['active'], $_POST['id'], $newpdo);
-		updateIndexShop($_POST['active'], $_POST['id'], $newpdo);
-		updateActive($_POST['active'], $_POST['id'], $newpdo);
-		updateActiveShop($_POST['active'], $_POST['id'], $newpdo);
-		updateCondition($_POST['condition'], $_POST['id'], $newpdo);
-		updateConditionShop($_POST['condition'], $_POST['id'], $newpdo);
-		updateManufacturer($_POST['author'], $_POST['id'], $newpdo);
-		updatePrice($_POST['id'], $_POST['nominalPriceNew'], $newpdo);
-		deleteCategory($_POST['id'], $newpdo);
-		if(isset($_POST['categories']))
+		if(isset($_GET['editcompleteformold']))
 		{
-			insertDifferentCategory($_POST['categories'], $_POST['id'], $newpdo);
-		} else {echo'Nie znaleziono kategorii do zapisania!';}
-		deleteWholeTag($_POST['id'], $newpdo);
+			if ($_POST['text']=='')
+			{
+				echo 'Musisz podać nazwę produktu!';
+				exit();
+			}
+			elseif ($_POST['quantity']=='')
+			{
+				echo 'Musisz podać nową ilość produktu!';
+				exit();
+			}
+			else try
+			{
+				if (isset($_POST['zmiana'])and $_POST['zmiana']== "zmianaNazwy"){
+					$oldTry= new OldProduct;
+					$oldQuery = $oldTry->insertModyfy($_POST['id'], $_POST['text'], $oldpdo);
+				}
+				$oldTry= new OldProduct;
+				$oldQuery = $oldTry->updateDetailedBoth($_POST['id'], $_POST['nominalPriceOld'], $_POST['text'], $_POST['quantity'], $_POST['description'], $_POST['description_short'], $_POST['meta_title'], $_POST['meta_description'], $_POST['link'], $_POST['condition'], $_POST['active'], $oldpdo);
+			}
+			catch (PDOExceptioon $e)
+			{
+				echo 'Aktualizacja nazwy nie powiodła się: ' . $e->getMessage();
+				exit();
+			}
+			try
+			{
+				$oldQuery = $oldTry->updateManufacturer($_POST['author'], $_POST['id'], $oldpdo);
+			}
+			catch (PDOExceptioon $e)
+			{
+				echo 'Aktualizacja producenta nie powiodła się: ' . $e->getMessage();
+				exit();
+			}
+			$oldQuery = $oldTry->deleteCategory($_POST['id'], $oldpdo);
+			if(isset($_POST['categories']))
+			{
+				$oldQuery = $oldTry->insertCategory($_POST['categories'], $_POST['id'], $oldpdo);
+			} else {echo'Nie znaleziono kategorii do zapisania!';
+		}
+		$oldQuery = $oldTry->deleteWholeTag($_POST['id'], $oldpdo);
 		foreach ($_POST['tagText'] as $tagText){
-			$row=checkIfTag($tagText, $newpdo);
-			$checkedTagId=$row['id_tag'];
+			$oldQuery = $oldTry->checkIfTag($tagText, $oldpdo);
+			$oldQuery2 = $oldQuery->fetch();
+			$checkedTagId= $oldQuery2[0];
 			if($checkedTagId!=0)
 			{
-				insertTag($checkedTagId, $_POST['id'], $newpdo);
+				$oldQuery = $oldTry->insertTag($checkedTagId, $_POST['id'], $oldpdo);
 			}
 			else{
-				createTag($checkedTagId, $tagText, $newpdo);
-				$row=checkIfTag($tagText, $newpdo);
-				$checkedTagId=$row['id_tag'];
-				insertTag($checkedTagId, $_POST['id'], $newpdo);
+				$oldQuery = $oldTry->createTag($checkedTagId, $tagText, $oldpdo);
+				$oldQuery = $oldTry->checkIfTag($tagText, $oldpdo);
+				$oldQuery2 = $oldQuery->fetch();
+				$checkedTagId= $oldQuery2[0];
+				$oldQuery = $oldTry->insertTag($checkedTagId, $_POST['id'], $oldpdo);
 			}
 		}
-	}	
-	include 'confirmation.html.php';
-	exit();
-}
-if(isset($_GET['editcompleteformnew']))
-{
-	if ($_POST['text']=='')
-	{
-		echo 'Musisz podać nazwę produktu!';
-		exit();
-	}
-	elseif ($_POST['quantity']=='')
-	{
-		echo 'Musisz podać nową ilość produktu!';
-		exit();
-	}
-	else try
-	{
-		if (isset($_POST['zmiana'])and $_POST['zmiana']== "zmianaNazwy"){
-			insertModyfy($_POST['id'], $_POST['text'], $oldpdo);
-		}
-		updateProductName($_POST['text'], $_POST['id'], $newpdo);
-		updateDesc($_POST['description'], $_POST['id'], $newpdo);
-		updateDesc_short($_POST['description_short'], $_POST['id'], $newpdo);
-		updateLink($_POST['link'], $_POST['id'], $newpdo);
-		updateMeta_title($_POST['meta_title'], $_POST['id'], $newpdo);
-		updateMeta_desc($_POST['meta_description'], $_POST['id'], $newpdo);
-		updateQuantity($_POST['quantity'], $_POST['id'], $newpdo);
-		updateIndex($_POST['active'], $_POST['id'], $newpdo);
-		updateIndexShop($_POST['active'], $_POST['id'], $newpdo);
-		updateActive($_POST['active'], $_POST['id'], $newpdo);
-		updateActiveShop($_POST['active'], $_POST['id'], $newpdo);
-		updateCondition($_POST['condition'], $_POST['id'], $newpdo);
-		updateConditionShop($_POST['condition'], $_POST['id'], $newpdo);
-	}
-	catch (PDOExceptioon $e)
-	{
-		echo 'Aktualizacja nazwy nie powiodła się: ' . $e->getMessage();
-		exit();
-	}
-	try
-	{
-		updateManufacturer($_POST['author'], $_POST['id'], $newpdo);
-	}
-	catch (PDOExceptioon $e)
-	{
-		echo 'Aktualizacja producenta nie powiodła się: ' . $e->getMessage();
-		exit();
-	}
-	try
-	{
-		updatePrice($_POST['id'], $_POST['nominalPriceNew'], $newpdo);
-	}
-	catch (PDOExceptioon $e)
-	{
-		echo 'Aktualizacja starej ceny nie powiodła się: ' . $e->getMessage();
-		exit();
-	}
-	deleteCategory($_POST['id'], $newpdo);
-	if(isset($_POST['categories']))
-	{
-		insertCategory($_POST['categories'], $_POST['id'], $newpdo);
-	} else {echo'Nie znaleziono kategorii do zapisania!';
-	}
-	deleteWholeTag($_POST['id'], $newpdo);
-	foreach ($_POST['tagText'] as $tagText){
-		$row=checkIfTag($tagText, $newpdo);
-		$checkedTagId=$row['id_tag'];
-		if($checkedTagId!=0)
-		{
-			insertTag($checkedTagId, $_POST['id'], $newpdo);
-		}
-		else{
-			createTag($checkedTagId, $tagText, $newpdo);
-			$row=checkIfTag($tagText, $newpdo);
-			$checkedTagId=$row['id_tag'];
-			insertTag($checkedTagId, $_POST['id'], $newpdo);
-		}
-	}
-	try
-	{
-	$row=confirmation($_POST['id'], $newpdo);
-	$id= $row['id_product'];
-	$quantity= $row['quantity'];
-	}
-	catch (PDOExceptioon $e)
-	{
-		echo 'Pobranie uaktualnionych danych nie powiodło się: ' . $e->getMessage();
-		exit();
-	}
-	if (isset($_POST['howManyBases'])and $_POST['howManyBases']== 'obie'){
-		updateProductName($_POST['text'], $_POST['id'], $oldpdo);
-		updateDesc($_POST['description'], $_POST['id'], $oldpdo);
-		updateDesc_short($_POST['description_short'], $_POST['id'], $oldpdo);
-		updateLink($_POST['link'], $_POST['id'], $oldpdo);
-		updateMeta_title($_POST['meta_title'], $_POST['id'], $oldpdo);
-		updateMeta_desc($_POST['meta_description'], $_POST['id'], $oldpdo);
-		updateQuantity($_POST['quantity'], $_POST['id'], $oldpdo);
-		updateIndex($_POST['active'], $_POST['id'], $oldpdo);
-		updateIndexShop($_POST['active'], $_POST['id'], $oldpdo);
-		updateActive($_POST['active'], $_POST['id'], $oldpdo);
-		updateActiveShop($_POST['active'], $_POST['id'], $oldpdo);
-		updateCondition($_POST['condition'], $_POST['id'], $oldpdo);
-		updateConditionShop($_POST['condition'], $_POST['id'], $oldpdo);
-		updateManufacturer($_POST['author'], $_POST['id'], $oldpdo);
-		updatePrice($_POST['id'], $_POST['nominalPriceOld'], $oldpdo);
-		deleteCategory($_POST['id'], $oldpdo);
-		if(isset($_POST['categories']))
-		{
-			insertDifferentCategory($_POST['categories'], $_POST['id'], $oldpdo);
-		} else {echo'Nie znaleziono kategorii do zapisania!';}
-		deleteWholeTag($_POST['id'], $oldpdo);
-		foreach ($_POST['tagText'] as $tagText){
-			$row=checkIfTag($tagText, $oldpdo);
-			$checkedTagId=$row['id_tag'];
-			if($checkedTagId!=0)
-			{
-				insertTag($checkedTagId, $_POST['id'], $oldpdo);
-			}
-			else{
-				createTag($checkedTagId, $tagText, $oldpdo);
-				$row=checkIfTag($tagText, $oldpdo);
-				$checkedTagId=$row['id_tag'];
-				insertTag($checkedTagId, $_POST['id'], $oldpdo);
-			}
-		}
-	}	
-	include 'confirmation.html.php';
-	exit();
-}
-if (isset($_GET['action'])and $_GET['action']== 'Zmiana obu przez nowy panel')
-{
-	try
-	{
-	$row=selectProduct($_GET['id'], $newpdo);
-	$baza='- informacje z nowego panelu.';
-	$text= $row['name'];
-	$quantity= $row['quantity'];
-	$id= $row['id_product'];
-	$priceNew=$row['price'];
-	$button= 'Aktualizuj produkt w obu bazach';
-	$editForm='?editformBoth';
-
-	$oldPrice=getPrice($_GET['id'], $oldpdo);
-	$oldPrice2=$oldPrice['price'];
-	}
-	catch (PODException $e)
-	{
-		echo 'Błąd przy pobieraniu informacji o produkcie: ' . $e->getMessage();
-		exit();
-	}
-	include 'form.html.php';
-	exit();
-	}
-	if (isset($_GET['action'])and $_GET['action']== 'Zmiana obu przez stary panel')
-{	
-	try
-	{
-	$row=selectProduct($_GET['id'], $oldpdo);
-	$baza='- informacje ze starego panelu.';
-	$text= $row['name'];
-	$quantity= $row['quantity'];
-	$id= $row['id_product'];
-	$oldPrice2=$row['price'];
-	$button= 'Aktualizuj produkt w obu bazach';
-	$editForm='?editformBoth';
-
-	$newPrice=getPrice($_GET['id'], $newpdo);
-	$priceNew=$newPrice['price'];
-	}
-	catch (PODException $e)
-	{
-		echo 'Błąd przy pobieraniu informacji o produkcie: ' . $e->getMessage();
-		exit();
-	}
-	include 'form.html.php';
-	exit();
-	}
-		if (isset($_GET['action'])and $_GET['action']== 'Kompletna edycja w NP')
 		try
+		{
+			$oldQuery = $oldTry->confirmation($_POST['id'], $oldpdo);
+			$idOld= $oldQuery["id_product"];
+			$quantityOld= $oldQuery["quantity"];
+		}
+		catch (PDOExceptioon $e)
+		{
+			echo 'Pobranie uaktualnionych danych nie powiodło się: ' . $e->getMessage();
+			exit();
+		}
+		if (isset($_POST['howManyBases'])and $_POST['howManyBases']== 'obie'){
+			$newTry= new NewProduct;
+			$newQuery = $newTry->updateDetailedBoth($_POST['id'], $_POST['nominalPriceOld'], $_POST['text'], $_POST['quantity'], $_POST['description'], $_POST['description_short'], $_POST['meta_title'], $_POST['meta_description'], $_POST['link'], $_POST['condition'], $_POST['active'], $newpdo);
+			try
+			{
+				$newQuery = $newTry->updateManufacturer($_POST['author'], $_POST['id'], $newpdo);
+			}
+			catch (PDOExceptioon $e)
+			{
+				echo 'Aktualizacja producenta nie powiodła się: ' . $e->getMessage();
+				exit();
+			}
+			$newQuery = $newTry->deleteCategory($_POST['id'], $newpdo);
+			if(isset($_POST['categories'])){
+				$newQuery = $newTry->insertDifferentCategory($_POST['categories'], $_POST['id'], $newpdo);	
+			}else {echo'Nie znaleziono kategorii do zapisania!';}
+			$newQuery = $newTry->deleteWholeTag($_POST['id'], $newpdo);
+			foreach ($_POST['tagText'] as $tagText){
+				$newQuery = $newTry->checkIfTag($tagText, $newpdo);
+				$newQuery2 = $newQuery->fetch();
+				$checkedTagId= $newQuery2[0];
+				if($checkedTagId!=0)
+				{
+					$newQuery = $newTry->insertTag($checkedTagId, $_POST['id'], $newpdo);
+				}
+				else{
+					$newQuery = $newTry->createTag($checkedTagId, $tagText, $newpdo);
+					$newQuery = $newTry->checkIfTag($tagText, $newpdo);
+					$newQuery2 = $newQuery->fetch();
+					$checkedTagId= $newQuery2[0];
+					$newQuery = $newTry->insertTag($checkedTagId, $_POST['id'], $newpdo);
+				}
+			}
+		}
+
+		include 'confirmation.html.php';
+		exit();
+	}
+	if(isset($_GET['editcompleteformnew']))
 	{
-		$row=selectWholeDetails($_GET['id'],$newpdo);
+		if ($_POST['text']=='')
+		{
+			echo 'Musisz podać nazwę produktu!';
+			exit();
+		}
+		elseif ($_POST['quantity']=='')
+		{
+			echo 'Musisz podać nową ilość produktu!';
+			exit();
+		}
+		else try
+		{
+			if (isset($_POST['zmiana'])and $_POST['zmiana']== "zmianaNazwy"){
+				$oldTry= new OldProduct;
+				$oldQuery = $oldTry->insertModyfy($_POST['id'], $_POST['text'], $oldpdo);
+			}
+			$newTry= new NewProduct;
+			$newQuery = $newTry->updateDetailedBoth($_POST['id'], $_POST['nominalPriceOld'], $_POST['text'], $_POST['quantity'], $_POST['description'], $_POST['description_short'], $_POST['meta_title'], $_POST['meta_description'], $_POST['link'], $_POST['condition'], $_POST['active'], $newpdo);
+		}
+		catch (PDOExceptioon $e)
+		{
+			echo 'Aktualizacja nazwy i ilości nie powiodła się: ' . $e->getMessage();
+			exit();
+		}
+		try
+		{
+			$newQuery = $newTry->updateManufacturer($_POST['author'], $_POST['id'], $newpdo);
+		}
+		catch (PDOExceptioon $e)
+		{
+			echo 'Aktualizacja producenta nie powiodła się: ' . $e->getMessage();
+			exit();
+		}
+		$newQuery = $newTry->deleteCategory($_POST['id'], $newpdo);
+		if(isset($_POST['categories']))
+		{
+			$newQuery = $newTry->insertCategory($_POST['categories'], $_POST['id'], $newpdo);
+		} else {echo'Nie znaleziono kategorii do zapisania!';
+	}
+	$newQuery = $newTry->deleteWholeTag($_POST['id'], $newpdo);
+	foreach ($_POST['tagText'] as $tagText){
+		$newQuery = $newTry->checkIfTag($tagText, $newpdo);
+		$newQuery2 = $newQuery->fetch();
+		$checkedTagId= $newQuery2[0];
+		if($checkedTagId!=0)
+		{
+			$newQuery = $newTry->insertTag($checkedTagId, $_POST['id'], $newpdo);
+		}
+		else{
+			$newQuery = $newTry->createTag($checkedTagId, $tagText, $newpdo);
+			$newQuery = $newTry->checkIfTag($tagText, $newpdo);
+			$newQuery2 = $newQuery->fetch();
+			$checkedTagId= $newQuery2[0];
+			$newQuery = $newTry->insertTag($checkedTagId, $_POST['id'], $newpdo);
+		}
+	}
+	try
+	{
+		$newQuery = $newTry->confirmation($_POST['id'], $newpdo);
+		$idOld= $newQuery["id_product"];
+		$quantityNew= $newQuery["quantity"];
+	}
+	catch (PDOExceptioon $e)
+	{
+		echo 'Pobranie uaktualnionych danych nie powiodło się: ' . $e->getMessage();
+		exit();
+	}
+	if (isset($_POST['howManyBases'])and $_POST['howManyBases']== 'obie'){
+		$oldTry= new OldProduct;
+		$oldQuery = $oldTry->updateDetailedBoth($_POST['id'], $_POST['nominalPriceOld'], $_POST['text'], $_POST['quantity'], $_POST['description'], $_POST['description_short'], $_POST['meta_title'], $_POST['meta_description'], $_POST['link'], $_POST['condition'], $_POST['active'], $oldpdo);
+		try
+		{
+			$oldQuery = $oldTry->updateManufacturer($_POST['author'], $_POST['id'], $oldpdo);
+		}
+		catch (PDOExceptioon $e)
+		{
+			echo 'Aktualizacja producenta nie powiodła się: ' . $e->getMessage();
+			exit();
+		}
+		$oldQuery = $oldTry->deleteCategory($_POST['id'], $oldpdo);
+		if(isset($_POST['categories']))
+		{
+			$oldQuery = $oldTry->insertDifferentCategory($_POST['categories'], $_POST['id'], $oldpdo);
+		} 	else {echo'Nie znaleziono kategorii do zapisania!';
+	}
+	$oldQuery = $oldTry->deleteWholeTag($_POST['id'], $oldpdo);
+	foreach ($_POST['tagText'] as $tagText){
+		$oldQuery = $oldTry->checkIfTag($tagText, $oldpdo);
+		$oldQuery2 = $oldQuery->fetch();
+		$checkedTagId= $oldQuery2[0];
+		if($checkedTagId!=0)
+		{
+			$oldQuery = $oldTry->insertTag($checkedTagId, $_POST['id'], $oldpdo);
+		}
+		else{
+			$oldQuery = $oldTry->createTag($checkedTagId, $tagText, $oldpdo);
+			$oldQuery = $oldTry->checkIfTag($tagText, $oldpdo);
+			$oldQuery2 = $oldQuery->fetch();
+			$checkedTagId= $oldQuery2[0];
+			$oldQuery = $oldTry->insertTag($checkedTagId, $_POST['id'], $oldpdo);
+		}
+	}
+}	
+include 'confirmation.html.php';
+exit();
+}
+if(isset($_GET['action'])){
+	if ($_GET['action']== 'Zmiana obu przez nowy panel' OR $_GET['action']== 'Zmiana obu przez stary panel')
+	{
+		try
+		{
+			$newTry= new NewProduct;
+			$Query = $newTry->getProductQuery($_GET['id'], $newpdo);
+			$QueryResult = $Query->fetch();
+			$Query3= $newTry->getReduction($_GET['id'], $newpdo);
+			$QueryResult3 = $Query3->fetch();
+			$oldTry= new OldProduct;
+			$Query2 = $oldTry->getProductQuery($_GET['id'], $oldpdo);
+			$QueryResult2 = $Query2->fetch();
+			$Query4= $oldTry->getReduction($_GET['id'], $oldpdo);
+			$QueryResult4 = $Query4->fetch();
+			$button= 'Aktualizuj produkt w obu bazach';
+			$editForm='?editformBoth';
+		}
+		catch (PODException $e)
+		{
+			echo 'Błąd przy pobieraniu informacji o produkcie: ' . $e->getMessage();
+			exit();
+		}
+		include 'form.html.php';
+		exit();
+	}
+}
+if (isset($_GET['action'])and $_GET['action']== 'Kompletna edycja w NP')
+	try
+	{
+		$oldTry= new NewProduct;
+		$Query = $oldTry->getWholeDetailsQuery($_GET['id'], $newpdo);
+		$QueryResult = $Query->fetch();
+		$Query1 = $oldTry->getReduction($_GET['id'], $newpdo);
+		$Query3 = $Query1->fetch();
+		$Query6 = $oldTry->selectManufacturer($_GET['id'], $newpdo);
+		$Query8 = $oldTry->getCategory($_GET['id'], $newpdo);
+		foreach ($Query8 as $Query9)
+		{
+			$this[]=array('id'=>$Query9['id_category'], 'name'=>$Query9['meta_title']);
+		$selectedCats[]=$Query9['id_category'];
+		}
+		$Query10 = $oldTry->getWholeCategory($newpdo);
+		foreach ($Query10 as $Query11)
+		{
+			$this2[]=array('id'=>$Query11['id_category'], 'name'=>$Query11['meta_title'], 'selected'=> in_array($Query11['id_category'], $selectedCats));
+		}
+		$Query12 = $oldTry->selectTag($_GET['id'], $newpdo);
+		foreach ($Query12 as $Query13)
+		{
+			$this3[]=array('id'=>$Query13['id_tag'], 'name'=>$Query13['name']);
+		}
+		$newTry= new OldProduct;
+		$Query2 = $newTry->getProductQuery($_GET['id'], $oldpdo);
+		$QueryResult2 = $Query2->fetch();
+		$Query4 = $newTry->getReduction($_GET['id'], $oldpdo);
+		$Query5 = $Query4->fetch();
 		$baza='- informacje z nowego panelu.';
-		$text= $row['name'];
-		$quantity= $row['quantity'];
-		$id= $row['id_product'];
-		$description_short=$row['description_short'];
-		$description=$row['description'];
-		$link=$row['link_rewrite'];
-		$meta_title=$row['meta_title'];
-		$meta_description=$row['meta_description'];
-		$condition=$row['condition'];
-		$active=$row['active'];
-		$priceNew=$row['price'];
-		$oldPrice=getPrice($_GET['id'], $newpdo);$oldPrice2=$oldPrice['price'];
-		$button= 'Aktualizuj produkt w nowej bazie';
 		$editForm='?editcompleteformnew';
-		$completeButton="Uaktualnij produkt (NB)";
 
-		$row=selectManufacturer($_GET['id'], $newpdo);
-		$authorid =$row['id_manufacturer'];
-	
-		foreach ($result as $manufactList) //$authors[] zadeklarowane w line 46
-		{
-			$authors[]=array('id'=> $manufactList['id_manufacturer'], 'name'=> $manufactList['name']);
-		}
-		try
-		{
-			$t=selectCategory($id, $newpdo);
-		}
-		catch (PODException $e)
-		{
-			echo 'Błąd przy pobieraniu listy wybranych kategorii: ' . $e->getMessage();
-			exit();
-		}
-		
-		foreach ($t as $row)
-		{
-			$selectedCats[]=$row['id_category'];
-			$selectedNames[]=array(
-				'name'=>$row['meta_title']);
-		}
-		try
-		{
-			$result =selectWholeCategory($newpdo);
-		}
-		catch (PODException $e)
-		{
-			echo 'Błąd przy pobieraniu listy kategorii: ' . $e->getMessage();
-			exit();
-		}
-		foreach ($result as $row)
-		{
-			$cat[]= array(
-				'id'=>$row['id_category'],
-				'name'=>$row['meta_title'],
-				'selected'=> in_array($row['id_category'], $selectedCats));
-		}
-		try
-		{
-			$tag=selectTag($id, $newpdo);
-		}
-		catch (PODException $e)
-		{
-			echo 'Błąd przy pobieraniu listy tagów wybranego produktu: ' . $e->getMessage();
-			exit();
-		}
-		foreach ($tag as $row)
-		{
-			$productTag[]=array(
-				'id'=>$row['id_tag'],
-				'name'=>$row['name']);
-		}
 		include 'completeForm.html.php';
 		exit();
 	}
@@ -601,79 +455,36 @@ if (isset($_GET['action'])and $_GET['action']== 'Zmiana obu przez nowy panel')
 	if (isset($_GET['action'])and $_GET['action']== 'Kompletna edycja w SP')
 		try
 	{
-		$row=selectWholeDetailsOld($_GET['id'],$oldpdo);
+		$oldTry= new OldProduct;
+		$Query = $oldTry->getWholeDetailsQuery($_GET['id'], $oldpdo);
+		$QueryResult = $Query->fetch();
+		$Query1 = $oldTry->getReduction($_GET['id'], $oldpdo);
+		$Query3 = $Query1->fetch();
+		$Query6 = $oldTry->selectManufacturer($_GET['id'], $oldpdo);
+		$Query8 = $oldTry->getCategory($_GET['id'], $oldpdo);
+		foreach ($Query8 as $Query9)
+		{
+			$this[]=array('id'=>$Query9['id_category'], 'name'=>$Query9['meta_title']);
+		$selectedCats[]=$Query9['id_category'];
+		}
+		$Query10 = $oldTry->getWholeCategory($oldpdo);
+		foreach ($Query10 as $Query11)
+		{
+			$this2[]=array('id'=>$Query11['id_category'], 'name'=>$Query11['meta_title'], 'selected'=> in_array($Query11['id_category'], $selectedCats));
+		}
+		$Query12 = $oldTry->selectTag($_GET['id'], $oldpdo);
+		foreach ($Query12 as $Query13)
+		{
+			$this3[]=array('id'=>$Query13['id_tag'], 'name'=>$Query13['name']);
+		}
+		$newTry= new NewProduct;
+		$Query2 = $newTry->getProductQuery($_GET['id'], $newpdo);
+		$QueryResult2 = $Query2->fetch();
+		$Query4 = $newTry->getReduction($_GET['id'], $newpdo);
+		$Query5 = $Query4->fetch();
 		$baza='- informacje ze starego panelu.';
-		$text= $row['name'];
-		$quantity= $row['quantity'];
-		$id= $row['id_product'];
-		$description_short=$row['description_short'];
-		$description=$row['description'];
-		$link=$row['link_rewrite'];
-		$meta_title=$row['meta_title'];
-		$meta_description=$row['meta_description'];
-		$condition=$row['condition'];
-		$active=$row['active'];
-		$indexed=$row['indexed'];
-		$oldPrice2=$row['price'];
-		$newPrice=getPrice($_GET['id'], $newpdo);$priceNew=$newPrice['price'];
-		$button= 'Aktualizuj produkt w starej bazie';
 		$editForm='?editcompleteformold';
-		$completeButton="Uaktualnij produkt (SB)";
 
-		$row=selectManufacturer($_GET['id'], $oldpdo);
-		$authorid =$row['id_manufacturer'];
-		
-		foreach ($result as $manufactList) //$authors[] zadeklarowane w line 46
-		{
-			$authors[]=array('id'=> $manufactList['id_manufacturer'], 'name'=> $manufactList['name']);
-		}
-		try
-		{
-			$s=selectCategoryOld($id, $oldpdo);
-		}
-		catch (PODException $e)
-		{
-			echo 'Błąd przy pobieraniu listy wybranych kategorii: ' . $e->getMessage();
-			exit();
-		}
-
-		foreach ($s as $row)
-		{
-			$selectedCat[]=$row['id_category'];
-			$selectedNames[]= array(
-				'name'=>$row['meta_title']);
-		}
-		try
-		{
-			$result =selectWholeCategoryOld($oldpdo);
-		}
-		catch (PODException $e)
-		{
-			echo 'Błąd przy pobieraniu listy kategorii: ' . $e->getMessage();
-			exit();
-		}
-		foreach ($result as $row)
-		{
-			$cat[]= array(
-				'id'=>$row['id_category'],
-				'name'=>$row['meta_title'],
-				'selected'=> in_array($row['id_category'], $selectedCat));
-		}
-		try
-		{
-			$tag=selectTag($id, $oldpdo);
-		}
-		catch (PODException $e)
-		{
-			echo 'Błąd przy pobieraniu listy tagów wybranego produktu: ' . $e->getMessage();
-			exit();
-		}
-		foreach ($tag as $row)
-		{
-			$productTag[]=array(
-				'id'=>$row['id_tag'],
-				'name'=>$row['name']);
-		}
 		include 'completeForm.html.php';
 		exit();
 	}
@@ -702,173 +513,90 @@ if (isset($_GET['action'])and $_GET['action']== 'Zmiana obu przez nowy panel')
 		echo 'Pobranie ilości w zamówieniu nie powiodło się: ' . $e->getMessage();
 		exit();
 	}
-	if (isset($_GET['action'])and $_GET['action']== 'Wyrównaj ilość w starej bazie')
-	try
-	{
-		updateQuantity($_GET['quantity'], $_GET['id'], $oldpdo);
-		try
-	{
-	$row=confirmation($_GET['id'], $oldpdo);
-	$id= $row['id_product'];
-	$quantity= $row['quantity'];
-	}
-	catch (PDOExceptioon $e)
-	{
-		echo 'Pobranie uaktualnionych danych nie powiodło się: ' . $e->getMessage();
-		exit();
-	}
-		include 'confirmation2.html.php';
-	}
-	catch (PODException $e)
-	{
-		echo 'Błąd przy wyrównywaniu ilości - nowy->stary panel: ' . $e->getMessage();
-		exit();
-	}
-	if (isset($_GET['action'])and $_GET['action']== 'Wyrównaj ilość w nowej bazie')
-	try
-	{
-		updateQuantity($_GET['quantity'], $_GET['id'], $newpdo);
-		try
-	{
-	$row=confirmation($_GET['id'], $newpdo);
-	$id= $row['id_product'];
-	$quantity= $row['quantity'];
-	}
-	catch (PDOExceptioon $e)
-	{
-		echo 'Pobranie uaktualnionych danych nie powiodło się: ' . $e->getMessage();
-		exit();
-	}
-		include 'confirmation.html.php';
-	}
-	catch (PODException $e)
-	{
-		echo 'Błąd przy pobieraniu wyrównywaniu ilości - nowy->stary panel: ' . $e->getMessage();
-		exit();
-	}
-	if(isset($_GET['action'])and $_GET['action']=='search')
-	{
-		$select = 'SELECT ps_product_lang.id_product, ps_product_lang.name, ps_stock_available.quantity';
-		$from = ' FROM ps_product_lang INNER JOIN ps_stock_available ON ps_product_lang.id_product = ps_stock_available.id_product';
-		$newwhere = ' WHERE TRUE';
-		$oldwhere = ' WHERE ps_product_lang.id_lang=3';
-		$placeholders = array();
-		if ($_GET['author'] !='')
+	if(isset($_GET['action'])and $_GET['action']=='idsearch')
 		{
-			$select = 'SELECT ps_product_lang.id_product, ps_product_lang.name, ps_stock_available.quantity, ps_product.id_manufacturer';
-			$from = ' FROM ps_product_lang INNER JOIN ps_stock_available ON ps_product_lang.id_product = ps_stock_available.id_product
-			INNER JOIN ps_product ON ps_product_lang.id_product=ps_product.id_product' ;
-			$newwhere .=" AND id_manufacturer= :id_manufacturer";
-			$oldwhere .=" AND id_manufacturer= :id_manufacturer";
-			$placeholders[':id_manufacturer'] = $_GET['author'];
+		$newTry= new NewProduct;
+		$newQuery = $newTry->getProductQuery($_GET['idnr'], $newpdo);
+		$newQueryResult = $newQuery->fetch();
+		$newQuery2= $newTry->getReduction($_GET['idnr'], $newpdo);
+		$newQueryResult2 = $newQuery2->fetch();
+		$oldTry= new OldProduct;
+		$oldQuery = $oldTry->getProductQuery($_GET['idnr'], $oldpdo);
+		$oldQueryResult = $oldQuery->fetch();
+		$oldQuery2= $oldTry->getReduction($_GET['idnr'], $oldpdo);
+		$oldQueryResult2 = $oldQuery2->fetch();
+		include 'products.html.php';
 		}
-		if ($_GET['category'] !=''){
-			$from .=' INNER JOIN ps_category_product ON ps_product_lang.id_product= ps_category_product.id_product';
-			$newwhere .=" AND id_category= :id_category";
-			$oldwhere .=" AND id_category= :id_category";
-			$placeholders[':id_category'] = $_GET['category'];
-		}
-		if ($_GET['idnr'] !='')
+		if(isset($_GET['action'])and $_GET['action']=='search')
 		{
-			$newwhere .=" AND ps_product_lang.id_product LIKE :id_product";
-			$oldwhere .=" AND ps_product_lang.id_product LIKE :id_product";
-			$placeholders[':id_product'] =$_GET['idnr'];
-		}
-		if ($_GET['neworder'] !=''){
-			$select = 'SELECT ps_product_lang.id_product, ps_product_lang.name, ps_stock_available.quantity, ps_order_detail.id_order, ps_order_detail.product_quantity, ps_product.price';
-			$from = ' FROM ps_product_lang INNER JOIN ps_stock_available ON ps_product_lang.id_product = ps_stock_available.id_product
-			INNER JOIN ps_order_detail ON ps_stock_available.id_product=ps_order_detail.product_id
-			INNER JOIN ps_product ON ps_product_lang.id_product=ps_product.id_product';
-			$newwhere =" AND id_order= :id_order";
-			$placeholders[':id_order'] = $_GET['neworder'];
-			try
+			if ($_GET['text'] !='' AND $_GET['category'] =='' AND $_GET['author'] =='')
 			{
-				$newsql= $select. $from. $newwhere;
-				$s=$newpdo->prepare($newsql);
-				$s->execute($placeholders);
+				$newTry= new NewProduct;
+				$newQuery = $newTry->getLoopTextQuery(' WHERE ps_product_lang.name LIKE :name ORDER BY ps_product_lang.id_product','%'.$_GET['text'].'%', $newpdo);
+				foreach ($newQuery as $newQuery2)
+				{
+					$newQuery3[]=array('id'=>$newQuery2['id_product'], 'name'=>$newQuery2['name'], 'quantity'=>$newQuery2['quantity'], 'price'=>$newQuery2['price']);
+				}
 			}
-			catch (PDOException $e)
+			if ($_GET['author'] !='' AND $_GET['category'] =='' AND $_GET['text'] =='')
 			{
-				echo 'Błąd przy pobieraniu nowych produktów: ' . $e->getMessage();
+				$newTry= new NewProduct;
+				$newQuery = $newTry->getLoopManufacturerQuery(" WHERE id_manufacturer= :id_manufacturer",$_GET['author'], $newpdo);
+				foreach ($newQuery as $newQuery2)
+				{
+					$newQuery3[]=array('id'=>$newQuery2['id_product'], 'name'=>$newQuery2['name'], 'quantity'=>$newQuery2['quantity'], 'price'=>$newQuery2['price']);
+				}
+			}
+			if ($_GET['text'] !='' AND $_GET['author'] !=''AND $_GET['category'] =='')
+			{
+				$newTry= new NewProduct;
+				$newQuery = $newTry->getLoopBothQuery(" WHERE id_manufacturer= :id_manufacturer AND ps_product_lang.name LIKE :name ORDER BY ps_product_lang.id_product",'%'.$_GET['text'].'%',$_GET['author'], $newpdo);
+				foreach ($newQuery as $newQuery2)
+				{
+					$newQuery3[]=array('id'=>$newQuery2['id_product'], 'name'=>$newQuery2['name'], 'quantity'=>$newQuery2['quantity'], 'price'=>$newQuery2['price']);
+				}
+			}
+			if ($_GET['category'] !='' AND$_GET['text'] =='' AND $_GET['author'] =='')
+			{
+				$newTry= new NewProduct;
+				$newQuery = $newTry->getLoopCategoryQuery(' WHERE id_category= :id_category',$_GET['category'], $newpdo);
+				foreach ($newQuery as $newQuery2)
+				{
+					$newQuery3[]=array('id'=>$newQuery2['id_product'], 'name'=>$newQuery2['name'], 'quantity'=>$newQuery2['quantity'], 'price'=>$newQuery2['price']);
+				}
+			}
+			if ($_GET['category'] !='' AND$_GET['text'] !='' AND $_GET['author'] =='')
+			{
+				$newTry= new NewProduct;
+				$newQuery = $newTry->getLoopBoth2Query(' WHERE id_category= :id_category AND ps_product_lang.name LIKE :name ORDER BY ps_product_lang.id_product','%'.$_GET['text'].'%',$_GET['category'], $newpdo);
+				foreach ($newQuery as $newQuery2)
+				{
+					$newQuery3[]=array('id'=>$newQuery2['id_product'], 'name'=>$newQuery2['name'], 'quantity'=>$newQuery2['quantity'], 'price'=>$newQuery2['price']);
+				}
+			}
+			if ($_GET['category'] !='' AND$_GET['text'] =='' AND $_GET['author'] !='')
+			{
+				$newTry= new NewProduct;
+				$newQuery = $newTry->getLoopBoth3Query(' WHERE id_category= :id_category AND id_manufacturer= :id_manufacturer', $_GET['category'], $_GET['author'], $newpdo);
+				foreach ($newQuery as $newQuery2)
+				{
+					$newQuery3[]=array('id'=>$newQuery2['id_product'], 'name'=>$newQuery2['name'], 'quantity'=>$newQuery2['quantity'], 'price'=>$newQuery2['price']);
+				}
+			}
+			if ($_GET['category'] !='' AND$_GET['text'] !='' AND $_GET['author'] !='')
+			{
+				$newTry= new NewProduct;
+				$newQuery = $newTry->getLoopTripleQuery(' WHERE id_category= :id_category AND id_manufacturer= :id_manufacturer AND ps_product_lang.name LIKE :name ORDER BY ps_product_lang.id_product','%'.$_GET['text'].'%',$_GET['category'],$_GET['author'], $newpdo);
+				foreach ($newQuery as $newQuery2)
+				{
+					$newQuery3[]=array('id'=>$newQuery2['id_product'], 'name'=>$newQuery2['name'], 'quantity'=>$newQuery2['quantity'], 'price'=>$newQuery2['price']);
+				}
+			}
+			if ($_GET['text'] =='' AND $_GET['category'] =='' AND $_GET['author'] ==''){
+				echo'<b>Nie chcesz chyba szukać wszystkich wyników w bazie...?</b><br>Zaznacz chociaż 1 kryterium wyszukiwania!';
 				exit();
 			}
-			foreach ($s as $row)
-			{
-				$products[]=array('id'=>$row['id_product'], 'text'=>$row['name'], 'quantity'=>$row['quantity'], 'orderedQuantity'=>$row['product_quantity']);
-			}
-			$panel='Nowy panel: ';
-			$stan='Na stanie (NP)';
-			$stan2='Zamówione (NP)';
-			$uaktualnij='Wyrównaj ilość w starej bazie';
-			$edycja='Kompletna edycja w NP';
-			$uaktualnij2='Uaktualnij ilości w całym zamówieniu';
-			$uaktualnij3='Zmiana obu przez nowy panel';
-			$uaktualnij4="neworder";
-			include 'products2.html.php';
-			exit();
-		}
-		if ($_GET['oldorder'] !=''){
-			$select = 'SELECT ps_product_lang.id_product, ps_product_lang.name, ps_stock_available.quantity, ps_order_detail.id_order, ps_order_detail.product_quantity';
-			$from = ' FROM ps_product_lang INNER JOIN ps_stock_available ON ps_product_lang.id_product = ps_stock_available.id_product
-			INNER JOIN ps_order_detail ON ps_stock_available.id_product=ps_order_detail.product_id' ;
-			$oldwhere =" WHERE ps_product_lang.id_lang=3 AND id_order= :id_order";
-			$placeholders[':id_order'] = $_GET['oldorder'];
-			try
-			{
-				$oldsql= $select. $from. $oldwhere;
-				$s=$oldpdo->prepare($oldsql);
-				$s->execute($placeholders);
-			}
-			catch (PDOException $e)
-			{
-				echo 'Błąd przy pobieraniu starych produktów: ' . $e->getMessage();
-				exit();
-			}
-			foreach ($s as $row)
-			{
-				$products[]=array('id'=>$row['id_product'], 'text'=>$row['name'], 'quantity'=>$row['quantity'], 'orderedQuantity'=>$row['product_quantity']);
-			}
-			$panel='Stary panel: ';
-			$stan='Na stanie (SP)';
-			$stan2='Zamówione (SP)';
-			$uaktualnij='Wyrównaj ilość w nowej bazie';
-			$edycja='Kompletna edycja w SP';
-			$uaktualnij2='Uaktualnij ilości dla całego zamówienia';
-			$uaktualnij3='Zmiana obu przez stary panel';
-			$uaktualnij4="oldorder";
-			include 'products2.html.php';
-			exit();
-		}
-
-		if ($_GET['text'] !='')
-		{
-			$newwhere .=" AND name LIKE :name ORDER BY ps_product_lang.id_product";
-			$oldwhere .=" AND name LIKE :name";
-			$placeholders[':name'] ='%'.$_GET['text'].'%';
-		}
-		try
-		{
-			$newsql= $select. $from. $newwhere;
-			$s=$newpdo->prepare($newsql);
-			$s->execute($placeholders);
-			$oldsql= $select. $from. $oldwhere;
-			$t=$oldpdo->prepare($oldsql);
-			$t->execute($placeholders);
-		}
-		catch (PDOException $e)
-		{
-			echo 'Błąd przy pobieraniu produktów: ' . $e->getMessage();
-			exit();
-		}
-		foreach ($s as $row)
-		{
-			$products[]=array('id'=>$row['id_product'], 'text'=>$row['name'], 'quantity'=>$row['quantity']);
-		}
-		foreach ($t as $rows)
-		{
-			$oldproducts[]=array('oldId'=>$rows['id_product'], 'oldText'=>$rows['name'], 'oldQuantity'=>$rows['quantity']);
-		}
 			include 'products.html.php';
-			exit();
-	}
+		}
+	ob_end_flush();
 	exit();
