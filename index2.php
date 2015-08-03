@@ -19,12 +19,12 @@ if (!isset($_SESSION['zalogowany'])){
 			echo'Witamy w systemie CMS obu paneli! '.$login;
 		}
 		if(!isset($_SESSION['zalogowany'])){
-			header('Location:logowanie.html');
+			header('Location:signIn.html');
 			exit();
 		} 
 	}
 }
-include 'orderSearch.html';
+include 'HTML/orderSearch.html';
 
 if(isset($_GET['editformBoth']))
 {
@@ -63,7 +63,7 @@ if(isset($_GET['editformBoth']))
 		echo 'Aktualizacja starych danych nie powiodła się: ' . $e->getMessage();
 		exit();
 	}
-	include 'confirmation.html.php';
+	include 'HTML/confirmation.html.php';
 	exit();
 }
 if(isset($_GET['editcompleteformold']))
@@ -174,7 +174,7 @@ if (isset($_POST['howManyBases'])and $_POST['howManyBases']== 'obie'){
 		}
 	}
 }
-include 'confirmation.html.php';
+include 'HTML/confirmation.html.php';
 exit();
 }
 if(isset($_GET['editcompleteformnew']))
@@ -288,12 +288,12 @@ foreach ($_POST['tagText'] as $tagText){
 	}
 }
 }	
-include 'confirmation.html.php';
+include 'HTML/confirmation.html.php';
 exit();
 }
 if (isset($_GET['shipmentNumber']))
 {
-	include'shipmentMail.html';exit();
+	include'HTML/shipmentMail.html';exit();
 }
 
 if(isset($_GET['action'])&&$_GET['action']=='orderSearch')
@@ -341,7 +341,7 @@ if(isset($_GET['action'])&&$_GET['action']=='orderSearch')
 			$detail2[]=array('id'=>$sDetail['product_id'], 'name'=>$sDetail['name'], 'price'=>$sDetail['product_price'], 'reduction'=>$sDetail['reduction_amount'], 'quantity'=>$sDetail['product_quantity'], 'total'=>$sDetail['total_price_tax_incl'], 'productSum'=>$sDetail['total_products'], 'totalPaid'=>$sDetail['total_paid'], 'mail'=>$sDetail['email'], 'first'=>$sDetail['firstname'], 'last'=>$sDetail['lastname'], 'reference'=>$sDetail['reference'], 'payment'=>$sDetail['payment']);
 		}
 	}
-	include 'products3.html';
+	include 'HTML/orders.html';
 }
 if(isset($_GET['action'])){
 	if ($_GET['action']== 'Wyrównaj ilość w starej bazie')
@@ -351,7 +351,7 @@ if(isset($_GET['action'])){
 		$oldQuery = $oldTry->confirmation($_GET['id'], $oldpdo);
 		$idOld= $oldQuery["id_product"];
 		$quantityOld= $oldQuery["quantity"];
-		include 'confirmation.html.php';
+		include 'HTML/confirmation.html.php';
 		exit();
 	}
 	if ($_GET['action']== 'Wyrównaj ilość w nowej bazie')
@@ -361,7 +361,7 @@ if(isset($_GET['action'])){
 		$newQuery = $newTry->confirmation($_GET['id'], $newpdo);
 		$idOld= $newQuery["id_product"];
 		$quantityNew= $newQuery["quantity"];
-		include 'confirmation.html.php';
+		include 'HTML/confirmation.html.php';
 		exit();
 	}
 	if ($_GET['action']== 'Zmiana obu przez nowy panel' OR $_GET['action']== 'Zmiana obu przez stary panel')
@@ -386,7 +386,7 @@ if(isset($_GET['action'])){
 			echo 'Błąd przy pobieraniu informacji o produkcie: ' . $e->getMessage();
 			exit();
 		}
-		include 'form.html.php';
+		include 'HTML/form.html.php';
 		exit();
 	}
 	if (isset($_GET['action'])and $_GET['action']== 'Kompletna edycja w NP')
@@ -398,7 +398,7 @@ if(isset($_GET['action'])){
 		$Query1 = $oldTry->getReduction($_GET['id'], $newpdo);
 		$Query3 = $Query1->fetch();
 		$Query6 = $oldTry->selectManufacturer($_GET['id'], $newpdo);
-		$list= new OldLists($newpdo);
+		$list= new OldHelper($newpdo);
 		$result= $list->selectWholeManufacturer();
 		foreach ($result as $row)
 		{
@@ -428,7 +428,7 @@ if(isset($_GET['action'])){
 		$baza='- informacje z nowego panelu.';
 		$editForm='?editcompleteformnew';
 
-		include 'completeForm.html.php';
+		include 'HTML/completeForm.html.php';
 		exit();
 	}
 	catch (PDOExceptioon $e)
@@ -445,7 +445,7 @@ if(isset($_GET['action'])){
 		$Query1 = $oldTry->getReduction($_GET['id'], $oldpdo);
 		$Query3 = $Query1->fetch();
 		$Query6 = $oldTry->selectManufacturer($_GET['id'], $oldpdo);
-		$list= new OldLists($oldpdo);
+		$list= new OldHelper($oldpdo);
 		$result= $list->selectWholeManufacturer();
 		foreach ($result as $row)
 		{
@@ -475,7 +475,7 @@ if(isset($_GET['action'])){
 		$baza='- informacje ze starego panelu.';
 		$editForm='?editcompleteformold';
 
-		include 'completeForm.html.php';
+		include 'HTML/completeForm.html.php';
 		exit();
 	}
 	catch (PDOExceptioon $e)
@@ -493,7 +493,7 @@ if (isset($_GET['action'])and $_GET['action']== 'Uaktualnij ilości dla całego 
 	foreach ($newQuery as $newQuery2){
 		$mods[]= array('quantity'=>$newQuery2['quantity'], 'product_id'=>$newQuery2['product_id'], 'id_order'=>$newQuery2['id_order']);
 	}
-	include 'orderUpgrade.html.php';
+	include 'HTML/orderUpgrade.html.php';
 }
 catch (PDOExceptioon $e)
 {
@@ -510,7 +510,7 @@ if (isset($_GET['action'])and $_GET['action']== 'Uaktualnij ilości w całym zam
 	foreach ($oldQuery as $oldQuery2){
 		$mods[]= array('quantity'=>$oldQuery2['quantity'], 'product_id'=>$oldQuery2['product_id'], 'id_order'=>$oldQuery2['id_order']);
 	}
-	include 'orderUpgrade.html.php';
+	include 'HTML/orderUpgrade.html.php';
 }
 catch (PDOExceptioon $e)
 {
