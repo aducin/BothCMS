@@ -4,7 +4,7 @@ require_once $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/bootstrap.php';
 
 if(isset($_GET['deleterow']))
 {
-	$list= new OldLists($oldpdo);
+	$list= new OldHelper($oldpdo);
 	$result= $list->deleteMod($_GET['idMod']);
 	unset($list);
 	header('Location:.');
@@ -34,14 +34,14 @@ if (!isset($_SESSION['zalogowany'])){
 			echo'Witamy w systemie CMS obu paneli! '.$login;
 		}
 		if(!isset($_SESSION['zalogowany'])){
-			header('Location:logowanie.html');
+			header('Location:signIn.html');
 			exit();
 		} 
 	}
 }
 try
 {
-	$list= new OldLists($oldpdo);
+	$list= new OldHelper($oldpdo);
 	$result= $list->selectWholeManufacturer();
 }
 catch (PDOException $e)
@@ -72,7 +72,7 @@ foreach ($result as $mod)
 	$mods[]= array('id'=>$mod['id_number'], 'nazwa'=>$mod['name'], 'data'=>$mod['date'], 'cena'=>$mod['price']);
 }
 unset($list);
-include 'Searchform.html.php';
+include 'HTML/searchForm.html.php';
 if(isset($_GET['action'])&&$_GET['action']=='zamówienia')
 {
 	header('Location:index2.php');
@@ -92,7 +92,7 @@ if(isset($_GET['changeTabOldAdd']))
 		$QueryResult = $Query3->fetch();
 		$Query4 = $oldTry->insertTag($QueryResult[0], $_POST['id'], $oldpdo);
 	}
-	include 'confirmation.html.php';
+	include 'HTML/confirmation.html.php';
 }
 if(isset($_GET['changeTabNewAdd']))
 {
@@ -107,7 +107,7 @@ if(isset($_GET['changeTabNewAdd']))
 		$QueryResult = $Query3->fetch();
 		$Query4 = $oldTry->insertTag($QueryResult[0], $_POST['id'], $newpdo);
 	}
-	include 'confirmation.html.php';
+	include 'HTML/confirmation.html.php';
 }
 if(isset($_GET['changeTabNewCut']))
 {
@@ -166,7 +166,7 @@ if(isset($_GET['changeTabNewCut']))
 				echo 'Aktualizacja starych danych nie powiodła się: ' . $e->getMessage();
 				exit();
 			}
-			include 'confirmation.html.php';
+			include 'HTML/confirmation.html.php';
 			exit();
 		}
 		if(isset($_GET['editcompleteformold']))
@@ -278,7 +278,7 @@ if(isset($_GET['changeTabNewCut']))
 			}
 		}
 
-		include 'confirmation.html.php';
+		include 'HTML/confirmation.html.php';
 		exit();
 	}
 	if(isset($_GET['editcompleteformnew']))
@@ -392,7 +392,7 @@ if(isset($_GET['changeTabNewCut']))
 		}
 	}
 }	
-include 'confirmation.html.php';
+include 'HTML/confirmation.html.php';
 exit();
 }
 if(isset($_GET['action'])){
@@ -418,7 +418,7 @@ if(isset($_GET['action'])){
 			echo 'Błąd przy pobieraniu informacji o produkcie: ' . $e->getMessage();
 			exit();
 		}
-		include 'form.html.php';
+		include 'HTML/form.html.php';
 		exit();
 	}
 }
@@ -455,7 +455,7 @@ if (isset($_GET['action'])and $_GET['action']== 'Kompletna edycja w NP')
 		$baza='- informacje z nowego panelu.';
 		$editForm='?editcompleteformnew';
 
-		include 'completeForm.html.php';
+		include 'HTML/completeForm.html.php';
 		exit();
 	}
 	catch (PDOExceptioon $e)
@@ -496,7 +496,7 @@ if (isset($_GET['action'])and $_GET['action']== 'Kompletna edycja w NP')
 		$baza='- informacje ze starego panelu.';
 		$editForm='?editcompleteformold';
 
-		include 'completeForm.html.php';
+		include 'HTML/completeForm.html.php';
 		exit();
 	}
 	catch (PDOExceptioon $e)
@@ -516,7 +516,7 @@ if (isset($_GET['action'])and $_GET['action']== 'Kompletna edycja w NP')
 		$oldQueryResult = $oldQuery->fetch();
 		$oldQuery2= $oldTry->getReduction($_GET['idnr'], $oldpdo);
 		$oldQueryResult2 = $oldQuery2->fetch();
-		include 'products.html.php';
+		include 'HTML/products.html.php';
 		}
 		if(isset($_GET['action'])and $_GET['action']=='search')
 		{
@@ -587,7 +587,7 @@ if (isset($_GET['action'])and $_GET['action']== 'Kompletna edycja w NP')
 				echo'<b>Nie chcesz chyba szukać wszystkich wyników w bazie...?</b><br>Zaznacz chociaż 1 kryterium wyszukiwania!';
 				exit();
 			}
-			include 'products.html.php';
+			include 'HTML/products.html.php';
 		}
 	ob_end_flush();
 	exit();
