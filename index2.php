@@ -1,5 +1,5 @@
 <?php 
-require_once $_SERVER['DOCUMENT_ROOT'].'/ProjektCap3/bootstrap.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/bootstrap.php';
 
 session_start();
 if(!isset($_SESSION['zalogowany'])){
