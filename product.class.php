@@ -17,23 +17,23 @@ abstract class Product
 	}
 
 	private function selectWholeDetails(){
-	return 'SELECT ps_product_lang.id_product, ps_product_lang.name, ps_product_lang.description, ps_product_lang.description_short, ps_product_lang.link_rewrite, ps_product_lang.meta_description, ps_product_lang.meta_title, ps_stock_available.quantity, ps_product.condition, ps_product.price, ps_product.indexed, ps_product.active, ps_product_tag.id_tag
-	FROM ps_product_lang INNER JOIN ps_stock_available ON ps_product_lang.id_product=ps_stock_available.id_product
-	INNER JOIN ps_product ON ps_product_lang.id_product=ps_product.id_product
-	INNER JOIN ps_product_tag ON ps_product_lang.id_product=ps_product_tag.id_product';
+		return 'SELECT ps_product_lang.id_product, ps_product_lang.name, ps_product_lang.description, ps_product_lang.description_short, ps_product_lang.link_rewrite, ps_product_lang.meta_description, ps_product_lang.meta_title, ps_stock_available.quantity, ps_product.condition, ps_product.price, ps_product.indexed, ps_product.active, ps_product_tag.id_tag
+		FROM ps_product_lang INNER JOIN ps_stock_available ON ps_product_lang.id_product=ps_stock_available.id_product
+		INNER JOIN ps_product ON ps_product_lang.id_product=ps_product.id_product
+		INNER JOIN ps_product_tag ON ps_product_lang.id_product=ps_product_tag.id_product';
 	}
 
 	private function selectCategory(){
-	return 'SELECT ps_category_product.id_product, ps_category_product.id_category, ps_category_lang.id_lang, ps_category_lang.meta_title FROM ps_category_product
-	INNER JOIN ps_category_lang ON ps_category_product.id_category=ps_category_lang.id_category';
+		return 'SELECT ps_category_product.id_product, ps_category_product.id_category, ps_category_lang.id_lang, ps_category_lang.meta_title FROM ps_category_product
+		INNER JOIN ps_category_lang ON ps_category_product.id_category=ps_category_lang.id_category';
 	}
 
 	private function selectWholeCategory(){
-	return 'SELECT id_category, meta_title FROM ps_category_lang';
+		return 'SELECT id_category, meta_title FROM ps_category_lang';
 	}
 
 	private function selectName(){
-	return 'SELECT name FROM ps_product_lang';
+		return 'SELECT name FROM ps_product_lang';
 	}
 
 	abstract protected function getWhereProduct();
@@ -155,128 +155,128 @@ abstract class Product
 	}
 
 	public function selectManufacturer($id, $pdo){
-	$sql='SELECT ps_product.id_product, ps_product.id_manufacturer, ps_manufacturer.name
-	FROM ps_product INNER JOIN ps_manufacturer
-	ON ps_product.id_manufacturer=ps_manufacturer.id_manufacturer
-	WHERE ps_product.id_product= :id';
-	$s=$pdo->prepare($sql);
-	$s->bindValue(':id', $id);
-	$s->execute();
-	$s1 = $s->fetch();
-	return($s1["name"]);
-}
+		$sql='SELECT ps_product.id_product, ps_product.id_manufacturer, ps_manufacturer.name
+		FROM ps_product INNER JOIN ps_manufacturer
+		ON ps_product.id_manufacturer=ps_manufacturer.id_manufacturer
+		WHERE ps_product.id_product= :id';
+		$s=$pdo->prepare($sql);
+		$s->bindValue(':id', $id);
+		$s->execute();
+		$s1 = $s->fetch();
+		return($s1["name"]);
+	}
 
 	public function selectTag($id, $pdo){
-	$sql='SELECT ps_product_tag.id_product, ps_product_tag.id_tag, ps_tag.name
-	FROM ps_product_tag INNER JOIN ps_tag ON ps_product_tag.id_tag=ps_tag.id_tag
-	WHERE ps_product_tag.id_product= :id';
-	$s=$pdo->prepare($sql);
-	$s->bindValue(':id', $id);
-	$s->execute();
-	return $s;
-}
+		$sql='SELECT ps_product_tag.id_product, ps_product_tag.id_tag, ps_tag.name
+		FROM ps_product_tag INNER JOIN ps_tag ON ps_product_tag.id_tag=ps_tag.id_tag
+		WHERE ps_product_tag.id_product= :id';
+		$s=$pdo->prepare($sql);
+		$s->bindValue(':id', $id);
+		$s->execute();
+		return $s;
+	}
 
 	public function checkIfTag($tagText, $pdo){
-	$sql='SELECT id_tag
-	FROM ps_tag
-	WHERE ps_tag.name= :id';
-	$s=$pdo->prepare($sql);
-	$s->bindValue(':id', $tagText);
-	$s->execute();
-	return $s;
-}
+		$sql='SELECT id_tag
+		FROM ps_tag
+		WHERE ps_tag.name= :id';
+		$s=$pdo->prepare($sql);
+		$s->bindValue(':id', $tagText);
+		$s->execute();
+		return $s;
+	}
 
 	public function insertTag($id_tag, $id, $pdo){
-	$sql='INSERT INTO ps_product_tag (id_product, id_tag)
-	VALUES (:id, :id_tag)';
-	$s=$pdo->prepare($sql);
-	$s->bindValue(':id_tag', $id_tag);
-	$s->bindValue(':id', $id);
-	$s->execute();
-}
+		$sql='INSERT INTO ps_product_tag (id_product, id_tag)
+		VALUES (:id, :id_tag)';
+		$s=$pdo->prepare($sql);
+		$s->bindValue(':id_tag', $id_tag);
+		$s->bindValue(':id', $id);
+		$s->execute();
+	}
 
 	public function createTag($id_tag, $name, $pdo){
-	$sql='INSERT INTO ps_tag (id_tag, name)
-	VALUES (:id_tag, :name)';
-	$s=$pdo->prepare($sql);
-	$s->bindValue(':id_tag', $id_tag);
-	$s->bindValue(':name', $name);
-	$s->execute();
-}
-
-public function deleteTag($id_tag, $id, $pdo){
-	$sql='DELETE FROM ps_product_tag
-	WHERE id_product = :id AND id_tag = :id_tag';
-	$s=$pdo->prepare($sql);
-	$s->bindValue(':id_tag', $id_tag);
-	$s->bindValue(':id', $id);
-	$s->execute();
-}
-
-public function deleteWholeTag($id, $pdo){
-	$sql='DELETE FROM ps_product_tag
-	WHERE id_product = :id';
-	$s=$pdo->prepare($sql);
-	$s->bindValue(':id', $id);
-	$s->execute();
-}
-
-public function deleteCategory($id, $pdo){
-	$sql='DELETE FROM ps_category_product
-	WHERE id_product = :id';
-	$s=$pdo->prepare($sql);
-	$s->bindValue(':id', $id);
-	$s->execute();
-}
-
-public function deleteImage($id, $pdo){
-	$sql='DELETE FROM ps_image
-	WHERE id_product = :id';
-	$s=$pdo->prepare($sql);
-	$s->bindValue(':id', $id);
-	$s->execute();
-}
-
-public function insertCategory($id_category, $id_product, $pdo){
-	$sql='INSERT INTO ps_category_product SET
-	id_category= :id_category,
-	id_product= :id_product';
-	$s=$pdo->prepare($sql);
-	foreach ($id_category as $categoryId){
-		$s->bindValue(':id_category', $categoryId);
-		$s->bindValue(':id_product', $id_product);
+		$sql='INSERT INTO ps_tag (id_tag, name)
+		VALUES (:id_tag, :name)';
+		$s=$pdo->prepare($sql);
+		$s->bindValue(':id_tag', $id_tag);
+		$s->bindValue(':name', $name);
 		$s->execute();
 	}
-}
 
-public function insertDifferentCategory($id_category, $id_product, $pdo){
-	$sql='INSERT INTO ps_category_product SET
-	id_category= :id_category,
-	id_product= :id_product';
-	$s=$pdo->prepare($sql);
-	foreach ($id_category as $categoryId){
-		if ($categoryId== 6){
-			$categoryId=2;
-		}
-		elseif ($categoryId== 2){
-			$categoryId=6;
-		}
-		$s->bindValue(':id_category', $categoryId);
-		$s->bindValue(':id_product', $id_product);
+	public function deleteTag($id_tag, $id, $pdo){
+		$sql='DELETE FROM ps_product_tag
+		WHERE id_product = :id AND id_tag = :id_tag';
+		$s=$pdo->prepare($sql);
+		$s->bindValue(':id_tag', $id_tag);
+		$s->bindValue(':id', $id);
 		$s->execute();
 	}
-}
+
+	public function deleteWholeTag($id, $pdo){
+		$sql='DELETE FROM ps_product_tag
+		WHERE id_product = :id';
+		$s=$pdo->prepare($sql);
+		$s->bindValue(':id', $id);
+		$s->execute();
+	}
+
+	public function deleteCategory($id, $pdo){
+		$sql='DELETE FROM ps_category_product
+		WHERE id_product = :id';
+		$s=$pdo->prepare($sql);
+		$s->bindValue(':id', $id);
+		$s->execute();
+	}
+
+	public function deleteImage($id, $pdo){
+		$sql='DELETE FROM ps_image
+		WHERE id_product = :id';
+		$s=$pdo->prepare($sql);
+		$s->bindValue(':id', $id);
+		$s->execute();
+	}
+
+	public function insertCategory($id_category, $id_product, $pdo){
+		$sql='INSERT INTO ps_category_product SET
+		id_category= :id_category,
+		id_product= :id_product';
+		$s=$pdo->prepare($sql);
+		foreach ($id_category as $categoryId){
+			$s->bindValue(':id_category', $categoryId);
+			$s->bindValue(':id_product', $id_product);
+			$s->execute();
+		}
+	}
+
+	public function insertDifferentCategory($id_category, $id_product, $pdo){
+		$sql='INSERT INTO ps_category_product SET
+		id_category= :id_category,
+		id_product= :id_product';
+		$s=$pdo->prepare($sql);
+		foreach ($id_category as $categoryId){
+			if ($categoryId== 6){
+				$categoryId=2;
+			}
+			elseif ($categoryId== 2){
+				$categoryId=6;
+			}
+			$s->bindValue(':id_category', $categoryId);
+			$s->bindValue(':id_product', $id_product);
+			$s->execute();
+		}
+	}
 
 	public function insertModyfy($id_product, $name, $pdo){
-	$sql='INSERT INTO ps_modyfy SET
-	name= :name,
-	id_number= :id_product,
-	date=CURDATE()';
-	$s=$pdo->prepare($sql);
-	$s->bindValue(':name', $name);
-	$s->bindValue(':id_product', $id_product);
-	$s->execute();
-}
+		$sql='INSERT INTO ps_modyfy SET
+		name= :name,
+		id_number= :id_product,
+		date=CURDATE()';
+		$s=$pdo->prepare($sql);
+		$s->bindValue(':name', $name);
+		$s->bindValue(':id_product', $id_product);
+		$s->execute();
+	}
 
 	public function updateBoth($id, $nominalPrice, $name, $quantity, $pdo){
 		$sql='UPDATE ps_product 
@@ -333,33 +333,33 @@ public function insertDifferentCategory($id_category, $id_product, $pdo){
 	}
 	
 	public function updateManufacturer($author, $id, $pdo){
-	$sql='UPDATE ps_product SET
-	id_manufacturer= :id_manufacturer
-	WHERE id_product = :id';
-	$s=$pdo->prepare($sql);
-	$s->bindValue(':id', $id);
-	$s->bindValue(':id_manufacturer', $author);
-	$s->execute();
-}
+		$sql='UPDATE ps_product SET
+		id_manufacturer= :id_manufacturer
+		WHERE id_product = :id';
+		$s=$pdo->prepare($sql);
+		$s->bindValue(':id', $id);
+		$s->bindValue(':id_manufacturer', $author);
+		$s->execute();
+	}
 
-public function updateQuantity($quantity, $id, $pdo){
-	$sql='UPDATE ps_stock_available SET
-	quantity= :quantity
-	WHERE id_product = :id';
-	$s=$pdo->prepare($sql);
-	$s->bindValue(':quantity', $quantity);
-	$s->bindValue(':id', $id);
-	$s->execute();
-}
+	public function updateQuantity($quantity, $id, $pdo){
+		$sql='UPDATE ps_stock_available SET
+		quantity= :quantity
+		WHERE id_product = :id';
+		$s=$pdo->prepare($sql);
+		$s->bindValue(':quantity', $quantity);
+		$s->bindValue(':id', $id);
+		$s->execute();
+	}
 
 	public function confirmation($id, $pdo){
-	$sql='SELECT id_product, quantity FROM ps_stock_available
-	WHERE ps_stock_available.id_product= :id';
-	$s=$pdo->prepare($sql);
-	$s->bindValue(':id', $id);
-	$s->execute();
-	$s2 = $s->fetch();
-	return ($s2);
+		$sql='SELECT id_product, quantity FROM ps_stock_available
+		WHERE ps_stock_available.id_product= :id';
+		$s=$pdo->prepare($sql);
+		$s->bindValue(':id', $id);
+		$s->execute();
+		$s2 = $s->fetch();
+		return ($s2);
 	}
 }
 
@@ -378,12 +378,12 @@ class OldProduct extends Product
 	}
 
 	public function countReduction($price, $reduction) {
-				$new0=number_format($price, 2,'.','');
-				$new=floatval($reduction);
-				$new2=number_format($new, 2,'.','');
-				$oldQueryResult1=$new0-$new;
-				$oldQueryResult2=number_format($oldQueryResult1, 2,'.','');
-				return$oldQueryResult2.'zł<br>W tym rabat: <b>'.$new2.'zł</b>';
+		$new0=number_format($price, 2,'.','');
+		$new=floatval($reduction);
+		$new2=number_format($new, 2,'.','');
+		$oldQueryResult1=$new0-$new;
+		$oldQueryResult2=number_format($oldQueryResult1, 2,'.','');
+		return$oldQueryResult2.'zł<br>W tym rabat: <b>'.$new2.'zł</b>';
 	}
 }
 
@@ -402,11 +402,11 @@ class NewProduct extends Product
 	}
 
 	public function countReduction($price, $reduction) {
-				$new0=number_format($price, 2,'.','');
-				$new=floatval($reduction);
-				$newQueryResult2=$new0-$new0*$new;
-				$newQueryResult3=$new*100;
-				$newQueryResult4=$newQueryResult3.'%</b>';
-				return$newQueryResult2.'zł<br>W tym rabat: <b>'.$newQueryResult4;
+		$new0=number_format($price, 2,'.','');
+		$new=floatval($reduction);
+		$newQueryResult2=$new0-$new0*$new;
+		$newQueryResult3=$new*100;
+		$newQueryResult4=$newQueryResult3.'%</b>';
+		return$newQueryResult2.'zł<br>W tym rabat: <b>'.$newQueryResult4;
 	}
 }
