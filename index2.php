@@ -1,7 +1,6 @@
 <?php 
-include_once $_SERVER['DOCUMENT_ROOT'].'/ProjektCap3/clas2.php';
-include_once $_SERVER['DOCUMENT_ROOT'].'/ProjektCap3/prestapdo.php';
-include 'orderSearch.html';
+require_once $_SERVER['DOCUMENT_ROOT'].'/ProjektCap3/bootstrap.php';
+
 session_start();
 if(!isset($_SESSION['zalogowany'])){
 	$login=$_POST['login'];
@@ -25,6 +24,8 @@ if (!isset($_SESSION['zalogowany'])){
 		} 
 	}
 }
+include 'orderSearch.html';
+
 if(isset($_GET['editformBoth']))
 {
 	if ($_POST['text']=='')
@@ -78,19 +79,21 @@ if(isset($_GET['editcompleteformold']))
 		exit();
 	}
 	else try
-	{
-		if (isset($_POST['zmiana'])and $_POST['zmiana']== "zmianaNazwy"){
-			$oldTry= new OldProduct;
-			$oldQuery = $oldTry->insertModyfy($_POST['id'], $_POST['text'], $oldpdo);
-		}
-		$oldTry= new OldProduct;
-		$oldQuery = $oldTry->updateDetailedBoth($_POST['id'], $_POST['nominalPriceOld'], $_POST['text'], $_POST['quantity'], $_POST['description'], $_POST['description_short'], $_POST['meta_title'], $_POST['meta_description'], $_POST['link'], $_POST['condition'], $_POST['active'], $oldpdo);
-	}
-	catch (PDOExceptioon $e)
-	{
-		echo 'Aktualizacja nazwy nie powiodła się: ' . $e->getMessage();
-		exit();
-	}
+			{
+				$oldTry= new OldProduct;
+				if (isset($_POST['zmiana'])and $_POST['zmiana']== "zmianaNazwy"){
+					$oldQuery = $oldTry->insertModyfy($_POST['id'], $_POST['text'], $oldpdo);
+				}
+				if (isset($_POST['delete'])and $_POST['delete']== "deleteImages"){
+					$oldQuery = $oldTry->deleteImage($_POST['id'], $oldpdo);
+				}
+				$oldQuery = $oldTry->updateDetailedBoth($_POST['id'], $_POST['nominalPriceOld'], $_POST['text'], $_POST['quantity'], $_POST['description'], $_POST['description_short'], $_POST['meta_title'], $_POST['meta_description'], $_POST['link'], $_POST['condition'], $_POST['active'], $oldpdo);
+			}
+			catch (PDOExceptioon $e)
+			{
+				echo 'Aktualizacja nazwy nie powiodła się: ' . $e->getMessage();
+				exit();
+			}
 	try
 	{
 		$oldQuery = $oldTry->updateManufacturer($_POST['author'], $_POST['id'], $oldpdo);
@@ -136,6 +139,9 @@ catch (PDOExceptioon $e)
 }
 if (isset($_POST['howManyBases'])and $_POST['howManyBases']== 'obie'){
 	$newTry= new NewProduct;
+	if (isset($_POST['delete'])and $_POST['delete']== "deleteImages"){
+					$newQuery = $newTry->deleteImage($_POST['id'], $newpdo);
+	}
 	$newQuery = $newTry->updateDetailedBoth($_POST['id'], $_POST['nominalPriceOld'], $_POST['text'], $_POST['quantity'], $_POST['description'], $_POST['description_short'], $_POST['meta_title'], $_POST['meta_description'], $_POST['link'], $_POST['condition'], $_POST['active'], $newpdo);
 	try
 	{
@@ -184,19 +190,22 @@ if(isset($_GET['editcompleteformnew']))
 		exit();
 	}
 	else try
-	{
-		if (isset($_POST['zmiana'])and $_POST['zmiana']== "zmianaNazwy"){
-			$oldTry= new OldProduct;
-			$oldQuery = $oldTry->insertModyfy($_POST['id'], $_POST['text'], $oldpdo);
+		{
+			if (isset($_POST['zmiana'])and $_POST['zmiana']== "zmianaNazwy"){
+				$oldTry= new OldProduct;
+				$oldQuery = $oldTry->insertModyfy($_POST['id'], $_POST['text'], $oldpdo);
+			}
+			$newTry= new NewProduct;
+			if (isset($_POST['delete'])and $_POST['delete']== "deleteImages"){
+				$newQuery = $newTry->deleteImage($_POST['id'], $newpdo);
+			}
+			$newQuery = $newTry->updateDetailedBoth($_POST['id'], $_POST['nominalPriceOld'], $_POST['text'], $_POST['quantity'], $_POST['description'], $_POST['description_short'], $_POST['meta_title'], $_POST['meta_description'], $_POST['link'], $_POST['condition'], $_POST['active'], $newpdo);
 		}
-		$newTry= new NewProduct;
-		$newQuery = $newTry->updateDetailedBoth($_POST['id'], $_POST['nominalPriceOld'], $_POST['text'], $_POST['quantity'], $_POST['description'], $_POST['description_short'], $_POST['meta_title'], $_POST['meta_description'], $_POST['link'], $_POST['condition'], $_POST['active'], $newpdo);
-	}
-	catch (PDOExceptioon $e)
-	{
-		echo 'Aktualizacja nazwy i ilości nie powiodła się: ' . $e->getMessage();
-		exit();
-	}
+		catch (PDOExceptioon $e)
+		{
+			echo 'Aktualizacja nazwy i ilości nie powiodła się: ' . $e->getMessage();
+			exit();
+		}
 	try
 	{
 		$newQuery = $newTry->updateManufacturer($_POST['author'], $_POST['id'], $newpdo);
@@ -242,6 +251,9 @@ catch (PDOExceptioon $e)
 }
 if (isset($_POST['howManyBases'])and $_POST['howManyBases']== 'obie'){
 	$oldTry= new OldProduct;
+	if (isset($_POST['delete'])and $_POST['delete']== "deleteImages"){
+			$oldQuery = $oldTry->deleteImage($_POST['id'], $oldpdo);
+		}
 	$oldQuery = $oldTry->updateDetailedBoth($_POST['id'], $_POST['nominalPriceOld'], $_POST['text'], $_POST['quantity'], $_POST['description'], $_POST['description_short'], $_POST['meta_title'], $_POST['meta_description'], $_POST['link'], $_POST['condition'], $_POST['active'], $oldpdo);
 	try
 	{
@@ -386,7 +398,7 @@ if(isset($_GET['action'])){
 		$Query1 = $oldTry->getReduction($_GET['id'], $newpdo);
 		$Query3 = $Query1->fetch();
 		$Query6 = $oldTry->selectManufacturer($_GET['id'], $newpdo);
-		$list= new OldLists;
+		$list= new OldLists($newpdo);
 		$result= $list->selectWholeManufacturer();
 		foreach ($result as $row)
 		{
@@ -433,7 +445,7 @@ if(isset($_GET['action'])){
 		$Query1 = $oldTry->getReduction($_GET['id'], $oldpdo);
 		$Query3 = $Query1->fetch();
 		$Query6 = $oldTry->selectManufacturer($_GET['id'], $oldpdo);
-		$list= new OldLists;
+		$list= new OldLists($oldpdo);
 		$result= $list->selectWholeManufacturer();
 		foreach ($result as $row)
 		{
