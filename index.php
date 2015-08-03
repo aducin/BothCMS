@@ -1,10 +1,10 @@
 <?php
 ob_start();
-include_once $_SERVER['DOCUMENT_ROOT'].'/ProjektCap3/prestapdo.php';
-include_once $_SERVER['DOCUMENT_ROOT'].'/ProjektCap3/clas2.php';
-if(isset($_GET['action'])and $_GET['action']=='Usuń wpis')
+require_once $_SERVER['DOCUMENT_ROOT'].'/ProjektCap3/bootstrap.php';
+
+if(isset($_GET['deleterow']))
 {
-	$list= new OldLists;
+	$list= new OldLists($oldpdo);
 	$result= $list->deleteMod($_GET['idMod']);
 	unset($list);
 	header('Location:.');
@@ -41,7 +41,7 @@ if (!isset($_SESSION['zalogowany'])){
 }
 try
 {
-	$list= new OldLists;
+	$list= new OldLists($oldpdo);
 	$result= $list->selectWholeManufacturer();
 }
 catch (PDOException $e)
@@ -55,7 +55,7 @@ foreach ($result as $row)
 }
 try
 {
-	$result= $list->getWholeCategory();
+	$result= $list->selectWholeCategory2();
 }
 catch (PDOException $e)
 {
@@ -183,11 +183,13 @@ if(isset($_GET['changeTabNewCut']))
 			}
 			else try
 			{
+				$oldTry= new OldProduct;
 				if (isset($_POST['zmiana'])and $_POST['zmiana']== "zmianaNazwy"){
-					$oldTry= new OldProduct;
 					$oldQuery = $oldTry->insertModyfy($_POST['id'], $_POST['text'], $oldpdo);
 				}
-				$oldTry= new OldProduct;
+				if (isset($_POST['delete'])and $_POST['delete']== "deleteImages"){
+					$oldQuery = $oldTry->deleteImage($_POST['id'], $oldpdo);
+				}
 				$oldQuery = $oldTry->updateDetailedBoth($_POST['id'], $_POST['nominalPriceOld'], $_POST['text'], $_POST['quantity'], $_POST['description'], $_POST['description_short'], $_POST['meta_title'], $_POST['meta_description'], $_POST['link'], $_POST['condition'], $_POST['active'], $oldpdo);
 			}
 			catch (PDOExceptioon $e)
@@ -240,6 +242,9 @@ if(isset($_GET['changeTabNewCut']))
 		}
 		if (isset($_POST['howManyBases'])and $_POST['howManyBases']== 'obie'){
 			$newTry= new NewProduct;
+			if (isset($_POST['delete'])and $_POST['delete']== "deleteImages"){
+					$newQuery = $newTry->deleteImage($_POST['id'], $newpdo);
+				}
 			$newQuery = $newTry->updateDetailedBoth($_POST['id'], $_POST['nominalPriceOld'], $_POST['text'], $_POST['quantity'], $_POST['description'], $_POST['description_short'], $_POST['meta_title'], $_POST['meta_description'], $_POST['link'], $_POST['condition'], $_POST['active'], $newpdo);
 			try
 			{
@@ -295,6 +300,9 @@ if(isset($_GET['changeTabNewCut']))
 				$oldQuery = $oldTry->insertModyfy($_POST['id'], $_POST['text'], $oldpdo);
 			}
 			$newTry= new NewProduct;
+			if (isset($_POST['delete'])and $_POST['delete']== "deleteImages"){
+				$newQuery = $newTry->deleteImage($_POST['id'], $newpdo);
+			}
 			$newQuery = $newTry->updateDetailedBoth($_POST['id'], $_POST['nominalPriceOld'], $_POST['text'], $_POST['quantity'], $_POST['description'], $_POST['description_short'], $_POST['meta_title'], $_POST['meta_description'], $_POST['link'], $_POST['condition'], $_POST['active'], $newpdo);
 		}
 		catch (PDOExceptioon $e)
@@ -347,6 +355,9 @@ if(isset($_GET['changeTabNewCut']))
 	}
 	if (isset($_POST['howManyBases'])and $_POST['howManyBases']== 'obie'){
 		$oldTry= new OldProduct;
+		if (isset($_POST['delete'])and $_POST['delete']== "deleteImages"){
+			$oldQuery = $oldTry->deleteImage($_POST['id'], $oldpdo);
+		}
 		$oldQuery = $oldTry->updateDetailedBoth($_POST['id'], $_POST['nominalPriceOld'], $_POST['text'], $_POST['quantity'], $_POST['description'], $_POST['description_short'], $_POST['meta_title'], $_POST['meta_description'], $_POST['link'], $_POST['condition'], $_POST['active'], $oldpdo);
 		try
 		{
@@ -491,26 +502,6 @@ if (isset($_GET['action'])and $_GET['action']== 'Kompletna edycja w NP')
 	catch (PDOExceptioon $e)
 	{
 		echo 'Pobranie kompletnych danych ze starej bazy nie powiodło się: ' . $e->getMessage();
-		exit();
-	}
-	if (isset($_GET['action'])and $_GET['action']== 'Uaktualnij ilości dla całego zamówienia')
-		try
-	{
-		selectOrderQuantity($_GET['id_number'], $oldpdo, $newpdo, 0);
-	}
-	catch (PDOExceptioon $e)
-	{
-		echo 'Pobranie ilości w zamówieniu nie powiodło się: ' . $e->getMessage();
-		exit();
-	}
-	if (isset($_GET['action'])and $_GET['action']== 'Uaktualnij ilości w całym zamówieniu')
-		try
-	{
-		selectOrderQuantity($_GET['id_number'], $newpdo, $oldpdo, 1);
-	}
-	catch (PDOExceptioon $e)
-	{
-		echo 'Pobranie ilości w zamówieniu nie powiodło się: ' . $e->getMessage();
 		exit();
 	}
 	if(isset($_GET['action'])and $_GET['action']=='idsearch')
