@@ -11,10 +11,43 @@
 	#legend{
 		font-size: 32px; background-color: #b5fdd9; color: white;border: 2px ridge blue;
 	}
-	#producerC{
-		background-color: #bb9998; width:49.4%;padding-left: 10px;
+	#text{
+		margin-left: 0px;
+	}
+	div#producerC{
+		background-color: #bb9998; width:616px;padding-left: 10px;
 		border: 2px ridge purple;font-style: italic;
 	}
+	#priceC{
+		background-color: #cc9998;width:616px;padding-left:10px;
+		border: 2px ridge purple;font-style: italic;
+	}
+	#priceCO{
+		background-color: #ce9278;width:616px;padding-left:10px;
+		border: 2px ridge purple;font-style: italic;
+	}
+	#condP{
+		background-color: #a59998;width:616px;padding-left: 10px;
+		border: 2px ridge purple;font-style: italic;
+	}
+	#indexP{
+		background-color: #a59668;width:616px;padding-bottom: 10px;padding-left: 10px;
+		border: 2px ridge purple;font-style: italic;
+	}
+	#quantity{
+		background-color: #a59338;width:616px;padding-left: 10px;
+		border: 2px ridge purple;font-style: italic;}
+	#fieldC{
+		background-color: #dddd98;width:700px;
+		border: 2px ridge purple;
+	}
+	#fieldT{
+		background-color: #ffff98;width:700px;
+		border: 2px ridge purple;
+	}
+	#tagText{
+		background-color: #fffff5;width:10.2%;
+		border: 2px ridge purple;font-style: italic;}
 	#quantityText{
 	margin-bottom: 11px;margin-left:24.2%;
 	}
@@ -24,42 +57,12 @@
 	#authorText{
 	margin-bottom: 11px;margin-left:45.3%;
 	}
-	#priceC{
-		background-color: #cc9998;width:49.4%;padding-left:10px;
-		border: 2px ridge purple;font-style: italic;
-	}
-	#priceCO{
-		background-color: #ce9278;width:49.4%;padding-left:10px;
-		border: 2px ridge purple;font-style: italic;
-	}
 	#priceText{
 		margin-bottom: 11px;margin-left:55px;
 	}
 	#priceTextO{
 		margin-bottom: 11px;margin-left:51px;
 	}
-	#condP{
-		background-color: #a59998;width:49.4%;padding-left: 10px;
-		border: 2px ridge purple;font-style: italic;
-	}
-	#indexP{
-		background-color: #a59668;width:49.4%;padding-bottom: 10px;padding-left: 10px;
-		border: 2px ridge purple;font-style: italic;
-	}
-	#fieldC{
-		background-color: #dddd98;width:700px;
-		border: 2px ridge purple;
-	}
-	#fieldT{
-		background-color: #ffff98;width:700px;
-		border: 2px ridge purple;
-	}
-	#quantity{
-		background-color: #a59338;width:49.4%;padding-left: 10px;
-		border: 2px ridge purple;font-style: italic;}
-	#tagText{
-		background-color: #fffff5;width:10.2%;
-		border: 2px ridge purple;font-style: italic;}
 	#indexText{
 		margin-left:9.6%;}
 	#newTag{
@@ -79,9 +82,12 @@ background-color: silver;border: 2px ridge black;font-style: italic; font-size: 
 	#select{
 		width:100%;
 	}
+	#textarea{
+		border: 2px ridge black;
+	}
 	</style>
-	<script src="jquery.js" ></script>
-	<script src="jscript.js"></script>
+	<script src="/Ad9bisCMS/assets/jquery.js" ></script>
+	<script src="/Ad9bisCMS/assets/jscript.js"></script>
 	<script type="text/javascript" language="javascript">
 	function wyswietlAlert(){
 		if(document.form.quantity.value==""){
@@ -100,17 +106,17 @@ background-color: silver;border: 2px ridge black;font-style: italic; font-size: 
 	<form name="form" action="<?php htmlout($editForm); ?>" method="post" onsubmit="wyswietlAlert()">
 		<div>
 			<label for="text">Aktualna nazwa produktu:</label>
-			<textarea id="text" name="text" rows="1" cols="30"><?php htmlout($QueryResult[1]); ?></textarea>
+			<textarea id="textarea" name="text" rows="1" cols="30"><?php htmlout($QueryResult[1]); ?></textarea>
 			<label for="description_short">Krótki opis produktu:<label>
-			<textarea id="description_short" name="description_short" rows="1" cols="30"><?php htmlout($QueryResult[3]); ?></textarea>
+			<textarea id="textarea" name="description_short" rows="1" cols="30"><?php htmlout($QueryResult[3]); ?></textarea>
 			<label for="description">Pełny opis produktu:<label>
-			<textarea id="description" name="description" rows="3" cols="70"><?php htmlout($QueryResult[2]); ?></textarea>
+			<textarea id="textarea" name="description" rows="5" cols="70"><?php htmlout($QueryResult[2]); ?></textarea>
 			<label for="link">Aktualny link do produktu:</label>
-			<textarea id="link" name="link" rows="1" cols="30"><?php htmlout($QueryResult[4]); ?></textarea>
+			<textarea id="textarea" name="link" rows="1" cols="30"><?php htmlout($QueryResult[4]); ?></textarea>
 			<label for="meta_title">Aktualny Meta-tytuł:</label>
-			<textarea id="meta_title" name="meta_title" rows="1" cols="30"><?php htmlout($QueryResult[6]); ?></textarea>
+			<textarea id="textarea" name="meta_title" rows="1" cols="30"><?php htmlout($QueryResult[6]); ?></textarea>
 			<label for="meta_description">Aktualny Meta-opis:</label>
-			<textarea id="meta_description" name="meta_description" rows="2" cols="30"><?php htmlout($QueryResult[5]); ?></textarea>
+			<textarea id="textarea" name="meta_description" rows="2" cols="30"><?php htmlout($QueryResult[5]); ?></textarea>
 			<div id="quantity"><label for="quantity">Aktualna ilość produktu:</label>
 			<input type="text" id="quantityText" name="quantity" size="11" value="<?php htmlout($QueryResult[7]); ?>"</></div>
 			<div id="indexP"><label for="indexP">Aktywność produktu na sklepie:</label>
@@ -239,10 +245,10 @@ background-color: silver;border: 2px ridge black;font-style: italic; font-size: 
 				<fieldset id="submitButton">
 				<legend id="legend">W ilu bazach zapisać zmiany</legend><table><tr><td>
 				<div id="checkbox">
-				<input type="checkbox" name="zmiana" value="zmianaNazwy">Zapisz produkt jako podmieniony</><br>
+				<input type="checkbox" name="change" value="nameChange">Zapisz produkt jako podmieniony</><br>
 				<input type="checkbox" name="delete" value="deleteImages">Usuń obecne zdjęcia produktu</><br>
 				<select name="howManyBases" id="select">
-		<option value="obie">Zapisz zmiany w obu bazach</option>
+		<option value="both">Zapisz zmiany w obu bazach</option>
 		<option value="tylko1">Tylko w aktualnej bazie</option></td>
 	</select></div>
 				<td><div>
