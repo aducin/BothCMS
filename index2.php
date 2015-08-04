@@ -1,12 +1,12 @@
 <?php 
-require_once $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/bootstrap.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/controllers/bootstrap.php';
 
 session_start();
-if(!isset($_SESSION['zalogowany'])){
+if(!isset($_SESSION['log'])){
 	$login=$_POST['login'];
 	$password=$_POST['password'];
 }
-if (!isset($_SESSION['zalogowany'])){
+if (!isset($_SESSION['log'])){
 	if($result=$newpdo->query("SELECT * FROM ps_db_user WHERE login='$login' AND password='$password'"))
 	{
 		$resNumb=$result->rowCount();
@@ -14,17 +14,17 @@ if (!isset($_SESSION['zalogowany'])){
 		{
 			$finalResult=$result->fetch(PDO::FETCH_ASSOC);
 			$login=' Użytkownik: '.$finalResult['login'];
-			$_SESSION['zalogowany']=1;
+			$_SESSION['log']=1;
 			$result->closeCursor();
 			echo'Witamy w systemie CMS obu paneli! '.$login;
 		}
-		if(!isset($_SESSION['zalogowany'])){
-			header('Location:signIn.html');
+		if(!isset($_SESSION['log'])){
+			header('Location:templates/signIn.html');
 			exit();
 		} 
 	}
 }
-include 'HTML/orderSearch.html';
+include $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/orderSearch.html';
 
 if(isset($_GET['editformBoth']))
 {
@@ -40,7 +40,7 @@ if(isset($_GET['editformBoth']))
 	}
 	else try
 	{
-		$newTry= new NewProduct;
+		$newTry= new LinuxPlProduct;
 		$newQuery = $newTry->updateBoth($_POST['id'], $_POST['nominalPriceNew'], $_POST['text'], $_POST['quantity'], $newpdo);
 		$newQuery2 = $newTry->confirmation($_POST['id'], $newpdo);
 		$quantityNew= $newQuery2["quantity"];
@@ -52,7 +52,7 @@ if(isset($_GET['editformBoth']))
 	}
 	try
 	{
-		$oldTry= new OldProduct;
+		$oldTry= new OgicomProduct;
 		$oldQuery = $oldTry->updateBoth($_POST['id'], $_POST['nominalPriceOld'], $_POST['text'], $_POST['quantity'],$oldpdo);
 		$oldQuery2 = $oldTry->confirmation($_POST['id'], $oldpdo);
 		$idOld= $oldQuery2["id_product"];
@@ -63,7 +63,7 @@ if(isset($_GET['editformBoth']))
 		echo 'Aktualizacja starych danych nie powiodła się: ' . $e->getMessage();
 		exit();
 	}
-	include 'HTML/confirmation.html.php';
+	include $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/confirmation.html.php';
 	exit();
 }
 if(isset($_GET['editcompleteformold']))
@@ -80,8 +80,8 @@ if(isset($_GET['editcompleteformold']))
 	}
 	else try
 			{
-				$oldTry= new OldProduct;
-				if (isset($_POST['zmiana'])and $_POST['zmiana']== "zmianaNazwy"){
+				$oldTry= new OgicomProduct;
+				if (isset($_POST['change'])and $_POST['change']== "nameChange"){
 					$oldQuery = $oldTry->insertModyfy($_POST['id'], $_POST['text'], $oldpdo);
 				}
 				if (isset($_POST['delete'])and $_POST['delete']== "deleteImages"){
@@ -137,8 +137,8 @@ catch (PDOExceptioon $e)
 	echo 'Pobranie uaktualnionych danych nie powiodło się: ' . $e->getMessage();
 	exit();
 }
-if (isset($_POST['howManyBases'])and $_POST['howManyBases']== 'obie'){
-	$newTry= new NewProduct;
+if (isset($_POST['howManyBases'])and $_POST['howManyBases']== 'both'){
+	$newTry= new LinuxPlProduct;
 	if (isset($_POST['delete'])and $_POST['delete']== "deleteImages"){
 					$newQuery = $newTry->deleteImage($_POST['id'], $newpdo);
 	}
@@ -174,7 +174,7 @@ if (isset($_POST['howManyBases'])and $_POST['howManyBases']== 'obie'){
 		}
 	}
 }
-include 'HTML/confirmation.html.php';
+include $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/confirmation.html.php';
 exit();
 }
 if(isset($_GET['editcompleteformnew']))
@@ -191,11 +191,11 @@ if(isset($_GET['editcompleteformnew']))
 	}
 	else try
 		{
-			if (isset($_POST['zmiana'])and $_POST['zmiana']== "zmianaNazwy"){
-				$oldTry= new OldProduct;
+			if (isset($_POST['change'])and $_POST['change']== "nameChange"){
+				$oldTry= new OgicomProduct;
 				$oldQuery = $oldTry->insertModyfy($_POST['id'], $_POST['text'], $oldpdo);
 			}
-			$newTry= new NewProduct;
+			$newTry= new LinuxPlProduct;
 			if (isset($_POST['delete'])and $_POST['delete']== "deleteImages"){
 				$newQuery = $newTry->deleteImage($_POST['id'], $newpdo);
 			}
@@ -249,8 +249,8 @@ catch (PDOExceptioon $e)
 	echo 'Pobranie uaktualnionych danych nie powiodło się: ' . $e->getMessage();
 	exit();
 }
-if (isset($_POST['howManyBases'])and $_POST['howManyBases']== 'obie'){
-	$oldTry= new OldProduct;
+if (isset($_POST['howManyBases'])and $_POST['howManyBases']== 'both'){
+	$oldTry= new OgicomProduct;
 	if (isset($_POST['delete'])and $_POST['delete']== "deleteImages"){
 			$oldQuery = $oldTry->deleteImage($_POST['id'], $oldpdo);
 		}
@@ -288,18 +288,18 @@ foreach ($_POST['tagText'] as $tagText){
 	}
 }
 }	
-include 'HTML/confirmation.html.php';
+include $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/confirmation.html.php';
 exit();
 }
 if (isset($_GET['shipmentNumber']))
 {
-	include'HTML/shipmentMail.html';exit();
+	include'templates/shipmentMail.html';exit();
 }
 
 if(isset($_GET['action'])&&$_GET['action']=='orderSearch')
 {
 	if ($_GET['neworder'] !=''){
-		$try= new NewOrder;
+		$try= new LinuxPlOrder;
 		$query = $try->getQuery($_GET['neworder'], $newpdo);
 
 		foreach ($query as $sOrder)
@@ -308,7 +308,7 @@ if(isset($_GET['action'])&&$_GET['action']=='orderSearch')
 		}
 	}
 	if ($_GET['oldorder'] !=''){
-		$try= new OldOrder;
+		$try= new OgicomOrder;
 		$query = $try->getQuery($_GET['oldorder'], $oldpdo);
 
 		foreach ($query as $sOrder)
@@ -319,19 +319,19 @@ if(isset($_GET['action'])&&$_GET['action']=='orderSearch')
 	if ($_GET['notification'] !='')
 	{
 		if(isset($_GET['send'])&&$_GET['send']=='modele'){
-			$try= new OldOrder;
+			$try= new OgicomOrder;
 			$notification = $try->SendNotification($_GET['notification'], $oldpdo);
 			$notificationresult = $notification->fetch();
 		}
 		if(isset($_GET['send'])&&$_GET['send']=='ad9bis'){
-			$try= new NewOrder;	
+			$try= new LinuxPlOrder;	
 			$notification = $try->SendNotification($_GET['notification'], $newpdo);
 			$notificationresult = $notification->fetch();
 		}
 	}
 	if ($_GET['detailorder'] !='')
 	{
-		$detail= new OldOrder;
+		$detail= new OgicomOrder;
 		$details = $detail->getQueryDetails($_GET['detailorder'], $oldpdo);
 		$detailsCount=$detail->getCount($_GET['detailorder'], $oldpdo);
 		$detailsCountresult = $detailsCount->fetch();
@@ -341,39 +341,39 @@ if(isset($_GET['action'])&&$_GET['action']=='orderSearch')
 			$detail2[]=array('id'=>$sDetail['product_id'], 'name'=>$sDetail['name'], 'price'=>$sDetail['product_price'], 'reduction'=>$sDetail['reduction_amount'], 'quantity'=>$sDetail['product_quantity'], 'total'=>$sDetail['total_price_tax_incl'], 'productSum'=>$sDetail['total_products'], 'totalPaid'=>$sDetail['total_paid'], 'mail'=>$sDetail['email'], 'first'=>$sDetail['firstname'], 'last'=>$sDetail['lastname'], 'reference'=>$sDetail['reference'], 'payment'=>$sDetail['payment']);
 		}
 	}
-	include 'HTML/orders.html';
+	include $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/orders.html';
 }
-if(isset($_GET['action'])){
-	if ($_GET['action']== 'Wyrównaj ilość w starej bazie')
+	if (isset($_GET['BPSQO']))
 	{
-		$oldTry= new OldProduct;
+		$oldTry= new OgicomProduct;
 		$oldQuery = $oldTry->updateQuantity($_GET['quantity'], $_GET['id'], $oldpdo);
 		$oldQuery = $oldTry->confirmation($_GET['id'], $oldpdo);
 		$idOld= $oldQuery["id_product"];
 		$quantityOld= $oldQuery["quantity"];
-		include 'HTML/confirmation.html.php';
+		include $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/confirmation.html.php';
 		exit();
 	}
-	if ($_GET['action']== 'Wyrównaj ilość w nowej bazie')
+	if (isset($_GET['BPSQO']))
 	{
-		$newTry= new NewProduct;
+		$newTry= new LinuxPlProduct;
 		$newQuery = $newTry->updateQuantity($_GET['quantity'], $_GET['id'], $newpdo);
 		$newQuery = $newTry->confirmation($_GET['id'], $newpdo);
 		$idOld= $newQuery["id_product"];
 		$quantityNew= $newQuery["quantity"];
-		include 'HTML/confirmation.html.php';
+		include $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/confirmation.html.php';
 		exit();
 	}
+if(isset($_GET['action'])){
 	if ($_GET['action']== 'Zmiana obu przez nowy panel' OR $_GET['action']== 'Zmiana obu przez stary panel')
 	{
 		try
 		{
-			$newTry= new NewProduct;
+			$newTry= new LinuxPlProduct;
 			$Query = $newTry->getProductQuery($_GET['id'], $newpdo);
 			$QueryResult = $Query->fetch();
 			$Query3= $newTry->getReduction($_GET['id'], $newpdo);
 			$QueryResult3 = $Query3->fetch();
-			$oldTry= new OldProduct;
+			$oldTry= new OgicomProduct;
 			$Query2 = $oldTry->getProductQuery($_GET['id'], $oldpdo);
 			$QueryResult2 = $Query2->fetch();
 			$Query4= $oldTry->getReduction($_GET['id'], $oldpdo);
@@ -386,19 +386,19 @@ if(isset($_GET['action'])){
 			echo 'Błąd przy pobieraniu informacji o produkcie: ' . $e->getMessage();
 			exit();
 		}
-		include 'HTML/form.html.php';
+		include $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/form.html.php';
 		exit();
 	}
 	if (isset($_GET['action'])and $_GET['action']== 'Kompletna edycja w NP')
 		try
 	{
-		$oldTry= new NewProduct;
+		$oldTry= new LinuxPlProduct;
 		$Query = $oldTry->getWholeDetailsQuery($_GET['id'], $newpdo);
 		$QueryResult = $Query->fetch();
 		$Query1 = $oldTry->getReduction($_GET['id'], $newpdo);
 		$Query3 = $Query1->fetch();
 		$Query6 = $oldTry->selectManufacturer($_GET['id'], $newpdo);
-		$list= new OldHelper($newpdo);
+		$list= new OgicomHelper($newpdo);
 		$result= $list->selectWholeManufacturer();
 		foreach ($result as $row)
 		{
@@ -420,7 +420,7 @@ if(isset($_GET['action'])){
 		{
 			$this3[]=array('id'=>$Query13['id_tag'], 'name'=>$Query13['name']);
 		}
-		$newTry= new OldProduct;
+		$newTry= new OgicomProduct;
 		$Query2 = $newTry->getProductQuery($_GET['id'], $oldpdo);
 		$QueryResult2 = $Query2->fetch();
 		$Query4 = $newTry->getReduction($_GET['id'], $oldpdo);
@@ -428,7 +428,7 @@ if(isset($_GET['action'])){
 		$baza='- informacje z nowego panelu.';
 		$editForm='?editcompleteformnew';
 
-		include 'HTML/completeForm.html.php';
+	include $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/completeForm.html.php';
 		exit();
 	}
 	catch (PDOExceptioon $e)
@@ -439,13 +439,13 @@ if(isset($_GET['action'])){
 	if (isset($_GET['action'])and $_GET['action']== 'Kompletna edycja w SP')
 		try
 	{
-		$oldTry= new OldProduct;
+		$oldTry= new OgicomProduct;
 		$Query = $oldTry->getWholeDetailsQuery($_GET['id'], $oldpdo);
 		$QueryResult = $Query->fetch();
 		$Query1 = $oldTry->getReduction($_GET['id'], $oldpdo);
 		$Query3 = $Query1->fetch();
 		$Query6 = $oldTry->selectManufacturer($_GET['id'], $oldpdo);
-		$list= new OldHelper($oldpdo);
+		$list= new OgicomHelper($oldpdo);
 		$result= $list->selectWholeManufacturer();
 		foreach ($result as $row)
 		{
@@ -467,7 +467,7 @@ if(isset($_GET['action'])){
 		{
 			$this3[]=array('id'=>$Query13['id_tag'], 'name'=>$Query13['name']);
 		}
-		$newTry= new NewProduct;
+		$newTry= new LinuxPlProduct;
 		$Query2 = $newTry->getProductQuery($_GET['id'], $newpdo);
 		$QueryResult2 = $Query2->fetch();
 		$Query4 = $newTry->getReduction($_GET['id'], $newpdo);
@@ -475,7 +475,8 @@ if(isset($_GET['action'])){
 		$baza='- informacje ze starego panelu.';
 		$editForm='?editcompleteformold';
 
-		include 'HTML/completeForm.html.php';
+	include $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/completeForm.html.php';
+
 		exit();
 	}
 	catch (PDOExceptioon $e)
@@ -488,12 +489,12 @@ if (isset($_GET['action'])and $_GET['action']== 'Uaktualnij ilości dla całego 
 	try
 {
 	$include=0;
-	$newTry= new NewOrder;
+	$newTry= new LinuxPlOrder;
 	$newQuery = $newTry->selectOrderQuantity($_GET['id_number'], $oldpdo);
 	foreach ($newQuery as $newQuery2){
 		$mods[]= array('quantity'=>$newQuery2['quantity'], 'product_id'=>$newQuery2['product_id'], 'id_order'=>$newQuery2['id_order']);
 	}
-	include 'HTML/orderUpgrade.html.php';
+	include $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/orderUpgrade.html.php';
 }
 catch (PDOExceptioon $e)
 {
@@ -505,12 +506,12 @@ if (isset($_GET['action'])and $_GET['action']== 'Uaktualnij ilości w całym zam
 	try
 {
 	$include=1;
-	$oldTry= new OldOrder;
+	$oldTry= new OgicomOrder;
 	$oldQuery = $oldTry->selectOrderQuantity($_GET['id_number'], $newpdo);
 	foreach ($oldQuery as $oldQuery2){
 		$mods[]= array('quantity'=>$oldQuery2['quantity'], 'product_id'=>$oldQuery2['product_id'], 'id_order'=>$oldQuery2['id_order']);
 	}
-	include 'HTML/orderUpgrade.html.php';
+	include $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/orderUpgrade.html.php';
 }
 catch (PDOExceptioon $e)
 {
