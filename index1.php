@@ -22,22 +22,22 @@ if(isset($_POST['logout']))
 	exit();
 }
 if (!isset($_SESSION['log'])){
-	if($result=$newpdo->query("SELECT * FROM ps_db_user WHERE login='$login' AND password='$password'"))
+	$db=new db($newpdo);
+	$dbResult= $db->selectUser($login, $password);
+	$resNumb=$dbResult->rowCount();
+	if($resNumb>0)
 	{
-		$resNumb=$result->rowCount();
-		if($resNumb>0)
-		{
-			$finalResult=$result->fetch(PDO::FETCH_ASSOC);
-			$login=' Użytkownik: '.$finalResult['login'];
-			$_SESSION['log']=1;
-			$result->closeCursor();
-			echo'Witamy w systemie CMS obu paneli! '.$login;
-		}
-		if(!isset($_SESSION['log'])){
-			header('Location:templates/signIn.html');
-			exit();
-		} 
+		$finalResult=$dbResult->fetch(PDO::FETCH_ASSOC);
+		$login=' Użytkownik: '.$finalResult['login'];
+		$_SESSION['log']=1;
+		$dbResult->closeCursor();
+		echo'Witamy w systemie CMS obu paneli! '.$login;
 	}
+	if(!isset($_SESSION['log'])){
+		header('Location:templates/signIn.html');
+		exit();
+	} 
+	unset($db);
 }
 try
 {
