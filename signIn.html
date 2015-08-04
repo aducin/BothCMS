@@ -3,7 +3,7 @@ session_start(); ?>
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-	<link rel="stylesheet" href="styles.css" type="text/css">
+	<link rel="stylesheet" href="/Ad9bisCMS/assets/styles.css" type="text/css">
 	<style>
 	#loginI{
 		margin-left: -1px;
@@ -17,7 +17,7 @@ session_start(); ?>
 		background-color: white;width: 465px;height: 280px;text-align:center;
 		margin-left: 400px;
 		margin-top: -20px;
-				background-image: url(IMG_7214-001.jpg);
+				background-image: url(/Ad9bisCMS/assets/IMG_7214-001.jpg);
 	}
 	#login{
 		color:#4449f8;
@@ -35,7 +35,7 @@ session_start(); ?>
 	}
 	</style>
 	<title>System zarządzania produktami</title>
-	<p id="loginPicture" align="left"><img src="/css/ad9bis.jpg" alt="PC blog" heigh="50" width="140" onclick="$(this).hide();"></p>
+	<p id="loginPicture" align="left"><img src="/Ad9bisCMS/assets/ad9bis.ico" alt="PC blog" heigh="50" width="140" onclick="$(this).hide();"></p>
 	<meta charset="utf-8">
 	<script type="text/javascript" language="javascript">
 
@@ -56,20 +56,20 @@ session_start(); ?>
     el.focus();
 }
 		</script>
-		<script src="jquery.js" ></script>
+		<script src="/Ad9bisCMS/assets/jquery.js" ></script>
 </head>
 	<body onload="fokus('loginLogin');">
 		<br>
 		<fieldset id="field">
 			<legend>Witamy w systemie CMS obu paneli!</legend>
 			<h2 id="loginP">Proszę o podanie danych do logowania!</h2>
-			<form name="log" method="post" action="index.php" onsubmit="wyswietlAlert()"action="">
+			<form name="log" action="../index.php" method="post" onsubmit="wyswietlAlert()">
 			<div id="login">
 			Login: <input id="loginI" type="text" id="loginLogin" name="login"><br>
 			Hasło: <input id="loginI2" type="password" name="password"><br><br>
 		<input type="submit" id="loginSubmit" value="Zaloguj się"><br>
 	</div>
-		<script src="jscript.js"></script>
+		<script src="/Ad9bisCMS/assets/jscript.js"></script>
 	</form>
 	</fieldset>
 	</body>
