@@ -91,11 +91,11 @@ $oldTry= new OldProduct;
 			if(!isset($newQueryResult2[0])){
 			echo$new0.' zł'; }
 			else {
-				$newTry= new NewProduct;
+				$newTry= new LinuxPlProduct;
 				$newQuery = $newTry->countReduction($newQueryResult[3],$newQueryResult2[0]);
 				echo$newQuery;
 			} ?></td>
-			<td><form action="?" method="get">
+			<td><form action="?bothChange" method="get">
 					<div id="option">
 						<input type="hidden" name="id" value="<?php htmlout($newQueryResult[0]); ?>">
 						<input type="submit" name="action" value="Zmiana obu przez nowy panel">
@@ -108,7 +108,7 @@ $oldTry= new OldProduct;
 			if(!isset($oldQueryResult2[0])){
 			echo$new0.' zł'; }
 			else {
-				$newTry= new OldProduct;
+				$newTry= new OgicomProduct;
 				$newQuery = $newTry->countReduction($oldQueryResult[3],$oldQueryResult2[0]);
 				echo$newQuery;
 			} ?></td>
