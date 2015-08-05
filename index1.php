@@ -396,34 +396,31 @@ if(isset($_GET['changeTabNewCut']))
 include 'templates/confirmation.html.php';
 exit();
 }
-if(isset($_GET['action'])){
-	if ($_GET['action']== 'Zmiana obu przez nowy panel' OR $_GET['action']== 'Zmiana obu przez stary panel')
+if(isset($_GET['shortEdition'])){
+	try
 	{
-		try
-		{
-			$newTry= new LinuxPlProduct;
-			$Query = $newTry->getProductQuery($_GET['id'], $newpdo);
-			$QueryResult = $Query->fetch();
-			$Query3= $newTry->getReduction($_GET['id'], $newpdo);
-			$QueryResult3 = $Query3->fetch();
-			$oldTry= new OgicomProduct;
-			$Query2 = $oldTry->getProductQuery($_GET['id'], $oldpdo);
-			$QueryResult2 = $Query2->fetch();
-			$Query4= $oldTry->getReduction($_GET['id'], $oldpdo);
-			$QueryResult4 = $Query4->fetch();
-			$button= 'Aktualizuj produkt w obu bazach';
-			$editForm='?editformBoth';
-		}
-		catch (PODException $e)
-		{
-			echo 'Błąd przy pobieraniu informacji o produkcie: ' . $e->getMessage();
-			exit();
-		}
-		include 'templates/form.html.php';
+		$newTry= new LinuxPlProduct;
+		$Query = $newTry->getProductQuery($_GET['id'], $newpdo);
+		$QueryResult = $Query->fetch();
+		$Query3= $newTry->getReduction($_GET['id'], $newpdo);
+		$QueryResult3 = $Query3->fetch();
+		$oldTry= new OgicomProduct;
+		$Query2 = $oldTry->getProductQuery($_GET['id'], $oldpdo);
+		$QueryResult2 = $Query2->fetch();
+		$Query4= $oldTry->getReduction($_GET['id'], $oldpdo);
+		$QueryResult4 = $Query4->fetch();
+		$button= 'Aktualizuj produkt w obu bazach';
+		$editForm='?editformBoth';
+	}
+	catch (PODException $e)
+	{
+		echo 'Błąd przy pobieraniu informacji o produkcie: ' . $e->getMessage();
 		exit();
 	}
+	include 'templates/form.html.php';
+	exit();
 }
-if (isset($_GET['action'])and $_GET['action']== 'Kompletna edycja w NP')
+if (isset($_GET['fullEditionN']))
 	try
 	{
 		$oldTry= new LinuxPlProduct;
@@ -464,7 +461,7 @@ if (isset($_GET['action'])and $_GET['action']== 'Kompletna edycja w NP')
 		echo 'Pobranie kompletnych danych ze starej bazy nie powiodło się: ' . $e->getMessage();
 		exit();
 	}
-	if (isset($_GET['action'])and $_GET['action']== 'Kompletna edycja w SP')
+	if (isset($_GET['fullEditionO']))
 		try
 	{
 		$oldTry= new OgicomProduct;
