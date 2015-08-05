@@ -2,10 +2,12 @@
 
 class db{
 
-	function __construct($pdo){
-		$this->pdo=$pdo;}
+	function __construct($host, $login, $password){
+		$this->pdo=new PDO($host, $login, $password);
+		$this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+		$this->pdo->exec('SET NAMES "utf8"');}
 	
-	function selectUser($login, $password){
+	function getUserData($login, $password){
 	$sql='SELECT * FROM ps_db_user WHERE login=:login AND password=:password';
 	$s=$this->pdo->prepare($sql);
 	$s->bindValue(':login', $login);
