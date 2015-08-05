@@ -4,8 +4,8 @@
 	<meta charset="utf-8">
 	<link rel="shortcut icon" href="ad9bis.ico" type="image/x-icon" />
 	<title>Zarządzanie produktami</title>
-	<script src="jquery.js" ></script>
-	<script src="jscript.js"></script>
+	<script src="/Ad9bisCMS/assets/jquery.js" ></script>
+	<script src="/Ad9bisCMS/assets/jscript.js"></script>
 	<style type="text/css">
 	body{
 		background-color: #ab9999;
@@ -84,9 +84,9 @@ background-color: #aa7657;width:48%;border: 4px ridge black;
 	}
 	</style>
 </head>
-<body><fieldset id="fldset1"><form action="" method="get">
+<body><fieldset id="fldset1"><form action="" method="post">
 	<input id="upperInput" type="submit" value="Produkty" disabled>
-	<input type="hidden" name="action" value="zamówienia">
+	<input type="hidden" name="orders" value="zamówienia">
 	<input id="upperInput" type="submit" value="Zamówienia">
 </form></fieldset>
 	<h1>Zarządzanie produktami obu sklepów</h1>
@@ -129,7 +129,7 @@ background-color: #aa7657;width:48%;border: 4px ridge black;
 </form></table>
 </fieldset>
 <form method="post">
-	<input id="logOut" type="submit" name="action" value="Wyloguj"> 
+	<input id="logOut" type="submit" name="logout" value="Wyloguj"> 
 </form>
 <?php if(isset($mod)){ ?>
 <fieldset id="fldmod">
@@ -141,7 +141,7 @@ background-color: #aa7657;width:48%;border: 4px ridge black;
 		<td id="priceAndName"><b><a href="http://ad9bis.vot.pl/tory-h0/<?php htmlout($modified['id']); ?>-cysterna-francuska-primagaz-bttb.html" target="_blank"><?php htmlout($modified['nazwa']); ?></a></b></td>
 		<td id="priceAndName"><center><?php $modcena=$modified['cena']*1;
 				echo$modcena.'zł';
-				$reduction= new OldProduct;
+				$reduction= new OgicomProduct;
 				$row= $reduction->getReduction($modified['id'], $oldpdo);
 				$row2 = $row->fetch();
 				$reducedPrice=$row2[0];
