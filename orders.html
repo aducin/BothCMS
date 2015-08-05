@@ -55,8 +55,8 @@
 					{
 						if($_GET['oldorder']!='')
 						{
-							$try= new LinuxPlProduct;
-							$query = $try->getName($stry["id"], $oldpdo);
+							$product1= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
+							$query = $product1->getName($stry["id"]);
 							if ($query!=$stry["name"]){
 								?>Stary panel: 
 								<?php htmlout($query);
@@ -67,8 +67,8 @@
 						}
 						elseif($_GET['neworder']!='')
 						{
-						$try= new OgicomProduct;
-						$query = $try->getName($stry["id"], $oldpdo);
+						$product2= new OgicomProduct($secondHost, $secondLogin, $secondPassword);
+						$query = $product2->getName($stry["id"]);
 							if ($query!=$stry["name"]){
 								?>Stary panel: 
 								<?php htmlout($query);
