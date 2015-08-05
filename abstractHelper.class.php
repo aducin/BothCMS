@@ -2,10 +2,12 @@
 
 abstract class Helper{
 	
-	function __construct($pdo){
-		$this->pdo=$pdo;}
+	function __construct($host, $login, $password){
+		$this->pdo=new PDO($host, $login, $password);
+		$this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+		$this->pdo->exec('SET NAMES "utf8"');}
 
-		function selectWholeManufacturer(){
+		public function selectWholeManufacturer(){
 			$sql='SELECT id_manufacturer, name
 			FROM ps_manufacturer';
 			$s=$this->pdo->prepare($sql);
@@ -13,14 +15,14 @@ abstract class Helper{
 			return $s;
 		}
 
-		private function selectWholeCategory1(){
+		private function getCategorySelectSubquery(){
 			return 'SELECT id_category, meta_title FROM ps_category_lang';
 		}
 		
-		abstract protected function selectWhere();
+		abstract protected function getWhereSubquery();
 
-		public function selectWholeCategory2() {
-			$sql=$this->selectWholeCategory1() . $this->selectWhere();
+		public function getCategoryData() {
+			$sql=$this->getCategorySelectSubquery() . $this->getWhereSubquery();
 			$c=$this->pdo->prepare($sql);
 			$c->execute();
 			return $c;
