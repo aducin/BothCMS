@@ -353,7 +353,7 @@ if(isset($_GET['action'])&&$_GET['action']=='orderSearch')
 		include $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/confirmation.html.php';
 		exit();
 	}
-	if (isset($_GET['BPSQO']))
+	if (isset($_GET['BPSQN']))
 	{
 		$newTry= new LinuxPlProduct;
 		$newQuery = $newTry->updateQuantity($_GET['quantity'], $_GET['id'], $newpdo);
@@ -363,80 +363,7 @@ if(isset($_GET['action'])&&$_GET['action']=='orderSearch')
 		include $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/confirmation.html.php';
 		exit();
 	}
-if(isset($_GET['action'])){
-	if ($_GET['action']== 'Zmiana obu przez nowy panel' OR $_GET['action']== 'Zmiana obu przez stary panel')
-	{
-		try
-		{
-			$newTry= new LinuxPlProduct;
-			$Query = $newTry->getProductQuery($_GET['id'], $newpdo);
-			$QueryResult = $Query->fetch();
-			$Query3= $newTry->getReduction($_GET['id'], $newpdo);
-			$QueryResult3 = $Query3->fetch();
-			$oldTry= new OgicomProduct;
-			$Query2 = $oldTry->getProductQuery($_GET['id'], $oldpdo);
-			$QueryResult2 = $Query2->fetch();
-			$Query4= $oldTry->getReduction($_GET['id'], $oldpdo);
-			$QueryResult4 = $Query4->fetch();
-			$button= 'Aktualizuj produkt w obu bazach';
-			$editForm='?editformBoth';
-		}
-		catch (PODException $e)
-		{
-			echo 'Błąd przy pobieraniu informacji o produkcie: ' . $e->getMessage();
-			exit();
-		}
-		include $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/form.html.php';
-		exit();
-	}
-	if (isset($_GET['action'])and $_GET['action']== 'Kompletna edycja w NP')
-		try
-	{
-		$oldTry= new LinuxPlProduct;
-		$Query = $oldTry->getWholeDetailsQuery($_GET['id'], $newpdo);
-		$QueryResult = $Query->fetch();
-		$Query1 = $oldTry->getReduction($_GET['id'], $newpdo);
-		$Query3 = $Query1->fetch();
-		$Query6 = $oldTry->selectManufacturer($_GET['id'], $newpdo);
-		$list= new OgicomHelper($newpdo);
-		$result= $list->selectWholeManufacturer();
-		foreach ($result as $row)
-		{
-			$authors[]= array('id'=> $row['id_manufacturer'], 'name'=> $row['name']);
-		}
-		$Query8 = $oldTry->getCategory($_GET['id'], $newpdo);
-		foreach ($Query8 as $Query9)
-		{
-			$this[]=array('id'=>$Query9['id_category'], 'name'=>$Query9['meta_title']);
-			$selectedCats[]=$Query9['id_category'];
-		}
-		$Query10 = $oldTry->getWholeCategory($newpdo);
-		foreach ($Query10 as $Query11)
-		{
-			$this2[]=array('id'=>$Query11['id_category'], 'name'=>$Query11['meta_title'], 'selected'=> in_array($Query11['id_category'], $selectedCats));
-		}
-		$Query12 = $oldTry->selectTag($_GET['id'], $newpdo);
-		foreach ($Query12 as $Query13)
-		{
-			$this3[]=array('id'=>$Query13['id_tag'], 'name'=>$Query13['name']);
-		}
-		$newTry= new OgicomProduct;
-		$Query2 = $newTry->getProductQuery($_GET['id'], $oldpdo);
-		$QueryResult2 = $Query2->fetch();
-		$Query4 = $newTry->getReduction($_GET['id'], $oldpdo);
-		$Query5 = $Query4->fetch();
-		$baza='- informacje z nowego panelu.';
-		$editForm='?editcompleteformnew';
-
-	include $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/completeForm.html.php';
-		exit();
-	}
-	catch (PDOExceptioon $e)
-	{
-		echo 'Pobranie kompletnych danych ze starej bazy nie powiodło się: ' . $e->getMessage();
-		exit();
-	}
-	if (isset($_GET['action'])and $_GET['action']== 'Kompletna edycja w SP')
+	if (isset($_GET['fullEditionO']))
 		try
 	{
 		$oldTry= new OgicomProduct;
@@ -484,7 +411,77 @@ if(isset($_GET['action'])){
 		echo 'Pobranie kompletnych danych ze starej bazy nie powiodło się: ' . $e->getMessage();
 		exit();
 	}
-}
+	if (isset($_GET['fullEditionN']))
+		try
+	{
+		$oldTry= new LinuxPlProduct;
+		$Query = $oldTry->getWholeDetailsQuery($_GET['id'], $newpdo);
+		$QueryResult = $Query->fetch();
+		$Query1 = $oldTry->getReduction($_GET['id'], $newpdo);
+		$Query3 = $Query1->fetch();
+		$Query6 = $oldTry->selectManufacturer($_GET['id'], $newpdo);
+		$list= new OgicomHelper($newpdo);
+		$result= $list->selectWholeManufacturer();
+		foreach ($result as $row)
+		{
+			$authors[]= array('id'=> $row['id_manufacturer'], 'name'=> $row['name']);
+		}
+		$Query8 = $oldTry->getCategory($_GET['id'], $newpdo);
+		foreach ($Query8 as $Query9)
+		{
+			$this[]=array('id'=>$Query9['id_category'], 'name'=>$Query9['meta_title']);
+			$selectedCats[]=$Query9['id_category'];
+		}
+		$Query10 = $oldTry->getWholeCategory($newpdo);
+		foreach ($Query10 as $Query11)
+		{
+			$this2[]=array('id'=>$Query11['id_category'], 'name'=>$Query11['meta_title'], 'selected'=> in_array($Query11['id_category'], $selectedCats));
+		}
+		$Query12 = $oldTry->selectTag($_GET['id'], $newpdo);
+		foreach ($Query12 as $Query13)
+		{
+			$this3[]=array('id'=>$Query13['id_tag'], 'name'=>$Query13['name']);
+		}
+		$newTry= new OgicomProduct;
+		$Query2 = $newTry->getProductQuery($_GET['id'], $oldpdo);
+		$QueryResult2 = $Query2->fetch();
+		$Query4 = $newTry->getReduction($_GET['id'], $oldpdo);
+		$Query5 = $Query4->fetch();
+		$baza='- informacje z nowego panelu.';
+		$editForm='?editcompleteformnew';
+
+		include $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/completeForm.html.php';
+		exit();
+	}
+	catch (PDOExceptioon $e)
+	{
+		echo 'Pobranie kompletnych danych ze starej bazy nie powiodło się: ' . $e->getMessage();
+		exit();
+	}
+	if(isset($_GET['shortEdition'])){
+		try
+		{
+			$newTry= new LinuxPlProduct;
+			$Query = $newTry->getProductQuery($_GET['id'], $newpdo);
+			$QueryResult = $Query->fetch();
+			$Query3= $newTry->getReduction($_GET['id'], $newpdo);
+			$QueryResult3 = $Query3->fetch();
+			$oldTry= new OgicomProduct;
+			$Query2 = $oldTry->getProductQuery($_GET['id'], $oldpdo);
+			$QueryResult2 = $Query2->fetch();
+			$Query4= $oldTry->getReduction($_GET['id'], $oldpdo);
+			$QueryResult4 = $Query4->fetch();
+			$button= 'Aktualizuj produkt w obu bazach';
+			$editForm='?editformBoth';
+		}
+		catch (PODException $e)
+		{
+			echo 'Błąd przy pobieraniu informacji o produkcie: ' . $e->getMessage();
+			exit();
+		}
+		include $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/form.html.php';
+		exit();
+	}
 if (isset($_GET['action'])and $_GET['action']== 'Uaktualnij ilości dla całego zamówienia')
 	try
 {
