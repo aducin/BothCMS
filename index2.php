@@ -1,13 +1,26 @@
 <?php 
-require_once $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/controllers/bootstrap.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/config/bootstrap.php';
+
+$DBHandler=parse_ini_file($_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/config/database.ini',true);
+$firstHandler=$DBHandler ["firstDB"];
+$firstHost=$firstHandler["host"];
+$firstLogin=$firstHandler["login"];
+$firstPassword=$firstHandler["password"];
+$secondHandler=$DBHandler ["secondDB"];
+$secondHost=$secondHandler["host"];
+$secondLogin=$secondHandler["login"];
+$secondPassword=$secondHandler["password"];
 
 session_start();
 if(!isset($_SESSION['log'])){
-	$login=$_POST['login'];
-	$password=$_POST['password'];
+	$userLogin=$_POST['login'];
+	$userPassword=$_POST['password'];
 }
 if (!isset($_SESSION['log'])){
-	if($result=$newpdo->query("SELECT * FROM ps_db_user WHERE login='$login' AND password='$password'"))
+	$db=new db($firstHost, $firstLogin, $firstPassword);
+	$dbResult= $db->getUserData($userLogin, $userPassword);
+	$resNumb=$dbResult->rowCount();
+	if($resNumb>0)
 	{
 		$resNumb=$result->rowCount();
 		if($resNumb>0)
@@ -40,9 +53,9 @@ if(isset($_GET['editformBoth']))
 	}
 	else try
 	{
-		$newTry= new LinuxPlProduct;
-		$newQuery = $newTry->updateBoth($_POST['id'], $_POST['nominalPriceNew'], $_POST['text'], $_POST['quantity'], $newpdo);
-		$newQuery2 = $newTry->confirmation($_POST['id'], $newpdo);
+		$product1= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
+		$newQuery = $product1->updateBoth($_POST['id'], $_POST['nominalPriceNew'], $_POST['text'], $_POST['quantity']);
+		$newQuery2 = $product1->confirmation($_POST['id']);
 		$quantityNew= $newQuery2["quantity"];
 	}
 	catch (PDOExceptioon $e)
@@ -52,9 +65,9 @@ if(isset($_GET['editformBoth']))
 	}
 	try
 	{
-		$oldTry= new OgicomProduct;
-		$oldQuery = $oldTry->updateBoth($_POST['id'], $_POST['nominalPriceOld'], $_POST['text'], $_POST['quantity'],$oldpdo);
-		$oldQuery2 = $oldTry->confirmation($_POST['id'], $oldpdo);
+		$product2= new OgicomProduct($secondHost, $secondLogin, $secondPassword);
+		$oldQuery = $product2->updateBoth($_POST['id'], $_POST['nominalPriceOld'], $_POST['text'], $_POST['quantity']);
+		$oldQuery2 = $product2->confirmation($_POST['id']);
 		$idOld= $oldQuery2["id_product"];
 		$quantityOld= $oldQuery2["quantity"];
 	}
@@ -80,14 +93,14 @@ if(isset($_GET['editcompleteformold']))
 	}
 	else try
 			{
-				$oldTry= new OgicomProduct;
+				$product2= new OgicomProduct($secondHost, $secondLogin, $secondPassword);
 				if (isset($_POST['change'])and $_POST['change']== "nameChange"){
-					$oldQuery = $oldTry->insertModyfy($_POST['id'], $_POST['text'], $oldpdo);
+					$oldQuery = $product2->insertModyfy($_POST['id'], $_POST['text']);
 				}
 				if (isset($_POST['delete'])and $_POST['delete']== "deleteImages"){
-					$oldQuery = $oldTry->deleteImage($_POST['id'], $oldpdo);
+					$oldQuery = $product2->deleteImage($_POST['id']);
 				}
-				$oldQuery = $oldTry->updateDetailedBoth($_POST['id'], $_POST['nominalPriceOld'], $_POST['text'], $_POST['quantity'], $_POST['description'], $_POST['description_short'], $_POST['meta_title'], $_POST['meta_description'], $_POST['link'], $_POST['condition'], $_POST['active'], $oldpdo);
+				$oldQuery = $oldTry->updateDetailedBoth($_POST['id'], $_POST['nominalPriceOld'], $_POST['text'], $_POST['quantity'], $_POST['description'], $_POST['description_short'], $_POST['meta_title'], $_POST['meta_description'], $_POST['link'], $_POST['condition'], $_POST['active']);
 			}
 			catch (PDOExceptioon $e)
 			{
@@ -96,39 +109,39 @@ if(isset($_GET['editcompleteformold']))
 			}
 	try
 	{
-		$oldQuery = $oldTry->updateManufacturer($_POST['author'], $_POST['id'], $oldpdo);
+		$oldQuery = $product2->updateManufacturer($_POST['author'], $_POST['id']);
 	}
 	catch (PDOExceptioon $e)
 	{
 		echo 'Aktualizacja producenta nie powiodła się: ' . $e->getMessage();
 		exit();
 	}
-	$oldQuery = $oldTry->deleteCategory($_POST['id'], $oldpdo);
+	$oldQuery = $product2->deleteCategory($_POST['id']);
 	if(isset($_POST['categories']))
 	{
-		$oldQuery = $oldTry->insertCategory($_POST['categories'], $_POST['id'], $oldpdo);
+		$oldQuery = $product2->insertCategory($_POST['categories'], $_POST['id']);
 	} else {echo'Nie znaleziono kategorii do zapisania!';
 }
-$oldQuery = $oldTry->deleteWholeTag($_POST['id'], $oldpdo);
+$oldQuery = $product2->deleteWholeTag($_POST['id']);
 foreach ($_POST['tagText'] as $tagText){
-	$oldQuery = $oldTry->checkIfTag($tagText, $oldpdo);
+	$oldQuery = $product2->checkIfTag($tagText);
 	$oldQuery2 = $oldQuery->fetch();
 	$checkedTagId= $oldQuery2[0];
 	if($checkedTagId!=0)
 	{
-		$oldQuery = $oldTry->insertTag($checkedTagId, $_POST['id'], $oldpdo);
+		$oldQuery = $product2->insertTag($checkedTagId, $_POST['id']);
 	}
 	else{
-		$oldQuery = $oldTry->createTag($checkedTagId, $tagText, $oldpdo);
-		$oldQuery = $oldTry->checkIfTag($tagText, $oldpdo);
+		$oldQuery = $product2->createTag($checkedTagId, $tagText);
+		$oldQuery = $product2->checkIfTag($tagText);
 		$oldQuery2 = $oldQuery->fetch();
 		$checkedTagId= $oldQuery2[0];
-		$oldQuery = $oldTry->insertTag($checkedTagId, $_POST['id'], $oldpdo);
+		$oldQuery = $product2->insertTag($checkedTagId, $_POST['id']);
 	}
 }
 try
 {
-	$oldQuery = $oldTry->confirmation($_POST['id'], $oldpdo);
+	$oldQuery = $product2->confirmation($_POST['id']);
 	$idOld= $oldQuery["id_product"];
 	$quantityOld= $oldQuery["quantity"];
 }
@@ -138,39 +151,39 @@ catch (PDOExceptioon $e)
 	exit();
 }
 if (isset($_POST['howManyBases'])and $_POST['howManyBases']== 'both'){
-	$newTry= new LinuxPlProduct;
+	$product1= new LinuxPlProduct;
 	if (isset($_POST['delete'])and $_POST['delete']== "deleteImages"){
-					$newQuery = $newTry->deleteImage($_POST['id'], $newpdo);
+					$newQuery = $product1->deleteImage($_POST['id']);
 	}
-	$newQuery = $newTry->updateDetailedBoth($_POST['id'], $_POST['nominalPriceOld'], $_POST['text'], $_POST['quantity'], $_POST['description'], $_POST['description_short'], $_POST['meta_title'], $_POST['meta_description'], $_POST['link'], $_POST['condition'], $_POST['active'], $newpdo);
+	$newQuery = $product1->updateDetailedBoth($_POST['id'], $_POST['nominalPriceOld'], $_POST['text'], $_POST['quantity'], $_POST['description'], $_POST['description_short'], $_POST['meta_title'], $_POST['meta_description'], $_POST['link'], $_POST['condition'], $_POST['active']);
 	try
 	{
-		$newQuery = $newTry->updateManufacturer($_POST['author'], $_POST['id'], $newpdo);
+		$newQuery = $product1->updateManufacturer($_POST['author'], $_POST['id']);
 	}
 	catch (PDOExceptioon $e)
 	{
 		echo 'Aktualizacja producenta nie powiodła się: ' . $e->getMessage();
 		exit();
 	}
-	$newQuery = $newTry->deleteCategory($_POST['id'], $newpdo);
+	$newQuery = $product1->deleteCategory($_POST['id'], $newpdo);
 	if(isset($_POST['categories'])){
-		$newQuery = $newTry->insertDifferentCategory($_POST['categories'], $_POST['id'], $newpdo);	
+		$newQuery = $product1->insertDifferentCategory($_POST['categories'], $_POST['id']);	
 	}else {echo'Nie znaleziono kategorii do zapisania!';}
-	$newQuery = $newTry->deleteWholeTag($_POST['id'], $newpdo);
+	$newQuery = $newTry->deleteWholeTag($_POST['id']);
 	foreach ($_POST['tagText'] as $tagText){
-		$newQuery = $newTry->checkIfTag($tagText, $newpdo);
+		$newQuery = $product1->checkIfTag($tagText);
 		$newQuery2 = $newQuery->fetch();
 		$checkedTagId= $newQuery2[0];
 		if($checkedTagId!=0)
 		{
-			$newQuery = $newTry->insertTag($checkedTagId, $_POST['id'], $newpdo);
+			$newQuery = $product1->insertTag($checkedTagId, $_POST['id']);
 		}
 		else{
-			$newQuery = $newTry->createTag($checkedTagId, $tagText, $newpdo);
-			$newQuery = $newTry->checkIfTag($tagText, $newpdo);
+			$newQuery = $product1->createTag($checkedTagId, $tagText);
+			$newQuery = $product1->checkIfTag($tagText, $newpdo);
 			$newQuery2 = $newQuery->fetch();
 			$checkedTagId= $newQuery2[0];
-			$newQuery = $newTry->insertTag($checkedTagId, $_POST['id'], $newpdo);
+			$newQuery = $product1->insertTag($checkedTagId, $_POST['id']);
 		}
 	}
 }
@@ -192,14 +205,14 @@ if(isset($_GET['editcompleteformnew']))
 	else try
 		{
 			if (isset($_POST['change'])and $_POST['change']== "nameChange"){
-				$oldTry= new OgicomProduct;
-				$oldQuery = $oldTry->insertModyfy($_POST['id'], $_POST['text'], $oldpdo);
+				$product2= new OgicomProduct($secondHost, $secondLogin, $secondPassword);
+				$oldQuery = $product2->insertModyfy($_POST['id'], $_POST['text']);
 			}
-			$newTry= new LinuxPlProduct;
+			$product1= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
 			if (isset($_POST['delete'])and $_POST['delete']== "deleteImages"){
-				$newQuery = $newTry->deleteImage($_POST['id'], $newpdo);
+				$newQuery = $product1->deleteImage($_POST['id']);
 			}
-			$newQuery = $newTry->updateDetailedBoth($_POST['id'], $_POST['nominalPriceOld'], $_POST['text'], $_POST['quantity'], $_POST['description'], $_POST['description_short'], $_POST['meta_title'], $_POST['meta_description'], $_POST['link'], $_POST['condition'], $_POST['active'], $newpdo);
+			$newQuery = $product1->updateDetailedBoth($_POST['id'], $_POST['nominalPriceOld'], $_POST['text'], $_POST['quantity'], $_POST['description'], $_POST['description_short'], $_POST['meta_title'], $_POST['meta_description'], $_POST['link'], $_POST['condition'], $_POST['active']);
 		}
 		catch (PDOExceptioon $e)
 		{
@@ -208,39 +221,39 @@ if(isset($_GET['editcompleteformnew']))
 		}
 	try
 	{
-		$newQuery = $newTry->updateManufacturer($_POST['author'], $_POST['id'], $newpdo);
+		$newQuery = $product1->updateManufacturer($_POST['author'], $_POST['id']);
 	}
 	catch (PDOExceptioon $e)
 	{
 		echo 'Aktualizacja producenta nie powiodła się: ' . $e->getMessage();
 		exit();
 	}
-	$newQuery = $newTry->deleteCategory($_POST['id'], $newpdo);
+	$newQuery = $product1->deleteCategory($_POST['id']);
 	if(isset($_POST['categories']))
 	{
-		$newQuery = $newTry->insertCategory($_POST['categories'], $_POST['id'], $newpdo);
+		$newQuery = $product1->insertCategory($_POST['categories'], $_POST['id']);
 	} else {echo'Nie znaleziono kategorii do zapisania!';
 }
-$newQuery = $newTry->deleteWholeTag($_POST['id'], $newpdo);
+$newQuery = $product1->deleteWholeTag($_POST['id']);
 foreach ($_POST['tagText'] as $tagText){
-	$newQuery = $newTry->checkIfTag($tagText, $newpdo);
+	$newQuery = $product1->checkIfTag($tagText);
 	$newQuery2 = $newQuery->fetch();
 	$checkedTagId= $newQuery2[0];
 	if($checkedTagId!=0)
 	{
-		$newQuery = $newTry->insertTag($checkedTagId, $_POST['id'], $newpdo);
+		$newQuery = $product1->insertTag($checkedTagId, $_POST['id']);
 	}
 	else{
-		$newQuery = $newTry->createTag($checkedTagId, $tagText, $newpdo);
-		$newQuery = $newTry->checkIfTag($tagText, $newpdo);
+		$newQuery = $product1->createTag($checkedTagId, $tagText);
+		$newQuery = $product1->checkIfTag($tagText);
 		$newQuery2 = $newQuery->fetch();
 		$checkedTagId= $newQuery2[0];
-		$newQuery = $newTry->insertTag($checkedTagId, $_POST['id'], $newpdo);
+		$newQuery = $product1->insertTag($checkedTagId, $_POST['id']);
 	}
 }
 try
 {
-	$newQuery = $newTry->confirmation($_POST['id'], $newpdo);
+	$newQuery = $product1->confirmation($_POST['id']);
 	$idOld= $newQuery["id_product"];
 	$quantityNew= $newQuery["quantity"];
 }
@@ -250,41 +263,41 @@ catch (PDOExceptioon $e)
 	exit();
 }
 if (isset($_POST['howManyBases'])and $_POST['howManyBases']== 'both'){
-	$oldTry= new OgicomProduct;
+	$order1= new OgicomProduct($secondHost, $secondLogin, $secondPassword);
 	if (isset($_POST['delete'])and $_POST['delete']== "deleteImages"){
-			$oldQuery = $oldTry->deleteImage($_POST['id'], $oldpdo);
+			$oldQuery = $order1->deleteImage($_POST['id']);
 		}
-	$oldQuery = $oldTry->updateDetailedBoth($_POST['id'], $_POST['nominalPriceOld'], $_POST['text'], $_POST['quantity'], $_POST['description'], $_POST['description_short'], $_POST['meta_title'], $_POST['meta_description'], $_POST['link'], $_POST['condition'], $_POST['active'], $oldpdo);
+	$oldQuery = $order1->updateDetailedBoth($_POST['id'], $_POST['nominalPriceOld'], $_POST['text'], $_POST['quantity'], $_POST['description'], $_POST['description_short'], $_POST['meta_title'], $_POST['meta_description'], $_POST['link'], $_POST['condition'], $_POST['active']);
 	try
 	{
-		$oldQuery = $oldTry->updateManufacturer($_POST['author'], $_POST['id'], $oldpdo);
+		$oldQuery = $order1->updateManufacturer($_POST['author'], $_POST['id']);
 	}
 	catch (PDOExceptioon $e)
 	{
 		echo 'Aktualizacja producenta nie powiodła się: ' . $e->getMessage();
 		exit();
 	}
-	$oldQuery = $oldTry->deleteCategory($_POST['id'], $oldpdo);
+	$oldQuery = $order1->deleteCategory($_POST['id']);
 	if(isset($_POST['categories']))
 	{
-		$oldQuery = $oldTry->insertDifferentCategory($_POST['categories'], $_POST['id'], $oldpdo);
+		$oldQuery = $order1->insertDifferentCategory($_POST['categories'], $_POST['id']);
 	} 	else {echo'Nie znaleziono kategorii do zapisania!';
 }
-$oldQuery = $oldTry->deleteWholeTag($_POST['id'], $oldpdo);
+$oldQuery = $order1->deleteWholeTag($_POST['id']);
 foreach ($_POST['tagText'] as $tagText){
-	$oldQuery = $oldTry->checkIfTag($tagText, $oldpdo);
+	$oldQuery = $order1->checkIfTag($tagText);
 	$oldQuery2 = $oldQuery->fetch();
 	$checkedTagId= $oldQuery2[0];
 	if($checkedTagId!=0)
 	{
-		$oldQuery = $oldTry->insertTag($checkedTagId, $_POST['id'], $oldpdo);
+		$oldQuery = $order1->insertTag($checkedTagId, $_POST['id']);
 	}
 	else{
-		$oldQuery = $oldTry->createTag($checkedTagId, $tagText, $oldpdo);
-		$oldQuery = $oldTry->checkIfTag($tagText, $oldpdo);
+		$oldQuery = $order1->createTag($checkedTagId, $tagText);
+		$oldQuery = $order1->checkIfTag($tagText);
 		$oldQuery2 = $oldQuery->fetch();
 		$checkedTagId= $oldQuery2[0];
-		$oldQuery = $oldTry->insertTag($checkedTagId, $_POST['id'], $oldpdo);
+		$oldQuery = $order1->insertTag($checkedTagId, $_POST['id']);
 	}
 }
 }	
@@ -299,8 +312,8 @@ if (isset($_GET['shipmentNumber']))
 if(isset($_GET['action'])&&$_GET['action']=='orderSearch')
 {
 	if ($_GET['neworder'] !=''){
-		$try= new LinuxPlOrder;
-		$query = $try->getQuery($_GET['neworder'], $newpdo);
+		$order2= new LinuxPlOrder($firstHost, $firstLogin, $firstPassword);
+		$query = $order2->getQuery($_GET['neworder']);
 
 		foreach ($query as $sOrder)
 		{
@@ -308,8 +321,8 @@ if(isset($_GET['action'])&&$_GET['action']=='orderSearch')
 		}
 	}
 	if ($_GET['oldorder'] !=''){
-		$try= new OgicomOrder;
-		$query = $try->getQuery($_GET['oldorder'], $oldpdo);
+		$order1= new OgicomOrder($secondHost, $secondLogin, $secondPassword);
+		$query = $order1->getQuery($_GET['oldorder']);
 
 		foreach ($query as $sOrder)
 		{
@@ -319,21 +332,21 @@ if(isset($_GET['action'])&&$_GET['action']=='orderSearch')
 	if ($_GET['notification'] !='')
 	{
 		if(isset($_GET['send'])&&$_GET['send']=='modele'){
-			$try= new OgicomOrder;
-			$notification = $try->SendNotification($_GET['notification'], $oldpdo);
+			$order1= new OgicomOrder($secondHost, $secondLogin, $secondPassword);
+			$notification = $order1->sendNotification($_GET['notification']);
 			$notificationresult = $notification->fetch();
 		}
 		if(isset($_GET['send'])&&$_GET['send']=='ad9bis'){
-			$try= new LinuxPlOrder;	
-			$notification = $try->SendNotification($_GET['notification'], $newpdo);
+			$order2= new LinuxPlOrder($firstHost, $firstLogin, $secondPassword);
+			$notification = $order2->sendNotification($_GET['notification']);
 			$notificationresult = $notification->fetch();
 		}
 	}
 	if ($_GET['detailorder'] !='')
 	{
-		$detail= new OgicomOrder;
-		$details = $detail->getQueryDetails($_GET['detailorder'], $oldpdo);
-		$detailsCount=$detail->getCount($_GET['detailorder'], $oldpdo);
+		$order1= new OgicomOrder($secondHost, $secondLogin, $secondPassword);
+		$details = $order1->getQueryDetails($_GET['detailorder']);
+		$detailsCount=$order1->getCount($_GET['detailorder']);
 		$detailsCountresult = $detailsCount->fetch();
 		$count = $detailsCountresult[0];
 		foreach ($details as $sDetail)
@@ -345,9 +358,9 @@ if(isset($_GET['action'])&&$_GET['action']=='orderSearch')
 }
 	if (isset($_GET['BPSQO']))
 	{
-		$oldTry= new OgicomProduct;
-		$oldQuery = $oldTry->updateQuantity($_GET['quantity'], $_GET['id'], $oldpdo);
-		$oldQuery = $oldTry->confirmation($_GET['id'], $oldpdo);
+		$order1= new OgicomProduct($secondHost, $secondLogin, $secondPassword);
+		$oldQuery = $order1->updateQuantity($_GET['quantity'], $_GET['id']);
+		$oldQuery = $order1->confirmation($_GET['id']);
 		$idOld= $oldQuery["id_product"];
 		$quantityOld= $oldQuery["quantity"];
 		include $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/confirmation.html.php';
@@ -355,9 +368,9 @@ if(isset($_GET['action'])&&$_GET['action']=='orderSearch')
 	}
 	if (isset($_GET['BPSQN']))
 	{
-		$newTry= new LinuxPlProduct;
-		$newQuery = $newTry->updateQuantity($_GET['quantity'], $_GET['id'], $newpdo);
-		$newQuery = $newTry->confirmation($_GET['id'], $newpdo);
+		$order2= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
+		$newQuery = $order2->updateQuantity($_GET['quantity'], $_GET['id']);
+		$newQuery = $order2->confirmation($_GET['id']);
 		$idOld= $newQuery["id_product"];
 		$quantityNew= $newQuery["quantity"];
 		include $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/confirmation.html.php';
@@ -366,38 +379,38 @@ if(isset($_GET['action'])&&$_GET['action']=='orderSearch')
 	if (isset($_GET['fullEditionO']))
 		try
 	{
-		$oldTry= new OgicomProduct;
-		$Query = $oldTry->getWholeDetailsQuery($_GET['id'], $oldpdo);
+		$product2= new OgicomProduct($secondHost, $secondLogin, $secondPassword);
+		$Query = $product2->getWholeDetailsQuery($_GET['id']);
 		$QueryResult = $Query->fetch();
-		$Query1 = $oldTry->getReduction($_GET['id'], $oldpdo);
+		$Query1 = $product2->getReduction($_GET['id']);
 		$Query3 = $Query1->fetch();
-		$Query6 = $oldTry->selectManufacturer($_GET['id'], $oldpdo);
-		$list= new OgicomHelper($oldpdo);
-		$result= $list->selectWholeManufacturer();
+		$Query6 = $product2->selectManufacturer($_GET['id']);
+		$helper= new OgicomHelper($secondHost, $secondLogin, $secondPassword);
+		$result= $helper->selectWholeManufacturer();
 		foreach ($result as $row)
 		{
 			$authors[]= array('id'=> $row['id_manufacturer'], 'name'=> $row['name']);
 		}
-		$Query8 = $oldTry->getCategory($_GET['id'], $oldpdo);
+		$Query8 = $product2->getCategory($_GET['id']);
 		foreach ($Query8 as $Query9)
 		{
 			$this[]=array('id'=>$Query9['id_category'], 'name'=>$Query9['meta_title']);
 			$selectedCats[]=$Query9['id_category'];
 		}
-		$Query10 = $oldTry->getWholeCategory($oldpdo);
+		$Query10 = $product2->getEveryCategory();
 		foreach ($Query10 as $Query11)
 		{
 			$this2[]=array('id'=>$Query11['id_category'], 'name'=>$Query11['meta_title'], 'selected'=> in_array($Query11['id_category'], $selectedCats));
 		}
-		$Query12 = $oldTry->selectTag($_GET['id'], $oldpdo);
+		$Query12 = $product2->selectTag($_GET['id']);
 		foreach ($Query12 as $Query13)
 		{
 			$this3[]=array('id'=>$Query13['id_tag'], 'name'=>$Query13['name']);
 		}
-		$newTry= new LinuxPlProduct;
-		$Query2 = $newTry->getProductQuery($_GET['id'], $newpdo);
+		$product1= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
+		$Query2 = $product1->getProductQuery($_GET['id']);
 		$QueryResult2 = $Query2->fetch();
-		$Query4 = $newTry->getReduction($_GET['id'], $newpdo);
+		$Query4 = $product1->getReduction($_GET['id']);
 		$Query5 = $Query4->fetch();
 		$baza='- informacje ze starego panelu.';
 		$editForm='?editcompleteformold';
@@ -414,38 +427,38 @@ if(isset($_GET['action'])&&$_GET['action']=='orderSearch')
 	if (isset($_GET['fullEditionN']))
 		try
 	{
-		$oldTry= new LinuxPlProduct;
-		$Query = $oldTry->getWholeDetailsQuery($_GET['id'], $newpdo);
+		$product1= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
+		$Query = $product1->getWholeDetailsQuery($_GET['id']);
 		$QueryResult = $Query->fetch();
-		$Query1 = $oldTry->getReduction($_GET['id'], $newpdo);
+		$Query1 = $product1->getReduction($_GET['id']);
 		$Query3 = $Query1->fetch();
-		$Query6 = $oldTry->selectManufacturer($_GET['id'], $newpdo);
-		$list= new OgicomHelper($newpdo);
-		$result= $list->selectWholeManufacturer();
+		$Query6 = $product1->selectManufacturer($_GET['id']);
+		$helper= new OgicomHelper($firstHost, $firstLogin, $firstPassword);
+		$result= $helper->selectWholeManufacturer();
 		foreach ($result as $row)
 		{
 			$authors[]= array('id'=> $row['id_manufacturer'], 'name'=> $row['name']);
 		}
-		$Query8 = $oldTry->getCategory($_GET['id'], $newpdo);
+		$Query8 = $product1->getCategory($_GET['id']);
 		foreach ($Query8 as $Query9)
 		{
 			$this[]=array('id'=>$Query9['id_category'], 'name'=>$Query9['meta_title']);
 			$selectedCats[]=$Query9['id_category'];
 		}
-		$Query10 = $oldTry->getWholeCategory($newpdo);
+		$Query10 = $product1->getEveryCategory();
 		foreach ($Query10 as $Query11)
 		{
 			$this2[]=array('id'=>$Query11['id_category'], 'name'=>$Query11['meta_title'], 'selected'=> in_array($Query11['id_category'], $selectedCats));
 		}
-		$Query12 = $oldTry->selectTag($_GET['id'], $newpdo);
+		$Query12 = $product1->selectTag($_GET['id']);
 		foreach ($Query12 as $Query13)
 		{
 			$this3[]=array('id'=>$Query13['id_tag'], 'name'=>$Query13['name']);
 		}
-		$newTry= new OgicomProduct;
-		$Query2 = $newTry->getProductQuery($_GET['id'], $oldpdo);
+		$product2= new OgicomProduct($secondHost, $secondLogin, $secondPassword);
+		$Query2 = $product2->getProductQuery($_GET['id']);
 		$QueryResult2 = $Query2->fetch();
-		$Query4 = $newTry->getReduction($_GET['id'], $oldpdo);
+		$Query4 = $product2->getReduction($_GET['id']);
 		$Query5 = $Query4->fetch();
 		$baza='- informacje z nowego panelu.';
 		$editForm='?editcompleteformnew';
@@ -461,15 +474,15 @@ if(isset($_GET['action'])&&$_GET['action']=='orderSearch')
 	if(isset($_GET['shortEdition'])){
 		try
 		{
-			$newTry= new LinuxPlProduct;
-			$Query = $newTry->getProductQuery($_GET['id'], $newpdo);
+			$product1= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
+			$Query = $product1->getProductQuery($_GET['id']);
 			$QueryResult = $Query->fetch();
-			$Query3= $newTry->getReduction($_GET['id'], $newpdo);
+			$Query3= $product1->getReduction($_GET['id']);
 			$QueryResult3 = $Query3->fetch();
-			$oldTry= new OgicomProduct;
-			$Query2 = $oldTry->getProductQuery($_GET['id'], $oldpdo);
+			$product2= new OgicomProduct($secondHost, $secondLogin, $secondPassword);
+			$Query2 = $product2->getProductQuery($_GET['id']);
 			$QueryResult2 = $Query2->fetch();
-			$Query4= $oldTry->getReduction($_GET['id'], $oldpdo);
+			$Query4= $product2->getReduction($_GET['id']);
 			$QueryResult4 = $Query4->fetch();
 			$button= 'Aktualizuj produkt w obu bazach';
 			$editForm='?editformBoth';
@@ -486,8 +499,8 @@ if (isset($_GET['action'])and $_GET['action']== 'Uaktualnij ilości dla całego 
 	try
 {
 	$include=0;
-	$newTry= new LinuxPlOrder;
-	$newQuery = $newTry->selectOrderQuantity($_GET['id_number'], $oldpdo);
+	$order1= new LinuxPlOrder($secondHost, $secondLogin, $secondPassword);
+	$newQuery = $order1->selectOrderQuantity($_GET['id_number']);
 	foreach ($newQuery as $newQuery2){
 		$mods[]= array('quantity'=>$newQuery2['quantity'], 'product_id'=>$newQuery2['product_id'], 'id_order'=>$newQuery2['id_order']);
 	}
@@ -503,8 +516,8 @@ if (isset($_GET['action'])and $_GET['action']== 'Uaktualnij ilości w całym zam
 	try
 {
 	$include=1;
-	$oldTry= new OgicomOrder;
-	$oldQuery = $oldTry->selectOrderQuantity($_GET['id_number'], $newpdo);
+	$order2= new OgicomOrder($firstHost, $firstLogin, $firstPassword);
+	$oldQuery = $order2->selectOrderQuantity($_GET['id_number']);
 	foreach ($oldQuery as $oldQuery2){
 		$mods[]= array('quantity'=>$oldQuery2['quantity'], 'product_id'=>$oldQuery2['product_id'], 'id_order'=>$oldQuery2['id_order']);
 	}
