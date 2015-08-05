@@ -12,8 +12,8 @@
 		border: 2px ridge purple; text-align:left;background-color:silver;
 	}
 	</style>
-	<script src="jquery.js" ></script>
-	<script src="jscript.js"></script>
+	<script src="/Ad9bisCMS/assets/jquery.js" ></script>
+	<script src="/Ad9bisCMS/assets/jscript.js"></script>
 	<script type="text/javascript" language="javascript">
 	function wyswietlAlert(){
 		if(document.form.quantity.value==""){
@@ -30,7 +30,7 @@
 }
 			</script>
 		</head>
-		<?php if (isset($_GET['action'])and $_GET['action']== 'Zmiana obu przez stary panel')
+		<?php if (isset($_GET['shortEdition'])and $_GET['shortEdition']== 'Zmiana obu przez stary panel')
 		{
 			$baza='- informacje ze starego panelu.';
 		}
@@ -46,21 +46,21 @@
 		<div id="ramka">
 			<label for="text">Aktualna nazwa produktu:</label>
 			<textarea id="text" name="text" rows="1" cols="30"><?php 
-if(isset($_GET['action'])and $_GET['action']== 'Zmiana obu przez nowy panel')
+if(isset($_GET['shortEdition'])and $_GET['shortEdition']== 'Zmiana obu przez nowy panel')
 		{
 			htmlout($QueryResult[1]);
 		}
-		elseif(isset($_GET['action'])and $_GET['action']== 'Zmiana obu przez stary panel')
+		elseif(isset($_GET['shortEdition'])and $_GET['shortEdition']== 'Zmiana obu przez stary panel')
 		{
 			htmlout($QueryResult2[1]);
 		} ?></textarea>
 			</div><div id="ramka">
 			<label for="quantity">Obecna ilość na sklepie: <?php 
-			if(isset($_GET['action'])and $_GET['action']== 'Zmiana obu przez nowy panel')
+			if(isset($_GET['shortEdition'])and $_GET['shortEdition']== 'Zmiana obu przez nowy panel')
 		{
 			htmlout($QueryResult[2]);
 		}
-		elseif(isset($_GET['action'])and $_GET['action']== 'Zmiana obu przez stary panel')
+		elseif(isset($_GET['shortEdition'])and $_GET['shortEdition']== 'Zmiana obu przez stary panel')
 		{
 			htmlout($QueryResult2[2]);
 		} ?><br>
@@ -69,13 +69,13 @@ if(isset($_GET['action'])and $_GET['action']== 'Zmiana obu przez nowy panel')
 			</div>
 			<div id="ramka">
 				<label for="priceOld">Cena produktu (SP): <?php if(isset($QueryResult4[0])){
-				$oldTry= new OldProduct;
+				$oldTry= new OgicomProduct;
 				$oldQuery = $oldTry->countReduction($QueryResult2[3],$QueryResult4[0]);
 				echo$oldQuery;} ?></label>
 				<input type="text" name="nominalPriceOld" size="15" value="<?php htmlout($QueryResult2[3]); ?>"</><br>
 				</div><div id="ramka">
 				<label for="pricenew">Cena produktu (NP): <?php if(isset($QueryResult3[0])){
-				$newTry= new NewProduct;
+				$newTry= new LinuxPlProduct;
 				$newQuery = $newTry->countReduction($QueryResult[3],$QueryResult3[0]);
 				echo$newQuery;} ?></label>
 				<input type="text" name="nominalPriceNew" size="15" value="<?php htmlout($QueryResult[3]); ?>"</>
