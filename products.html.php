@@ -32,8 +32,8 @@ if(isset($_GET['action'])and $_GET['action']=='search'){ ?>
 		<tr>
 					<td><center><?php htmlout($product['id']); ?></td>
 					<td id="TD"><b><a href="http://ad9bis.vot.pl/tory-h0/<?php htmlout($product['id']); ?>-cysterna-francuska-primagaz-bttb.html" target="_blank"><?php htmlout($product['name']); ?></a></b><br>
-		<?php $oldTry= new OldProduct;	
-		$oldQuery = $oldTry->getProductQuery($product['id'], $oldpdo);
+		<?php $product2= new OgicomProduct($secondHost, $secondLogin, $secondPassword);	
+		$oldQuery = $product2->getProductQuery($product['id']);
 		$oldQueryResult = $oldQuery->fetch();
 		if($oldQueryResult[1]!=$product['name'] OR $oldQueryResult[2]!=$product['quantity'])
 		{
@@ -45,8 +45,8 @@ if(isset($_GET['action'])and $_GET['action']=='search'){ ?>
 		} ?>
 	</td><td id="TD"><center><?php htmlout($product['quantity']); ?></td>
 <td id="TD"><center><?php $new0=number_format($product['price'], 2,'.','');
-$newTry= new NewProduct;
-$newQuery = $newTry->getReduction($product['id'], $newpdo);
+$product1= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);;
+$newQuery = $product1->getReduction($product['id']);
 $newQueryResult = $newQuery->fetch();
 			if(!isset($newQueryResult[0])){
 			echo$new0.' zł'; }
@@ -59,10 +59,10 @@ $newQueryResult = $newQuery->fetch();
 				echo$newQueryResult6.'zł<br>W tym rabat: <b>'.$newQueryResult5;
 			} ?>
 </td><td id="TD"><center><?php
-$oldTry= new OldProduct;
-		$oldQuery = $oldTry->getProductQuery($product['id'], $oldpdo);
+$product2= new OgicomProduct($secondHost, $secondLogin, $secondPassword);	
+		$oldQuery = $product2->getProductQuery($product['id']);
 		$oldQueryResult = $oldQuery->fetch();
-		$oldQuery2= $oldTry->getReduction($product['id'], $oldpdo);
+		$oldQuery2= $product1->getReduction($product['id']);
 		$oldQueryResult2 = $oldQuery2->fetch(); 
 		$new0=number_format($oldQueryResult[3], 2,'.','');
 			if(!isset($oldQueryResult2[0])){
@@ -91,8 +91,8 @@ $oldTry= new OldProduct;
 			if(!isset($newQueryResult2[0])){
 			echo$new0.' zł'; }
 			else {
-				$newTry= new LinuxPlProduct;
-				$newQuery = $newTry->countReduction($newQueryResult[3],$newQueryResult2[0]);
+				$product1= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
+				$newQuery = $product1->countReduction($newQueryResult[3],$newQueryResult2[0]);
 				echo$newQuery;
 			} ?></td>
 			<td><form action="?bothChange" method="get">
