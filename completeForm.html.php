@@ -167,7 +167,7 @@ background-color: silver;border: 2px ridge black;font-style: italic; font-size: 
 					<?php endforeach; ?>
 					</select><br>
 				</div>
-			<?php if($_GET['action']!='Kompletna edycja w NP'){
+			<?php if(isset($_GET['fullEditionO'])){
 				$button= 'Aktualizuj produkt w starej bazie';
 				$completeButton="Uaktualnij produkt (SB)";
 			$tagName='changeTabOld'; $buttonCat='Aktualizuj kategorie w SB';
@@ -191,7 +191,7 @@ background-color: silver;border: 2px ridge black;font-style: italic; font-size: 
 					echo '<br>'.'UWAGA! Rabat wynosi '.$new0.'% wartości';
 				}} ?>
 			</div>
-			<?php if($_GET['action']!='Kompletna edycja w SP'){ 
+			<?php if(isset($_GET['fullEditionN'])){ 
 				$button= 'Aktualizuj produkt w nowej bazie';
 				$completeButton="Uaktualnij produkt (NB)";
 				$tagName='changeTabNew'; $buttonCat='Aktualizuj kategorie w NB';
