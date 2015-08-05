@@ -1,8 +1,8 @@
 <?php
 
-class NewOrder extends Order
+class LinuxPlOrder extends Order
 {
-	protected function getWhereStatement() {
+	protected function getWhereSubquery() {
 		return " WHERE id_order = :id_number";
 	}
 }
