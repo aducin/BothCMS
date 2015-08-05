@@ -78,8 +78,8 @@ $oldTry= new OldProduct;
 									<form action="?" method="get">
 										<div id="option">
 											<input type="hidden" name="id" value="<?php htmlout($product['id']); ?>">
-											<input type="submit" name="action" value="Zmiana obu przez nowy panel">
-											<input type="submit" name="action" value="Kompletna edycja w NP">
+											<input type="submit" name="shortEdition" value="Zmiana obu przez nowy panel">
+											<input type="submit" name="fullEditionN" value="Kompletna edycja w NP">
 										</div>
 									</form>
 								</td></tr><?php	endforeach;}	} ?></table>
@@ -98,8 +98,8 @@ $oldTry= new OldProduct;
 			<td><form action="?bothChange" method="get">
 					<div id="option">
 						<input type="hidden" name="id" value="<?php htmlout($newQueryResult[0]); ?>">
-						<input type="submit" name="action" value="Zmiana obu przez nowy panel">
-						<input type="submit" name="action" value="Kompletna edycja w NP">
+						<input type="submit" name="shortEdition" value="Zmiana obu przez nowy panel">
+						<input type="submit" name="fullEditionN" value="Kompletna edycja w NP">
 					</div>
 				</form>
 			</td></tr>
@@ -115,8 +115,8 @@ $oldTry= new OldProduct;
 			<td><form action="?" method="get">
 					<div id="option">
 						<input type="hidden" name="id" value="<?php htmlout($newQueryResult[0]); ?>">
-						<input type="submit" name="action" value="Zmiana obu przez stary panel">
-						<input type="submit" name="action" value="Kompletna edycja w SP">
+						<input type="submit" name="shortEdition" value="Zmiana obu przez stary panel">
+						<input type="submit" name="fullEditionO" value="Kompletna edycja w SP">
 					</div>
 				</form>
 			</td></tr>
