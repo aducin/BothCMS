@@ -1,12 +1,12 @@
 <?php
 
-class OldHelper extends Helper
+class OgicomHelper extends Helper
 {
 
-	protected function selectWhere() {
+	protected function getWhereSubquery() {
 		return " WHERE id_lang=3 AND id_category NOT IN (1,6)"; }
 
-		function selectModyfy(){
+		function getModyfiedData(){
 			$sql='SELECT ps_modyfy.id_number, ps_product_lang.name, ps_modyfy.date, ps_product.price
 			FROM ps_modyfy INNER JOIN ps_product_lang ON ps_modyfy.id_number=ps_product_lang.id_product
 			INNER JOIN ps_product ON ps_modyfy.id_number=ps_product.id_product
@@ -17,7 +17,7 @@ class OldHelper extends Helper
 			return $s;
 		}
 
-		function deleteMod($id){
+		function deleteModyfied($id){
 			$sql='DELETE FROM ps_modyfy
 			WHERE id_number = :id';
 			$s=$this->pdo->prepare($sql);
