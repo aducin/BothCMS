@@ -1,16 +1,16 @@
 <?php
 
-class NewProduct extends Product
+class LinuxPlProduct extends Product
 {
-	protected function getWhereProduct() {
+	protected function getWhereProductSubquery() {
 		return " WHERE ps_product_lang.id_product= :id_number";
 	}
 
-	protected function getWhereProduct2() {
+	protected function getWhereCategorySubquery() {
 		return " WHERE ps_category_product.id_product= :id";
 	}
 
-	protected function getWhereProduct3() {
+	protected function getWhereEveryCategorySubquery() {
 		return " WHERE id_category NOT IN (1,2,10,14, 15, 19, 20, 22, 23, 24, 25, 26, 27, 32, 33)";
 	}
 
