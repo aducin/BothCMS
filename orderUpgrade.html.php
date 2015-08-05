@@ -30,21 +30,21 @@ if($include==0){
 		<?php 
 		$quantity2=$row['quantity'];
 		if($zmienna2=='Ilość w SP'){
-		$newTry= new NewProduct;
-		$newQuery = $newTry->confirmation($row['product_id'], $newpdo);
+		$product1= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
+		$newQuery = $product1->confirmation($row['product_id']);
 		$quantity= $newQuery["quantity"]; ?>
 		<td style="text-align:center;"><?php htmlout($quantity); ?></td>
-		<?php $newQuery = $newTry->updateQuantity($quantity2, $row['product_id'], $newpdo);
-		$newQuery = $newTry->confirmation($row['product_id'], $newpdo);
+		<?php $newQuery = $product1->updateQuantity($quantity2, $row['product_id']);
+		$newQuery = $product1->confirmation($row['product_id']);
 		$quantity2= $newQuery["quantity"];
 	}
 		elseif($zmienna2=='Ilość w NP'){
-		$oldTry= new OldProduct;
-		$oldQuery = $oldTry->confirmation($row['product_id'], $oldpdo);
+		$product2= new OgicomProduct($secondHost, $secondLogin,$secondPassword);
+		$oldQuery = $product2->confirmation($row['product_id']);
 		$quantity= $oldQuery["quantity"]; ?>
 			<td style="text-align:center;"><?php htmlout($quantity); ?></td>
-			<?php $oldQuery = $oldTry->updateQuantity($quantity2, $row['product_id'], $oldpdo);
-			$oldQuery = $oldTry->confirmation($row['product_id'], $oldpdo);
+			<?php $oldQuery = $product2->updateQuantity($quantity2, $row['product_id']);
+			$oldQuery = $product2->confirmation($row['product_id']);
 			$quantity2= $oldQuery["quantity"]; } ?>
 			<td style="text-align:center;"><?php htmlout($quantity2); ?></td>
 			<td style="text-align:center;"><?php 
