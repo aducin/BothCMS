@@ -141,8 +141,8 @@ background-color: #aa7657;width:48%;border: 4px ridge black;
 		<td id="priceAndName"><b><a href="http://ad9bis.vot.pl/tory-h0/<?php htmlout($modified['id']); ?>-cysterna-francuska-primagaz-bttb.html" target="_blank"><?php htmlout($modified['nazwa']); ?></a></b></td>
 		<td id="priceAndName"><center><?php $modcena=$modified['cena']*1;
 				echo$modcena.'zł';
-				$reduction= new OgicomProduct;
-				$row= $reduction->getReduction($modified['id'], $oldpdo);
+				$reduction= new OgicomProduct($secondHost, $secondLogin, $secondPassword);
+				$row= $reduction->getReduction($modified['id']);
 				$row2 = $row->fetch();
 				$reducedPrice=$row2[0];
 				$reducedPrice2=$reducedPrice*1;
