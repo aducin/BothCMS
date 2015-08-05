@@ -23,7 +23,9 @@
 		if(isset($_GET['oldorder'])and $_GET['oldorder']!=''){
 		$panel='Stary panel: ';
 		$edycja='Kompletna edycja w SP';
+		$fullAction='fullEditionO';
 		$uaktualnij='Wyrównaj ilość w nowej bazie';
+		$action='BPSQN';
 		$uaktualnij2='Uaktualnij ilości dla całego zamówienia';
 		$uaktualnij3='Zmiana obu przez stary panel';
 		$order=$_GET['oldorder'];
@@ -31,7 +33,9 @@
 		if(isset($_GET['neworder'])and $_GET['neworder']!=''){
 		$panel='Nowy panel: ';	
 		$edycja='Kompletna edycja w NP';
+		$fullAction='fullEditionN';
 		$uaktualnij='Wyrównaj ilość w starej bazie';
+		$action='BPSQO';
 		$uaktualnij2='Uaktualnij ilości w całym zamówieniu';
 		$uaktualnij3='Zmiana obu przez nowy panel';
 		$order=$_GET['neworder'];
@@ -51,7 +55,7 @@
 					{
 						if($_GET['oldorder']!='')
 						{
-							$try= new NewProduct;
+							$try= new LinuxPlProduct;
 							$query = $try->getName($stry["id"], $oldpdo);
 							if ($query!=$stry["name"]){
 								?>Stary panel: 
@@ -63,7 +67,7 @@
 						}
 						elseif($_GET['neworder']!='')
 						{
-						$try= new OldProduct;
+						$try= new OgicomProduct;
 						$query = $try->getName($stry["id"], $oldpdo);
 							if ($query!=$stry["name"]){
 								?>Stary panel: 
@@ -84,14 +88,14 @@
 						<div>
 							<input type="hidden" name="id" value="<?php htmlout($stry["id"]); ?>">
 							<input type="hidden" name="quantity" value="<?php htmlout($stry["quantity"]); ?>">
-							<center><input type="submit" name="action" value="<?php htmlout($uaktualnij); ?>">
+							<center><input type="submit" name="<?php htmlout($action)?>" value="<?php htmlout($uaktualnij); ?>">
 							</div></td><td><center>
 									<?php htmlout($stry["onStock"]); ?></td><td>
 								<div>
-									<center><input type="submit" name="action" value="<?php htmlout($edycja); ?>">
+									<center><input type="submit" name="<?php htmlout($fullAction);?>" value="<?php htmlout($edycja); ?>">
 									</div>
 					<div>
-						<center><input type="submit" name="action" value="<?php htmlout($uaktualnij3); ?>">
+						<center><input type="submit" name="shortEdition" value="<?php htmlout($uaktualnij3); ?>">
 					</div></form></td></tr>
 									<?php endforeach; } } ?>
 								<br></table>
@@ -142,7 +146,7 @@ echo$new7.'zł'; ?>
 </td></tr></table></fieldset>
 <?php if(isset($_GET['mail'])) 
 {
-$to=$sDetail1["mail"];
+$to= $sDetail1["mail"]; //'ad9bis@gmail.com'
 $subject= 'Ad9bis - zamówienie z 15% rabatem';
 if($sDetail1['payment']=='Płatność przy odbiorze'){
 $message='
