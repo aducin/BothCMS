@@ -242,6 +242,10 @@ background-color: silver;border: 2px ridge black;font-style: italic; font-size: 
 							?>><?php htmlout($category['name']); ?></label></div>
 						<?php endforeach; ?>
 				</fieldset>
+				<fieldset id="fieldT">
+						<legend>Tagi aktywne dla tego produktu:</legend>
+						<input type="text" method="post" name="tagsText" size="80" value="<?php htmlout($completeTagNames);?>"</>
+						</fieldset>
 				<fieldset id="submitButton">
 				<legend id="legend">W ilu bazach zapisać zmiany</legend><table><tr><td>
 				<div id="checkbox">
@@ -255,25 +259,5 @@ background-color: silver;border: 2px ridge black;font-style: italic; font-size: 
 						<input type="hidden" name="id" value="<?php htmlout($QueryResult[0]); ?>">
 						<input id="submitButton2" type="submit" value="<?php htmlout($completeButton);?>">
 					</td></tr></table></div></fieldset>
-				<fieldset id="fieldT">
-						<legend>Tagi aktywne dla tego produktu:</legend>
-						<?php foreach ($this3 as $productTags): ?>
-						<form action="?<?php htmlout($tagName);?>" method="post"><div>
-							<input type="text" id="tagText" name="tagText[]" size="11" value="<?php htmlout($productTags['name']);?>"</>
-							<input type="hidden" name="tagID" value="<?php htmlout($productTags['id']); ?>">
-							<?php endforeach; ?>
-							</div>
-						</fieldset></form><hr size="5" width="99.6%"/><fieldset id="AddTag">
-						<legend>Dodaj/usuń tag</legend>
-					<form action="?<?php htmlout($tagName);?>Add" method="post"><div><table><tr>
-							<td><input type="text" id="tagAddText" name="newtagText" size="20" onchange="if(this.value!=''){ this.form.elements['newTag'].disabled=false; } else { this.form.elements['newTag'].disabled=true; }">
-							<input type="hidden" name="id" value="<?php htmlout($QueryResult[0]); ?>">
-							<input type="submit" id="newTag" name="newTag" value="Dodaj nowy tag" disabled>
-						</td></div></form>
-						<form action="?<?php htmlout($tagName);?>Cut" method="post"><div><td>
-							<input type="text" id="tagCutText" name="textCut" size="20" onchange="if(this.value!=''){ this.form.elements['cutTag'].disabled=false; } else { this.form.elements['cutTag'].disabled=true; }">
-							<input type="hidden" name="id" value="<?php htmlout($QueryResult[0]); ?>">
-							<input type="submit" id="newTag" name="cutTag" value="Usuń tag" disabled>
-						</td></tr></table></div></form>
-				</fieldset>
+					<hr size="5" width="99.6%"/>
 				</html>
