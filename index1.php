@@ -526,7 +526,7 @@ if (isset($_GET['fullEditionN']))
 		$oldQueryResult2 = $oldQuery2->fetch();
 		include 'templates/products.html.php';
 		}
-		if(isset($_GET['action'])and $_GET['action']=='search')
+	if(isset($_GET['action'])and $_GET['action']=='search')
 		{
 			if ($_GET['text'] =='' AND $_GET['category'] =='' AND $_GET['author'] ==''){
 				echo'<b>Nie chcesz chyba wypisywać wszystkich produktów z bazy...?</b><br>Zaznacz chociaż z 1 kryterium wyszukiwania!';
