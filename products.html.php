@@ -29,8 +29,11 @@ if(isset($_GET['action'])and $_GET['action']=='search'){ ?>
 	<table id="table">
 		<tr><th>Numer ID</th><th><b>Nowa nazwa produktu</b></th><th>Na stanie (NP)</th><th>Cena (NP)</th><th>Cena (SP)</th><th>Opcje</th></tr>
 		<?php foreach ($newQuery3 as $product): ?>
-		<tr>
-					<td><center><?php htmlout($product['id']); ?></td>
+		<tr><td>
+		<?php if(!isset($lastId) OR $lastId!=($product['id']))
+		{
+					?><center><?php htmlout($product['id']);
+					$lastId=($product['id']); ?></td>
 					<td id="TD"><b><a href="http://ad9bis.vot.pl/tory-h0/<?php htmlout($product['id']); ?>-cysterna-francuska-primagaz-bttb.html" target="_blank"><?php htmlout($product['name']); ?></a></b><br>
 		<?php $product2= new OgicomProduct($secondHost, $secondLogin, $secondPassword);	
 		$oldQuery = $product2->getProductQuery($product['id']);
@@ -45,26 +48,20 @@ if(isset($_GET['action'])and $_GET['action']=='search'){ ?>
 		} ?>
 	</td><td id="TD"><center><?php htmlout($product['quantity']); ?></td>
 <td id="TD"><center><?php $new0=number_format($product['price'], 2,'.','');
-$product1= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);;
+$product1= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
 $newQuery = $product1->getReduction($product['id']);
 $newQueryResult = $newQuery->fetch();
 			if(!isset($newQueryResult[0])){
 			echo$new0.' zł'; }
 			else {
-				$new=floatval($newQueryResult[0]);
-				$newQueryResult3=$new0-$new0*$new;
-				$newQueryResult6=number_format($newQueryResult3, 2,'.','');
-				$newQueryResult4=$new*100;
-				$newQueryResult5=$newQueryResult4.'%</b>';
-				echo$newQueryResult6.'zł<br>W tym rabat: <b>'.$newQueryResult5;
-			} ?>
+				$newQuery1 = $product1->countReduction($product['price'],$newQueryResult[0]);
+				echo$newQuery1;	} ?>
 </td><td id="TD"><center><?php
 $product2= new OgicomProduct($secondHost, $secondLogin, $secondPassword);	
-		$oldQuery = $product2->getProductQuery($product['id']);
-		$oldQueryResult = $oldQuery->fetch();
-		$oldQuery2= $product1->getReduction($product['id']);
+		$oldQuery = $product2->getPrice($product['id']);
+		$oldQuery2= $product2->getReduction($product['id']);
 		$oldQueryResult2 = $oldQuery2->fetch(); 
-		$new0=number_format($oldQueryResult[3], 2,'.','');
+		$new0=number_format($oldQuery, 2,'.','');
 			if(!isset($oldQueryResult2[0])){
 			echo$new0.' zł'; }
 			else {
@@ -82,7 +79,7 @@ $product2= new OgicomProduct($secondHost, $secondLogin, $secondPassword);
 											<input type="submit" name="fullEditionN" value="Kompletna edycja w NP">
 										</div>
 									</form>
-								</td></tr><?php	endforeach;}	} ?></table>
+								</td><?php } ?></tr><?php	endforeach;}	} ?></table>
 <?php if(isset($_GET['idnr'])): ?>
 	<table id="table"> 
 		<tr><th></th><th>Numer ID</th><th><b>Nazwa produktu</b></th><th>Na stanie</th><th>Cena</th><th>Opcje</th></tr>
@@ -108,8 +105,8 @@ $product2= new OgicomProduct($secondHost, $secondLogin, $secondPassword);
 			if(!isset($oldQueryResult2[0])){
 			echo$new0.' zł'; }
 			else {
-				$newTry= new OgicomProduct;
-				$newQuery = $newTry->countReduction($oldQueryResult[3],$oldQueryResult2[0]);
+				$product2= new OgicomProduct($secondHost, $secondLogin, $secondPassword);
+				$newQuery = $product2->countReduction($oldQueryResult[3],$oldQueryResult2[0]);
 				echo$newQuery;
 			} ?></td>
 			<td><form action="?" method="get">
