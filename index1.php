@@ -528,75 +528,35 @@ if (isset($_GET['fullEditionN']))
 		}
 		if(isset($_GET['action'])and $_GET['action']=='search')
 		{
-			if ($_GET['text'] !='' AND $_GET['category'] =='' AND $_GET['author'] =='')
-			{
-				$product1= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
-				$newQuery = $product1->getLoopTextQuery(' WHERE ps_product_lang.name LIKE :name ORDER BY ps_product_lang.id_product','%'.$_GET['text'].'%');
-				foreach ($newQuery as $newQuery2)
-				{
-					$newQuery3[]=array('id'=>$newQuery2['id_product'], 'name'=>$newQuery2['name'], 'quantity'=>$newQuery2['quantity'], 'price'=>$newQuery2['price']);
-				}
-			}
-			if ($_GET['author'] !='' AND $_GET['category'] =='' AND $_GET['text'] =='')
-			{
-				$product1= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
-				$newQuery = $product1->getLoopManufacturerQuery(" WHERE id_manufacturer= :id_manufacturer",$_GET['author']);
-				foreach ($newQuery as $newQuery2)
-				{
-					$newQuery3[]=array('id'=>$newQuery2['id_product'], 'name'=>$newQuery2['name'], 'quantity'=>$newQuery2['quantity'], 'price'=>$newQuery2['price']);
-				}
-			}
-			if ($_GET['text'] !='' AND $_GET['author'] !=''AND $_GET['category'] =='')
-			{
-				$product1= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
-				$newQuery = $product1->getLoopBothQuery(" WHERE id_manufacturer= :id_manufacturer AND ps_product_lang.name LIKE :name ORDER BY ps_product_lang.id_product",'%'.$_GET['text'].'%',$_GET['author']);
-				foreach ($newQuery as $newQuery2)
-				{
-					$newQuery3[]=array('id'=>$newQuery2['id_product'], 'name'=>$newQuery2['name'], 'quantity'=>$newQuery2['quantity'], 'price'=>$newQuery2['price']);
-				}
-			}
-			if ($_GET['category'] !='' AND$_GET['text'] =='' AND $_GET['author'] =='')
-			{
-				$product1= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
-				$newQuery = $product1->getLoopCategoryQuery(' WHERE id_category= :id_category',$_GET['category']);
-				foreach ($newQuery as $newQuery2)
-				{
-					$newQuery3[]=array('id'=>$newQuery2['id_product'], 'name'=>$newQuery2['name'], 'quantity'=>$newQuery2['quantity'], 'price'=>$newQuery2['price']);
-				}
-			}
-			if ($_GET['category'] !='' AND$_GET['text'] !='' AND $_GET['author'] =='')
-			{
-				$product1= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
-				$newQuery = $product1->getLoopBoth2Query(' WHERE id_category= :id_category AND ps_product_lang.name LIKE :name ORDER BY ps_product_lang.id_product','%'.$_GET['text'].'%',$_GET['category']);
-				foreach ($newQuery as $newQuery2)
-				{
-					$newQuery3[]=array('id'=>$newQuery2['id_product'], 'name'=>$newQuery2['name'], 'quantity'=>$newQuery2['quantity'], 'price'=>$newQuery2['price']);
-				}
-			}
-			if ($_GET['category'] !='' AND$_GET['text'] =='' AND $_GET['author'] !='')
-			{
-				$product1= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
-				$newQuery = $product1->getLoopBoth3Query(' WHERE id_category= :id_category AND id_manufacturer= :id_manufacturer', $_GET['category'], $_GET['author']);
-				foreach ($newQuery as $newQuery2)
-				{
-					$newQuery3[]=array('id'=>$newQuery2['id_product'], 'name'=>$newQuery2['name'], 'quantity'=>$newQuery2['quantity'], 'price'=>$newQuery2['price']);
-				}
-			}
-			if ($_GET['category'] !='' AND$_GET['text'] !='' AND $_GET['author'] !='')
-			{
-				$product1= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
-				$newQuery = $product1->getLoopTripleQuery(' WHERE id_category LIKE :id_category AND id_manufacturer LIKE :id_manufacturer AND ps_product_lang.name LIKE :name GROUP BY id_category, id_product','%'.$_GET['text'].'%','%'.$_GET['category'].'%','%'.$_GET['author'].'%');
-				foreach ($newQuery as $newQuery2)
-				{
-					$newQuery3[]=array('id'=>$newQuery2['id_product'], 'name'=>$newQuery2['name'], 'quantity'=>$newQuery2['quantity'], 'price'=>$newQuery2['price']);
-
-				}
-			}
 			if ($_GET['text'] =='' AND $_GET['category'] =='' AND $_GET['author'] ==''){
-				echo'<b>Nie chcesz chyba szukać wszystkich wyników w bazie...?</b><br>Zaznacz chociaż 1 kryterium wyszukiwania!';
+				echo'<b>Nie chcesz chyba wypisywać wszystkich produktów z bazy...?</b><br>Zaznacz chociaż z 1 kryterium wyszukiwania!';
 				exit();
+			}
+			else
+			{
+				$params[]=array('text'=>$_GET['text'],'category'=>$_GET['category'],'author'=>$_GET['author']);
+				foreach ($params as $result)
+					if ($result['text'] == "") { unset($result['text']); }
+				else {
+					$prequery[]= " name LIKE '"."%".$_GET['text']."%"."'";
+				}
+				if ($result['category'] == "") { unset($result['category']); }
+				else {
+					$prequery[]= " id_category =".$_GET['category'];
+				}
+				if ($result['author'] == "") { unset($result['author']); }
+				else {
+					$prequery[]= " id_manufacturer =".$_GET['author'];
+				}
+				$implodeSelect= ' WHERE'.implode(" AND",$prequery);
+				$product1= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
+				$newQuery = $product1->getProductData($implodeSelect);
+				foreach ($newQuery as $newQuery2)
+				{
+					$newQuery3[]=array('id'=>$newQuery2['id_product'], 'name'=>$newQuery2['name'], 'quantity'=>$newQuery2['quantity'], 'price'=>$newQuery2['price']);
+				}
 			}
 			include 'templates/products.html.php';
 		}
-	ob_end_flush();
-	exit();
+		ob_end_flush();
+		exit();
