@@ -73,63 +73,9 @@ abstract class Product
 		return $c;
 	}
 
-	public function getLoopTextQuery($where,$name) {
-		$sql=$this->getSelectLessProductSubquery() . $where;
-		$c=$this->pdo->prepare($sql);
-		$c->bindValue(':name', $name);
-		$c->execute();
-		return $c;
-	}
-
-	public function getLoopManufacturerQuery($where,$manufactorer) {
-		$sql=$this->getSelectLessProductSubquery() . $where;
-		$c=$this->pdo->prepare($sql);
-		$c->bindValue(':id_manufacturer', $manufactorer);
-		$c->execute();
-		return $c;
-	}
-
-	public function getLoopCategoryQuery($where,$category) {
+	public function getProductData($where) {
 		$sql=$this->getSelectProductSubquery() . $where;
 		$c=$this->pdo->prepare($sql);
-		$c->bindValue(':id_category', $category);
-		$c->execute();
-		return $c;
-	}
-
-	public function getLoopBothQuery($where,$name,$manufactorer) {
-		$sql=$this->getSelectLessProductSubquery() . $where;
-		$c=$this->pdo->prepare($sql);
-		$c->bindValue(':name', $name);
-		$c->bindValue(':id_manufacturer', $manufactorer);
-		$c->execute();
-		return $c;
-	}
-
-	public function getLoopBoth2Query($where,$name,$category) {
-		$sql=$this->getSelectProductSubquery() . $where;
-		$c=$this->pdo->prepare($sql);
-		$c->bindValue(':name', $name);
-		$c->bindValue(':id_category', $category);
-		$c->execute();
-		return $c;
-	}
-
-	public function getLoopBoth3Query($where,$category,$manufactorer) {
-		$sql=$this->getSelectProductSubquery() . $where;
-		$c=$this->pdo->prepare($sql);
-		$c->bindValue(':id_category', $category);
-		$c->bindValue(':id_manufacturer', $manufactorer);
-		$c->execute();
-		return $c;
-	}
-
-	public function getLoopTripleQuery($where,$name,$category,$manufactorer) {
-		$sql=$this->getSelectProductSubquery() . $where;
-		$c=$this->pdo->prepare($sql);
-		$c->bindValue(':name', $name);
-		$c->bindValue(':id_category', $category);
-		$c->bindValue(':id_manufacturer', $manufactorer);
 		$c->execute();
 		return $c;
 	}
@@ -158,6 +104,16 @@ abstract class Product
 		$c->bindValue(':id', $productId);
 		$c->execute();
 		return $c;
+	}
+
+		public function getPrice($productId) {
+		$sql='SELECT price FROM ps_product
+		WHERE ps_product.id_product=:id';
+		$c= $this->pdo->prepare($sql);
+		$c->bindValue(':id', $productId);
+		$c->execute();
+		$c1 = $c->fetch();
+		return($c1["price"]);
 	}
 
 	public function selectManufacturer($id){
