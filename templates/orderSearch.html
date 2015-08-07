@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+	<meta charset="utf-8">
+	<link rel="shortcut icon" href="ad9bis.ico" type="image/x-icon" />
+	<title>Zarządzanie produktami</title>
+	<script src="/ProjektCap3/assets/jquery.js" ></script>
+	<script src="/ProjektCap3/assets/jscript.js"></script>
+	<style type="text/css">
+body{
+		background-color: #ab9999;
+	}
+	#fldset1{
+background-color: #aa7768;width:48%;border: 4px ridge black;
+	}
+	#fldset{
+		background-color: #aa7768;width:48%;border: 4px ridge black;
+	}
+	#notific{
+		background-color: #aa5568;
+	}
+	#notific1{
+		text-align:right;
+	}
+	#h1{
+		margin-left:9%;
+	}
+	#neworder{
+		margin-left:200px;background-color:#ffffe3;
+	}
+	#oldorder{
+		margin-left:200px;background-color:#ffffe3;
+	}
+	#notification{
+		margin-left:200px;background-color:#ffffe3;
+	}
+	#detailorder{
+		margin-left:200px;background-color:#ffffe3;
+	}
+	#logOut{
+		margin-left:452px;padding-top: 3px;padding-bottom: 3px;margin-top:13px;
+		font-size:13pt; font-style:italic;padding-right: 17px;padding-left: 17px;
+		margin-bottom:50px;
+	}
+	#upperInput{
+		margin-left:21%;padding-top: 3px;padding-bottom: 3px;margin-top:13px;
+		font-size:12pt; font-style:italic; padding-right: 11px;
+	}
+	#searchInput{
+		margin-left:202px;padding-top: 3px;padding-bottom: 3px;margin-top:13px;padding-left: 10px;
+		font-size:13pt; font-style:italic; padding-right: 12px;
+	}
+	#textTab{
+		font-size:14pt; font-style:bold;
+	}
+	</style>
+	</head>
+<body>
+	<fieldset id="fldset1"><form action="../index.php" method="post">
+	<input type="hidden" name="action" value="products">
+	<input id="upperInput" type="submit" value="Produkty">
+	<input id="upperInput" type="submit" value="Zamówienia" disabled>
+</form></fieldset>
+	<h1 id="h1">Edycja zamówień obu sklepów</h1>
+	<fieldset id="fldset">
+		<table><form action="?" method="get">
+			<h2>Wyświetl zamówienie spełniające następujące kryteria:</h2>
+			<tr><td id="textTab">Numer Zamówienia NP:</td>
+				<td id="notific1"><input type="text" size="11" name="neworder" id="neworder"></td></tr><tr>
+				<td id="textTab">Numer Zamówienia SP:</td>
+				<td id="notific1"><input type="text" size="11" name="oldorder" id="oldorder"></td></tr><tr>
+				<td id="textTab">Prześlij link do przesyłki:</td>
+				<td id="notific1"><input type="text" size="11" name="notification" id="notification"></td></tr><tr id="notific"><td>
+			<input type="radio" name="send" value="modele" checked="checked">Stary panel</input>
+			</td><td id="notific1"><input type="radio" name="send" value="ad9bis" >Nowy panel</input>
+		</td></tr><tr>
+				<td id="textTab">Oblicz 15% rabat - tylko SP:</td>
+				<td id="notific1"><input type="text" size="11" name="detailorder" id="detailorder"></td></tr>
+<tr id="notific"><td>
+<input type="checkbox" name="mail" value="send">Wyślij mail o rabacie do klienta
+</td><td id="notific1">(wiadomość zostanie wysłana automatycznie)</td></tr>
+				<tr>
+				<tr><td></td><td><div>
+		<input type="hidden" name="action" value="orderSearch">
+		<input id="searchInput" type="submit" value="Wyszukaj">
+	</div></td></tr>
+</form></table>
+	</fieldset>
+	<form action="../index.php" method="post">
+	<input id="logOut" type="submit" name="logout" value="Wyloguj"> 
+</form>
+</body>
+</html>
