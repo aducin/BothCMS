@@ -10,3 +10,4 @@ include_once $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/classes/ProductClass/abstract
 include_once $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/classes/ProductClass/OldProduct.class.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/classes/ProductClass/NewProduct.class.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/classes/DataBaseClass/db.class.php';
+include_once $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/config/functions.php';
