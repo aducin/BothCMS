@@ -86,7 +86,8 @@ if(isset($_GET['editformBoth'])){
 	}catch (PDOExceptioon $e){
 		echo 'Aktualizacja nowych danych nie powiodła się: ' . $e->getMessage();
 		exit();
-	}try{
+	}
+	try{
 		$product2= new OgicomProduct($secondHost, $secondLogin, $secondPassword);
 		$oldQuery = $product2->updateBoth($_POST['id'], $_POST['nominalPriceOld'], $_POST['text'], $_POST['quantity']);
 		$oldQuery2 = $product2->confirmation($_POST['id']);
@@ -118,7 +119,8 @@ if(isset($_GET['editcompleteformold'])){
 	}catch (PDOExceptioon $e){
 		echo 'Aktualizacja nazwy nie powiodła się: ' . $e->getMessage();
 		exit();
-	}try{
+	}
+	try{
 		$oldQuery = $product2->updateManufacturer($_POST['author'], $_POST['id']);
 	}catch (PDOExceptioon $e){
 		echo 'Aktualizacja producenta nie powiodła się: ' . $e->getMessage();
