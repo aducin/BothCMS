@@ -198,7 +198,7 @@ if(isset($_GET['editcompleteformnew'])OR(isset($_GET['editcompleteformold']))){
 			}
 		}
 	}
-	include 'templates/confirmation.html.php';
+	include $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/confirmation.html.php';
 	exit();
 }
 if(isset($_GET['shortEdition'])){
@@ -219,86 +219,50 @@ if(isset($_GET['shortEdition'])){
 		echo 'Błąd przy pobieraniu informacji o produkcie: ' . $e->getMessage();
 		exit();
 	}
-	include 'templates/form.html.php';
+	include $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/form.html.php';
 	exit();
 }
-if (isset($_GET['fullEditionN'])){
-	try{
+if(isset($_GET['fullEditionN'])OR(isset($_GET['fullEditionO']))){
+	if (isset($_GET['fullEditionN'])){
 		$product1= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
-		$Query = $product1->getWholeDetailsQuery($_GET['id']);
-		$QueryResult = $Query->fetch();
-		$Query1 = $product1->getReduction($_GET['id']);
-		$Query3 = $Query1->fetch();
-		$Query6 = $product1->selectManufacturer($_GET['id']);
-		$Query8 = $product1->getCategory($_GET['id']);
-		foreach ($Query8 as $Query9){
-			$this[]=array('id'=>$Query9['id_category'], 'name'=>$Query9['meta_title']);
-			$selectedCats[]=$Query9['id_category'];
-		}
-		$Query10 = $product1->getEveryCategory();
-		foreach ($Query10 as $Query11){
-			$this2[]=array('id'=>$Query11['id_category'], 'name'=>$Query11['meta_title'], 'selected'=> in_array($Query11['id_category'], $selectedCats));
-		}
-		$Query12 = $product1->selectTag($_GET['id']);
-		foreach ($Query12 as $Query13){
-			$this3[]=array('id'=>$Query13['id_tag'], 'name'=>$Query13['name']);
-		}
-		foreach ($this3 as $this4){
-			$tagNames[]=$this4['name']; 
-		}
-		$completeTagNames=implode(", ", $tagNames);
 		$product2= new OgicomProduct($secondHost, $secondLogin, $secondPassword);
-		$Query2 = $product2->getProductQuery($_GET['id']);
-		$QueryResult2 = $Query2->fetch();
-		$Query4 = $product2->getReduction($_GET['id']);
-		$Query5 = $Query4->fetch();
-		$baza='- informacje z nowego panelu.';
 		$editForm='?editcompleteformnew';
-		include 'templates/completeForm.html.php';
-		exit();
-	}catch (PDOExceptioon $e){
-		echo 'Pobranie kompletnych danych ze starej bazy nie powiodło się: ' . $e->getMessage();
-		exit();
-	}
-}
-if (isset($_GET['fullEditionO'])){
-	try{
-		$product2= new OgicomProduct($secondHost, $secondLogin, $secondPassword);
-		$Query = $product2->getWholeDetailsQuery($_GET['id']);
-		$QueryResult = $Query->fetch();
-		$Query1 = $product2->getReduction($_GET['id']);
-		$Query3 = $Query1->fetch();
-		$Query6 = $product2->selectManufacturer($_GET['id']);
-		$Query8 = $product2->getCategory($_GET['id']);
-		foreach ($Query8 as $Query9){
-			$this[]=array('id'=>$Query9['id_category'], 'name'=>$Query9['meta_title']);
-			$selectedCats[]=$Query9['id_category'];
-		}
-		$Query10 = $product2->getEveryCategory();
-		foreach ($Query10 as $Query11){
-			$this2[]=array('id'=>$Query11['id_category'], 'name'=>$Query11['meta_title'], 'selected'=> in_array($Query11['id_category'], $selectedCats));
-		}
-		$Query12 = $product2->selectTag($_GET['id']);
-		foreach ($Query12 as $Query13){
-			$this3[]=array('id'=>$Query13['id_tag'], 'name'=>$Query13['name']);
-		}
-		foreach ($this3 as $this4){
-			$tagNames[]=$this4['name'];
-		}
-		$completeTagNames=implode(", ", $tagNames);
-		$product1= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
-		$Query2 = $product1->getProductQuery($_GET['id']);
-		$QueryResult2 = $Query2->fetch();
-		$Query4 = $product1->getReduction($_GET['id']);
-		$Query5 = $Query4->fetch();
-		$baza='- informacje ze starego panelu.';
+	}elseif(isset($_GET['fullEditionO'])){
+		$product1= new OgicomProduct($secondHost, $secondLogin, $secondPassword);
+		$product2= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
 		$editForm='?editcompleteformold';
-		include 'templates/completeForm.html.php';
-		exit();
-	}catch (PDOExceptioon $e){
-		echo 'Pobranie kompletnych danych ze starej bazy nie powiodło się: ' . $e->getMessage();
-		exit();
 	}
+	$Query = $product1->getWholeDetailsQuery($_GET['id']);
+	$QueryResult = $Query->fetch();
+	$Query1 = $product1->getReduction($_GET['id']);
+	$reduction1 = $Query1->fetch();
+	$manufacturer = $product1->selectManufacturer($_GET['id']);
+	$category = $product1->getCategory($_GET['id']);
+	foreach ($category as $category1){
+		$this[]=array('id'=>$category1['id_category'], 'name'=>$category1['meta_title']);
+		$selectedCats[]=$category1['id_category'];
+	}
+	$result= $product1->getEveryCategory();
+	foreach ($result as $result2){
+		$this2[]=array('id'=>$result2['id_category'], 'name'=>$result2['meta_title'], 'selected'=> in_array($result2['id_category'], $selectedCats));
+	}
+	$selectTag = $product1->selectTag($_GET['id']);
+	foreach ($selectTag as $tag){
+		if($tag!=''){
+			$this3[]=array('id'=>$tag['id_tag'],'name'=>$tag['name']);
+		}else{
+			$tag='';
+		}
+	}
+	foreach ($this3 as $this4){
+		$tagNames[]=$this4['name']; 
+		$completeTagNames=implode(", ", $tagNames);
+	}
+	$secondPrice = $product2->getPrice($_GET['id']);
+	$reduction = $product2->getReduction($_GET['id']);
+	$reduction2 = $reduction->fetch();
+	include $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/completeForm.html.php';
+	exit();
 }
 if(isset($_GET['action'])and $_GET['action']=='idsearch'){
 	$product1= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
@@ -311,7 +275,7 @@ if(isset($_GET['action'])and $_GET['action']=='idsearch'){
 	$oldQueryResult = $oldQuery->fetch();
 	$oldQuery2= $product2->getReduction($_GET['idnr']);
 	$oldQueryResult2 = $oldQuery2->fetch();
-	include 'templates/products.html.php';
+	include $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/products.html.php';
 }
 if(isset($_GET['action'])and $_GET['action']=='search'){
 	if ($_GET['text'] =='' AND $_GET['category'] =='' AND $_GET['author'] ==''){

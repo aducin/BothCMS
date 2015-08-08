@@ -98,8 +98,11 @@ background-color: silver;border: 2px ridge black;font-style: italic; font-size: 
 		</head>
 		<body>
 	<legend><h1>Edycja produktu ID: <?php htmlout($QueryResult[0]);
-	echo' ';
-	htmlout($baza); ?><h1></legend>
+	if(isset($_GET['fullEditionN'])){
+		echo' - informacje z nowego panelu.';
+	}elseif(isset($_GET['fullEditionO'])){
+		echo' - informacje ze starego panelu.';
+	} ?><h1></legend>
 	<form name="form" action="<?php htmlout($editForm); ?>" method="post" onsubmit="wyswietlAlert()">
 		<div>
 			<label for="text">Aktualna nazwa produktu:</label>
@@ -156,7 +159,7 @@ background-color: silver;border: 2px ridge black;font-style: italic; font-size: 
 						<option value="">Wybierz producenta</option>
 						<?php foreach ($authors as $authori): ?>
 						<option value="<?php htmlout($authori['id']); ?>"<?php
-						if ($authori['name'] == $Query6)
+						if ($authori['name'] == $manufacturer)
 						{
 							echo ' selected';
 						}
@@ -167,23 +170,22 @@ background-color: silver;border: 2px ridge black;font-style: italic; font-size: 
 			<?php if(isset($_GET['fullEditionO'])){
 				$button= 'Aktualizuj produkt w starej bazie';
 				$completeButton="Uaktualnij produkt (SB)";
-			$tagName='changeTabOld'; $buttonCat='Aktualizuj kategorie w SB';
-			$catName='changeCatOld'; ?>
+			$tagName='changeTabOld'; ?>
 			<div id="priceC">
 			<label for="priceOld">Nominalna cena produktu (SP):</label>
-			<input type="text" id="priceText" name="nominalPriceOld" size="11" value="<?php htmlout($QueryResult[9]); ?>"</>
+			<input type="text" id="priceText" name="nominalPriceOld" size="11" value="<?php htmlout($QueryResult[9]);?>"</>
 			<?php 
-				if ($Query3!='') {
-					$new=floatval($Query3[0]);
+				if ($reduction1!='') {
+					$new=floatval($reduction1[0]);
 					$new0=number_format($new, 2,'.','');
 					echo '<br>'.'UWAGA! Rabat wynosi '.$new0.' zł';
 				} ?>
 				</div><div id="priceCO">
 			<label for="pricenew">Nominalna cena produktu (NP):</label>
-			<input type="text" id="priceTextO" name="nominalPriceNew" size="11" value="<?php htmlout($QueryResult2[3]); ?>"</>
+			<input type="text" id="priceTextO" name="nominalPriceNew" size="11" value="<?php htmlout($secondPrice);?>"</>
 			<?php 
-				if ($Query5!='') {
-					$new=floatval($Query5[0]);
+				if ($reduction2!='') {
+					$new=floatval($reduction2[0]);
 					$new0=$new*100;
 					echo '<br>'.'UWAGA! Rabat wynosi '.$new0.'% wartości';
 				}} ?>
@@ -191,24 +193,23 @@ background-color: silver;border: 2px ridge black;font-style: italic; font-size: 
 			<?php if(isset($_GET['fullEditionN'])){ 
 				$button= 'Aktualizuj produkt w nowej bazie';
 				$completeButton="Uaktualnij produkt (NB)";
-				$tagName='changeTabNew'; $buttonCat='Aktualizuj kategorie w NB';
-				$catName='changeCatNew'; ?>
+				$tagName='changeTabNew';?>
 			<div id="priceC">
 			<label for="pricenew">Nominalna cena produktu (NP):</label>
-			<input type="text" id="priceText" name="nominalPriceNew" size="11" value="<?php htmlout($QueryResult[9]); ?>"</>
-			<?php 
-				if ($Query3!='') {
-					$new=floatval($Query3[0]);
+			<input type="text" id="priceText" name="nominalPriceNew" size="11" value="<?php htmlout($QueryResult[9]);?>"
+			</><?php 
+				if ($reduction1!='') {
+					$new=floatval($reduction1[0]);
 					$new0=$new*100;
 					echo '<br>'.'UWAGA! Rabat wynosi '.$new0.'% wartości';
 				} ?>
 			</div>
 			<div id="priceCO">
 			<label for="priceOld">Nominalna cena produktu (SP):</label>
-			<input type="text" id="priceTextO" name="nominalPriceOld" size="11" value="<?php htmlout($QueryResult2[3]); ?>"</>
+			<input type="text" id="priceTextO" name="nominalPriceOld" size="11" value="<?php htmlout($secondPrice);?>"</>
 			<?php 
-				if ($Query5!='') {
-					$new=floatval($Query5[0]);
+				if ($reduction2!='') {
+					$new=floatval($reduction2[0]);
 					$new0=number_format($new, 2,'.','');
 					echo '<br>'.'UWAGA! Rabat wynosi '.$new0.' zł';
 				}} ?>
@@ -241,7 +242,9 @@ background-color: silver;border: 2px ridge black;font-style: italic; font-size: 
 				</fieldset>
 				<fieldset id="fieldT">
 						<legend>Tagi aktywne dla tego produktu:</legend>
-						<input type="text" method="post" name="tagsText" size="80" value="<?php htmlout($completeTagNames);?>"</>
+						<input type="text" method="post" name="tagsText" size="80" value="<?php
+						if(isset($this3)){
+						htmlout($completeTagNames); } ?>"</>
 						</fieldset>
 				<fieldset id="submitButton">
 				<legend id="legend">W ilu bazach zapisać zmiany</legend><table><tr><td>
