@@ -100,21 +100,20 @@ if(isset($_GET['editformBoth'])){
 	include 'templates/confirmation.html.php';
 	exit();
 }
-if(isset($_GET['editcompleteformnew'])){
-	$product1= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
-	$product2= new OgicomProduct($secondHost, $secondLogin, $secondPassword);
-	if (isset($_POST['change'])and $_POST['change']== "nameChange"){
-		$oldQuery = $product2->insertModyfy($_POST['id'], $_POST['text']);
-	}
-}
-if(isset($_GET['editcompleteformold'])){
-	$product2= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
-	$product1= new OgicomProduct($secondHost, $secondLogin, $secondPassword);
-	if (isset($_POST['change'])and $_POST['change']== "nameChange"){
-		$oldQuery = $product1->insertModyfy($_POST['id'], $_POST['text']);
-	}
-}
 if(isset($_GET['editcompleteformnew'])OR(isset($_GET['editcompleteformold']))){
+	if(isset($_GET['editcompleteformnew'])){
+		$product1= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
+		$product2= new OgicomProduct($secondHost, $secondLogin, $secondPassword);
+		if (isset($_POST['change'])and $_POST['change']== "nameChange"){
+			$oldQuery = $product2->insertModyfy($_POST['id'], $_POST['text']);
+		}
+	}elseif(isset($_GET['editcompleteformold'])){
+		$product2= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
+		$product1= new OgicomProduct($secondHost, $secondLogin, $secondPassword);
+		if (isset($_POST['change'])and $_POST['change']== "nameChange"){
+			$oldQuery = $product1->insertModyfy($_POST['id'], $_POST['text']);
+		}
+	}
 	if ($_POST['text']==''){
 		echo 'Musisz podać nazwę produktu!';
 		exit();

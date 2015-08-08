@@ -212,21 +212,17 @@ if(isset($_GET['action'])&&$_GET['action']=='orderSearch'){
 	}
 	include $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/orders.html';
 }
-if (isset($_GET['BPSQO'])){
-	$order1= new OgicomProduct($secondHost, $secondLogin, $secondPassword);
-	$oldQuery = $order1->updateQuantity($_GET['quantity'], $_GET['id']);
-	$oldQuery = $order1->confirmation($_GET['id']);
-	$idOld= $oldQuery["id_product"];
-	$quantityOld= $oldQuery["quantity"];
-	include $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/confirmation.html.php';
-	exit();
-}
-if (isset($_GET['BPSQN'])){
-	$order2= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
-	$newQuery = $order2->updateQuantity($_GET['quantity'], $_GET['id']);
-	$newQuery = $order2->confirmation($_GET['id']);
-	$idOld= $newQuery["id_product"];
-	$quantityNew= $newQuery["quantity"];
+if (isset($_GET['BPSQO'])OR(isset($_GET['BPSQN']))){
+	if (isset($_GET['BPSQO'])){
+		$order1= new OgicomProduct($secondHost, $secondLogin, $secondPassword);
+	}
+	elseif (isset($_GET['BPSQN'])){
+		$order1= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
+	}
+	$Query = $order1->updateQuantity($_GET['quantity'], $_GET['id']);
+	$Query = $order1->confirmation($_GET['id']);
+	$idOld= $Query["id_product"];
+	$quantityOld= $Query["quantity"];
 	include $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/confirmation.html.php';
 	exit();
 }
