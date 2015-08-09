@@ -86,13 +86,11 @@ if(isset($_GET['shortEdition'])){
 		$product1= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
 		$Query = $product1->getProductQuery($_GET['id']);
 		$QueryResult = $Query->fetch();
-		$Query3= $product1->getReduction($_GET['id']);
-		$QueryResult3 = $Query3->fetch();
+		$Query3= $product1->getReductionData($_GET['id']);
 		$product2= new OgicomProduct($secondHost, $secondLogin, $secondPassword);
 		$Query2 = $product2->getProductQuery($_GET['id']);
 		$QueryResult2 = $Query2->fetch();
-		$Query4= $product2->getReduction($_GET['id']);
-		$QueryResult4 = $Query4->fetch();
+		$Query4= $product2->getReductionData($_GET['id']);
 		$button= 'Aktualizuj produkt w obu bazach';
 		$editForm='?editformBoth';
 	}catch (PODException $e){
@@ -114,8 +112,7 @@ if(isset($_GET['fullEditionN'])OR(isset($_GET['fullEditionO']))){
 	}
 	$Query = $product1->getWholeDetailsQuery($_GET['id']);
 	$QueryResult = $Query->fetch();
-	$Query1 = $product1->getReduction($_GET['id']);
-	$reduction1 = $Query1->fetch();
+	$reduction1= $product1->getReductionData($_GET['id']);
 	$manufacturer = $product1->selectManufacturer($_GET['id']);
 	$category = $product1->getCategory($_GET['id']);
 	foreach ($category as $category1){
@@ -139,8 +136,7 @@ if(isset($_GET['fullEditionN'])OR(isset($_GET['fullEditionO']))){
 		$completeTagNames=implode(", ", $tagNames);
 	}
 	$secondPrice = $product2->getPrice($_GET['id']);
-	$reduction = $product2->getReduction($_GET['id']);
-	$reduction2 = $reduction->fetch();
+	$reduction2= $product2->getReductionData($_GET['id']);
 	include $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/completeForm.html.php';
 	exit();
 }

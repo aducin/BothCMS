@@ -50,23 +50,21 @@ if(isset($_GET['action'])and $_GET['action']=='search'){ ?>
 	</td><td id="TD"><center><?php htmlout($product['quantity']); ?></td>
 <td id="TD"><center><?php $new0=number_format($product['price'], 2,'.','');
 $product1= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
-$newQuery = $product1->getReduction($product['id']);
-$newQueryResult = $newQuery->fetch();
-			if(!isset($newQueryResult[0])){
+$newQuery = $product1->getReductionData($product['id']);
+			if(!isset($newQuery)){
 			echo$new0.' zł'; }
 			else {
-				$newQuery1 = $product1->countReduction($product['price'],$newQueryResult[0]);
+				$newQuery1 = $product1->countReduction($product['price'],$newQuery);
 				echo$newQuery1;	} ?>
 </td><td id="TD"><center><?php
 $product2= new OgicomProduct($secondHost, $secondLogin, $secondPassword);	
 		$oldQuery = $product2->getPrice($product['id']);
-		$oldQuery2= $product2->getReduction($product['id']);
-		$oldQueryResult2 = $oldQuery2->fetch(); 
+		$oldQuery2= $product2->getReductionData($product['id']); 
 		$new0=number_format($oldQuery, 2,'.','');
-			if(!isset($oldQueryResult2[0])){
+			if(!isset($oldQuery2)){
 			echo$new0.' zł'; }
 			else {
-				$new=floatval($oldQueryResult2[0]);
+				$new=floatval($oldQuery2);
 				$new2=number_format($new, 2,'.','');
 				$oldQueryResult3=$new0-$new;
 				$oldQueryResult4=number_format($oldQueryResult3, 2,'.','');
@@ -86,11 +84,11 @@ $product2= new OgicomProduct($secondHost, $secondLogin, $secondPassword);
 		<tr><th></th><th>Numer ID</th><th><b>Nazwa produktu</b></th><th>Na stanie</th><th>Cena</th><th>Opcje</th></tr>
 		<tr><td><b>Nowy Panel:</b></td><td><center><?php htmlout($newQueryResult[0]); ?></td><td><center><?php htmlout($newQueryResult[1]); ?></td><td><center><?php htmlout($newQueryResult[2]); ?></td>
 			<td><center><?php $new0=number_format($newQueryResult[3], 2,'.','');
-			if(!isset($newQueryResult2[0])){
+			if(!isset($newQuery2)){
 			echo$new0.' zł'; }
 			else {
 				$product1= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
-				$newQuery = $product1->countReduction($newQueryResult[3],$newQueryResult2[0]);
+				$newQuery = $product1->countReduction($newQueryResult[3],$newQuery2);
 				echo$newQuery;
 			} ?></td>
 			<td><form action="?bothChange" method="get">
@@ -103,11 +101,11 @@ $product2= new OgicomProduct($secondHost, $secondLogin, $secondPassword);
 			</td></tr>
 		<tr><td><b>Stary Panel:</b></td><td><center><?php htmlout($oldQueryResult[0]); ?></td><td><center><?php htmlout($oldQueryResult[1]); ?></td><td><center><?php htmlout($oldQueryResult[2]); ?></td>
 			<td><center><?php $new0=number_format($oldQueryResult[3], 2,'.','');
-			if(!isset($oldQueryResult2[0])){
+			if(!isset($oldQuery2)){
 			echo$new0.' zł'; }
 			else {
 				$product2= new OgicomProduct($secondHost, $secondLogin, $secondPassword);
-				$newQuery = $product2->countReduction($oldQueryResult[3],$oldQueryResult2[0]);
+				$newQuery = $product2->countReduction($oldQueryResult[3],$oldQuery2);
 				echo$newQuery;
 			} ?></td>
 			<td><form action="?" method="get">

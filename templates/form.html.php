@@ -81,15 +81,15 @@ if(isset($_GET['shortEdition'])and $_GET['shortEdition']== 'Zmiana obu przez now
 			</label>
 			</div>
 			<div id="ramka">
-				<label for="priceOld">Cena produktu (SP): <?php if(isset($QueryResult4[0])){
+				<label for="priceOld">Cena produktu (SP): <?php if(isset($Query4)){
 				$product2= new OgicomProduct($secondHost, $secondLogin, $secondPassword);
-				$oldQuery = $product2->countReduction($QueryResult2[3],$QueryResult4[0]);
+				$oldQuery = $product2->countReduction($QueryResult2[3],$Query4);
 				echo$oldQuery;} ?></label>
 				<input type="text" id="priceS" name="nominalPriceOld" size="15" value="<?php htmlout($QueryResult2[3]); ?>"</><br>
 				</div><div id="ramka">
-				<label for="pricenew">Cena produktu (NP): <?php if(isset($QueryResult3[0])){
+				<label for="pricenew">Cena produktu (NP): <?php if(isset($Query3)){
 				$product1= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
-				$newQuery = $product1->countReduction($QueryResult[3],$QueryResult3[0]);
+				$newQuery = $product1->countReduction($QueryResult[3],$Query3);
 				echo$newQuery;} ?></label>
 				<input type="text" id="priceN" name="nominalPriceNew" size="15" value="<?php htmlout($QueryResult[3]); ?>"</>
 			</div>

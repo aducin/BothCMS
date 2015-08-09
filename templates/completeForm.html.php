@@ -176,7 +176,7 @@ background-color: silver;border: 2px ridge black;font-style: italic; font-size: 
 			<input type="text" id="priceText" name="nominalPriceOld" size="11" value="<?php htmlout($QueryResult[9]);?>"</>
 			<?php 
 				if ($reduction1!='') {
-					$new=floatval($reduction1[0]);
+					$new=floatval($reduction1);
 					$new0=number_format($new, 2,'.','');
 					echo '<br>'.'UWAGA! Rabat wynosi '.$new0.' zł';
 				} ?>
@@ -185,7 +185,7 @@ background-color: silver;border: 2px ridge black;font-style: italic; font-size: 
 			<input type="text" id="priceTextO" name="nominalPriceNew" size="11" value="<?php htmlout($secondPrice);?>"</>
 			<?php 
 				if ($reduction2!='') {
-					$new=floatval($reduction2[0]);
+					$new=floatval($reduction2);
 					$new0=$new*100;
 					echo '<br>'.'UWAGA! Rabat wynosi '.$new0.'% wartości';
 				}} ?>
@@ -199,7 +199,7 @@ background-color: silver;border: 2px ridge black;font-style: italic; font-size: 
 			<input type="text" id="priceText" name="nominalPriceNew" size="11" value="<?php htmlout($QueryResult[9]);?>"
 			</><?php 
 				if ($reduction1!='') {
-					$new=floatval($reduction1[0]);
+					$new=floatval($reduction1);
 					$new0=$new*100;
 					echo '<br>'.'UWAGA! Rabat wynosi '.$new0.'% wartości';
 				} ?>
@@ -209,7 +209,7 @@ background-color: silver;border: 2px ridge black;font-style: italic; font-size: 
 			<input type="text" id="priceTextO" name="nominalPriceOld" size="11" value="<?php htmlout($secondPrice);?>"</>
 			<?php 
 				if ($reduction2!='') {
-					$new=floatval($reduction2[0]);
+					$new=floatval($reduction2);
 					$new0=number_format($new, 2,'.','');
 					echo '<br>'.'UWAGA! Rabat wynosi '.$new0.' zł';
 				}} ?>
