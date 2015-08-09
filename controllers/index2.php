@@ -2,37 +2,35 @@
 require_once $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/config/bootstrap.php';
 
 $DBHandler=parse_ini_file($_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/config/database.ini',true);
-$firstHandler=$DBHandler ["firstDB"];
-$firstHost=$firstHandler["host"];
-$firstLogin=$firstHandler["login"];
-$firstPassword=$firstHandler["password"];
-$secondHandler=$DBHandler ["secondDB"];
-$secondHost=$secondHandler["host"];
-$secondLogin=$secondHandler["login"];
-$secondPassword=$secondHandler["password"];
+$firstHost=$DBHandler["firstDB"]["host"];
+$firstLogin=$DBHandler["firstDB"]["login"];
+$firstPassword=$DBHandler["firstDB"]["password"];
+$secondHost=$DBHandler["secondDB"]["host"];
+$secondLogin=$DBHandler["secondDB"]["login"];
+$secondPassword=$DBHandler["secondDB"]["password"];
 
 session_start();
+if(isset($_POST['logout'])){
+	unset($_SESSION['log']);
+	header('Location:index.php');
+	exit();
+}
 if(!isset($_SESSION['log'])){
 	$userLogin=$_POST['login'];
 	$userPassword=$_POST['password'];
-}
-if (!isset($_SESSION['log'])){
 	$db=new db($firstHost, $firstLogin, $firstPassword);
 	$dbResult= $db->getUserData($userLogin, $userPassword);
 	$resNumb=$dbResult->rowCount();
 	if($resNumb>0){
-		$resNumb=$result->rowCount();
-		if($resNumb>0){
-			$finalResult=$result->fetch(PDO::FETCH_ASSOC);
-			$login=' Użytkownik: '.$finalResult['login'];
-			$_SESSION['log']=1;
-			$result->closeCursor();
-			echo'Witamy w systemie CMS obu paneli! '.$login;
-		}
-		if(!isset($_SESSION['log'])){
-			header('Location:templates/signIn.html');
-			exit();
-		} 
+		$finalResult=$dbResult->fetch(PDO::FETCH_ASSOC);
+		$login=' Użytkownik: '.$finalResult['login'];
+		$_SESSION['log']=1;
+		$dbResult->closeCursor();
+		echo'Witamy w systemie CMS obu paneli! '.$login;
+	}else{
+	header('Location:templates/signIn.html');
+	unset($db);
+	exit();
 	}
 }
 include $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/orderSearch.html';

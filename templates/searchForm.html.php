@@ -139,9 +139,7 @@ background-color: #aa7657;width:48%;border: 4px ridge black;
 		<td id="priceAndName"><center><?php $modcena=$modified['cena']*1;
 				echo$modcena.'zł';
 				$reduction= new OgicomProduct($secondHost, $secondLogin, $secondPassword);
-				$row= $reduction->getReduction($modified['id']);
-				$row2 = $row->fetch();
-				$reducedPrice=$row2[0];
+				$reducedPrice= $reduction->getReductionData($modified['id']);
 				$reducedPrice2=$reducedPrice*1;
 				if ($reducedPrice!=0) {
 					echo '<br>'.'Rabat to: '.$reducedPrice2.'zł';

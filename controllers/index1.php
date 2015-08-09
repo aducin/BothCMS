@@ -11,16 +11,14 @@ $secondLogin=$DBHandler["secondDB"]["login"];
 $secondPassword=$DBHandler["secondDB"]["password"];
 
 session_start();
-if(!isset($_SESSION['log'])){
-	$userLogin=$_POST['login'];
-	$userPassword=$_POST['password'];
-}
 if(isset($_POST['logout'])){
 	unset($_SESSION['log']);
 	header('Location:index.php');
 	exit();
 }
-if (!isset($_SESSION['log'])){
+if(!isset($_SESSION['log'])){
+	$userLogin=$_POST['login'];
+	$userPassword=$_POST['password'];
 	$db=new db($firstHost, $firstLogin, $firstPassword);
 	$dbResult= $db->getUserData($userLogin, $userPassword);
 	$resNumb=$dbResult->rowCount();
@@ -30,12 +28,11 @@ if (!isset($_SESSION['log'])){
 		$_SESSION['log']=1;
 		$dbResult->closeCursor();
 		echo'Witamy w systemie CMS obu paneli! '.$login;
-	}
-	if(!isset($_SESSION['log'])){
-		header('Location:templates/signIn.html');
-		exit();
-	} 
+	}else{
+	header('Location:templates/signIn.html');
 	unset($db);
+	exit();
+	}
 }
 try{
 	$helper= new OgicomHelper($secondHost, $secondLogin, $secondPassword);
