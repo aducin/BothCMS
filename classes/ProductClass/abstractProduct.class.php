@@ -96,16 +96,6 @@ abstract class Product
 		return $c;
 	}
 
-	public function getReduction($productId){
-		$sql='SELECT reduction
-		FROM ps_specific_price
-		WHERE ps_specific_price.id_product=:id';
-		$c= $this->pdo->prepare($sql);
-		$c->bindValue(':id', $productId);
-		$c->execute();
-		return $c;
-	}
-
 	public function getReductionData($productId){
 		$sql='SELECT reduction
 		FROM ps_specific_price
