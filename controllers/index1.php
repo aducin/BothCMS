@@ -13,8 +13,9 @@ $secondPassword=$DBHandler["secondDB"]["password"];
 session_start();
 if(isset($_POST['logout'])){
 	unset($_SESSION['log']);
-	header('Location:index.php');
-	exit();
+	header('Location:templates/signIn.html');
+        exit();
+
 }
 if(!isset($_SESSION['log'])){
 	$userLogin=$_POST['login'];
@@ -28,11 +29,8 @@ if(!isset($_SESSION['log'])){
 		$_SESSION['log']=1;
 		$dbResult->closeCursor();
 		echo'Witamy w systemie CMS obu paneli! '.$login;
-	}else{
-	header('Location:templates/signIn.html');
+	} 
 	unset($db);
-	exit();
-	}
 }
 try{
 	$helper= new OgicomHelper($secondHost, $secondLogin, $secondPassword);
