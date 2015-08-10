@@ -233,7 +233,7 @@ if(isset($_POST['orders'])){
 	}
 	$secondPrice = $product2->getPrice($_GET['id']);
 	$reduction2= $product2->getReductionData($_GET['id']);
-	include $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/completeForm.html.php';
+	require $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/completeForm.html.php';
 	exit();
 }elseif(isset($_GET['action'])and $_GET['action']=='idsearch'){
 	$product1= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
@@ -272,11 +272,11 @@ if(isset($_POST['orders'])){
 			foreach ($newQuery as $newQuery2){
 			$newQuery3[]=array('id'=>$newQuery2['id_product'], 'name'=>$newQuery2['name'], 'quantity'=>$newQuery2['quantity'], 'price'=>$newQuery2['price']);
 		}
-	include 'templates/products.html.php';
+	require 'templates/products.html.php';
 	}
 }
 if(isset($error)){
-	include $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/error.html';
+	require $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/error.html';
 }
 ob_end_flush();
 exit();

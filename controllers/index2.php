@@ -33,9 +33,9 @@ if(!isset($_SESSION['log'])){
 	exit();
 	}
 }
-include $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/orderSearch.html';
+require $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/orderSearch.html';
 if(isset($_GET['shipmentNumber'])){
-	include $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/shipmentMail.html';
+	require $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/shipmentMail.html';
 	exit();
 }
 if(isset($_GET['action'])&&$_GET['action']=='orderSearch'){
@@ -77,7 +77,7 @@ if(isset($_GET['action'])&&$_GET['action']=='orderSearch'){
 			$detail2[]=array('id'=>$sDetail['product_id'], 'name'=>$sDetail['name'], 'price'=>$sDetail['product_price'], 'reduction'=>$sDetail['reduction_amount'], 'quantity'=>$sDetail['product_quantity'], 'total'=>$sDetail['total_price_tax_incl'], 'productSum'=>$sDetail['total_products'], 'totalPaid'=>$sDetail['total_paid'], 'mail'=>$sDetail['email'], 'first'=>$sDetail['firstname'], 'last'=>$sDetail['lastname'], 'reference'=>$sDetail['reference'], 'payment'=>$sDetail['payment']);
 		}
 	}
-	include $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/orders.html';
+	require $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/orders.html';
 }
 if(isset($_GET['shortEdition'])){
 	try{
@@ -95,7 +95,7 @@ if(isset($_GET['shortEdition'])){
 		echo 'Błąd przy pobieraniu informacji o produkcie: ' . $e->getMessage();
 		exit();
 	}
-	include $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/form.html.php';
+	require $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/form.html.php';
 	exit();
 }
 if(isset($_GET['fullEditionN'])OR(isset($_GET['fullEditionO']))){
@@ -135,7 +135,7 @@ if(isset($_GET['fullEditionN'])OR(isset($_GET['fullEditionO']))){
 	}
 	$secondPrice = $product2->getPrice($_GET['id']);
 	$reduction2= $product2->getReductionData($_GET['id']);
-	include $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/completeForm.html.php';
+	require $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/completeForm.html.php';
 	exit();
 }
 if(isset($_GET['editformBoth'])){
@@ -164,7 +164,7 @@ if(isset($_GET['editformBoth'])){
 		echo 'Aktualizacja starych danych nie powiodła się: ' . $e->getMessage();
 		exit();
 	}
-	include $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/confirmation.html.php';
+	require $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/confirmation.html.php';
 	exit();
 }
 if(isset($_GET['editcompleteformnew'])OR(isset($_GET['editcompleteformold']))){
@@ -265,7 +265,7 @@ if(isset($_GET['editcompleteformnew'])OR(isset($_GET['editcompleteformold']))){
 			}
 		}
 	}
-	include $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/confirmation.html.php';
+	require $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/confirmation.html.php';
 	exit();
 }
 if (isset($_GET['BPSQO'])OR(isset($_GET['BPSQN']))){
@@ -279,7 +279,7 @@ if (isset($_GET['BPSQO'])OR(isset($_GET['BPSQN']))){
 	$Query = $order1->confirmation($_GET['id']);
 	$idOld= $Query["id_product"];
 	$quantityOld= $Query["quantity"];
-	include $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/confirmation.html.php';
+	require $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/confirmation.html.php';
 	exit();
 }
 if(isset($_GET['mergeQuantities'])){
@@ -299,5 +299,5 @@ if(isset($_GET['mergeQuantities'])){
 		echo 'Pobranie ilości w zamówieniu nie powiodło się: ' . $e->getMessage();
 		exit();
 	}
-	include $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/orderUpgrade.html.php';
+	require $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/orderUpgrade.html.php';
 }
