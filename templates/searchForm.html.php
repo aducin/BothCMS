@@ -81,7 +81,10 @@ background-color: #aa7657;width:48%;border: 4px ridge black;
 	}
 	</style>
 </head>
-<body><fieldset id="fldset1"><form action="" method="post">
+<body>
+Witamy w systemie CMS obu paneli! 
+<?php if(isset($finalResult)){ ?>Użytkownik: <?php htmlout($finalResult['login']); }?>
+<fieldset id="fldset1"><form action="" method="post">
 	<input id="upperInput" type="submit" value="Produkty" disabled>
 	<input type="hidden" name="orders" value="zamówienia">
 	<input id="upperInput" type="submit" value="Zamówienia">
