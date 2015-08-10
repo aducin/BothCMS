@@ -14,7 +14,6 @@ session_start();
 if(isset($_POST['logout'])){
 	unset($_SESSION['log']);
 	header('Location:templates/signIn.html');
-        exit();
 
 }
 if(!isset($_SESSION['log'])){
