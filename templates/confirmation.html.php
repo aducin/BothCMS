@@ -37,7 +37,7 @@
 					echo'Obecna ilość produktu w starej bazie wynosi: <b>'.$quantityOld.'</b>'.'<br>';
 					echo'Obecna ilość produktu w nowej bazie wynosi: <b>'.$quantityNew.'</b>';
 				}
-				if(isset(error1)){
+				if(isset($error1)){
 					?><fieldset>
 					UWAGA!<br>
 					<?php htmlout($error1);?>

@@ -1,6 +1,6 @@
 <?php
 ob_start();
-require_once $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/config/bootstrap.php';
+require_once $rootDir.'/config/bootstrap.php';
 
 $DBHandler=parse_ini_file($_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/config/database.ini',true);
 $firstHost=$DBHandler["firstDB"]["host"];
@@ -51,7 +51,7 @@ foreach ($result as $mod){
 	$mods[]= array('id'=>$mod['id_number'], 'nazwa'=>$mod['name'], 'data'=>$mod['date'], 'cena'=>$mod['price']);
 }
 unset($helper);
-include $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/searchForm.html.php';
+require $rootDir.'/templates/searchForm.html.php';
 
 if(isset($_POST['orders'])){
 	header('Location:controllers/index2.php');
@@ -79,7 +79,7 @@ if(isset($_POST['orders'])){
 			$oldQuery2 = $product2->confirmation($_POST['id']);
 			$idOld= $oldQuery2["id_product"];
 			$quantityOld= $oldQuery2["quantity"];
-		include 'templates/confirmation.html.php';
+		require $rootDir.'templates/confirmation.html.php';
 		exit();
 	}
 }elseif(isset($_GET['editcompleteformnew'])OR(isset($_GET['editcompleteformold']))){
@@ -174,7 +174,7 @@ if(isset($_POST['orders'])){
 		}
 	}
 	if(!isset($error)){
-		include $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/confirmation.html.php';
+		require $rootDir.'/templates/confirmation.html.php';
 		exit();
 	}
 }elseif(isset($_GET['shortEdition'])){
@@ -193,7 +193,7 @@ if(isset($_POST['orders'])){
 		$error='Błąd przy pobieraniu informacji o produkcie: ' . $e->getMessage();
 	}
 	if(!isset($error)){
-		include $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/form.html.php';
+		require $rootDir.'/templates/form.html.php';
 		exit();
 	}
 }elseif(isset($_GET['fullEditionN'])OR(isset($_GET['fullEditionO']))){
@@ -233,7 +233,7 @@ if(isset($_POST['orders'])){
 	}
 	$secondPrice = $product2->getPrice($_GET['id']);
 	$reduction2= $product2->getReductionData($_GET['id']);
-	require $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/completeForm.html.php';
+	require $rootDir.'/templates/completeForm.html.php';
 	exit();
 }elseif(isset($_GET['action'])and $_GET['action']=='idsearch'){
 	$product1= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
@@ -244,7 +244,7 @@ if(isset($_POST['orders'])){
 	$oldQuery = $product2->getProductQuery($_GET['idnr']);
 	$oldQueryResult = $oldQuery->fetch();
 	$oldQuery2= $product2->getReductionData($_GET['idnr']);
-	include $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/products.html.php';
+	require $rootDir.'/templates/products.html.php';
 }elseif(isset($_GET['action'])and $_GET['action']=='search'){
 	if ($_GET['text'] =='' AND $_GET['category'] =='' AND $_GET['author'] ==''){
 		$error='Nie chcesz chyba wypisywać wszystkich produktów z bazy...? Zaznacz chociaż z 1 kryterium wyszukiwania!';
@@ -272,11 +272,11 @@ if(isset($_POST['orders'])){
 			foreach ($newQuery as $newQuery2){
 			$newQuery3[]=array('id'=>$newQuery2['id_product'], 'name'=>$newQuery2['name'], 'quantity'=>$newQuery2['quantity'], 'price'=>$newQuery2['price']);
 		}
-	require 'templates/products.html.php';
+	require $rootDir.'/templates/products.html.php';
 	}
 }
 if(isset($error)){
-	require $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/error.html';
+	require $rootDir.'/templates/error.html';
 }
 ob_end_flush();
 exit();
