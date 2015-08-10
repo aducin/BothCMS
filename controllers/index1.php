@@ -275,6 +275,7 @@ if(isset($_POST['orders'])){
 	require $rootDir.'/templates/products.html.php';
 	}
 }
+
 if(isset($error)){
 	require $rootDir.'/templates/error.html';
 }
