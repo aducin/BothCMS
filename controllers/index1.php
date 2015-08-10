@@ -50,18 +50,17 @@ $result= $helper->getModyfiedData();
 foreach ($result as $mod){
 	$mods[]= array('id'=>$mod['id_number'], 'nazwa'=>$mod['name'], 'data'=>$mod['date'], 'cena'=>$mod['price']);
 }
-if(isset($_GET['deleterow'])){
+unset($helper);
+include $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/searchForm.html.php';
+
+if(isset($_POST['orders'])){
+	header('Location:controllers/index2.php');
+}elseif(isset($_GET['deleterow'])){
 	$helper= new OgicomHelper($secondHost, $secondLogin, $secondPassword);
 	$result= $helper->deleteModyfied($_GET['idMod']);
 	header('Location:.');
-	exit();
-}
-unset($helper);
-include $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/searchForm.html.php';
-if(isset($_POST['orders'])){
-	header('Location:controllers/index2.php');
-}
-if(isset($_GET['editformBoth'])){
+	unset($helper);
+}elseif(isset($_GET['editformBoth'])){
 	if ($_POST['text']==''){
 		$error='Brak aktualnego wpisu: nazwa produktu!';
 	}elseif ($_POST['quantity']==''){
@@ -83,8 +82,7 @@ if(isset($_GET['editformBoth'])){
 		include 'templates/confirmation.html.php';
 		exit();
 	}
-}
-if(isset($_GET['editcompleteformnew'])OR(isset($_GET['editcompleteformold']))){
+}elseif(isset($_GET['editcompleteformnew'])OR(isset($_GET['editcompleteformold']))){
 	if(isset($_GET['editcompleteformnew'])){
 		$product1= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
 		$product2= new OgicomProduct($secondHost, $secondLogin, $secondPassword);
@@ -179,8 +177,7 @@ if(isset($_GET['editcompleteformnew'])OR(isset($_GET['editcompleteformold']))){
 		include $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/confirmation.html.php';
 		exit();
 	}
-}
-if(isset($_GET['shortEdition'])){
+}elseif(isset($_GET['shortEdition'])){
 	try{
 		$product1= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
 		$Query = $product1->getProductQuery($_GET['id']);
@@ -199,8 +196,7 @@ if(isset($_GET['shortEdition'])){
 		include $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/form.html.php';
 		exit();
 	}
-}
-if(isset($_GET['fullEditionN'])OR(isset($_GET['fullEditionO']))){
+}elseif(isset($_GET['fullEditionN'])OR(isset($_GET['fullEditionO']))){
 	if (isset($_GET['fullEditionN'])){
 		$product1= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
 		$product2= new OgicomProduct($secondHost, $secondLogin, $secondPassword);
@@ -239,8 +235,7 @@ if(isset($_GET['fullEditionN'])OR(isset($_GET['fullEditionO']))){
 	$reduction2= $product2->getReductionData($_GET['id']);
 	include $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/completeForm.html.php';
 	exit();
-}
-if(isset($_GET['action'])and $_GET['action']=='idsearch'){
+}elseif(isset($_GET['action'])and $_GET['action']=='idsearch'){
 	$product1= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
 	$newQuery = $product1->getProductQuery($_GET['idnr']);
 	$newQueryResult = $newQuery->fetch();
@@ -250,8 +245,7 @@ if(isset($_GET['action'])and $_GET['action']=='idsearch'){
 	$oldQueryResult = $oldQuery->fetch();
 	$oldQuery2= $product2->getReductionData($_GET['idnr']);
 	include $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/products.html.php';
-}
-if(isset($_GET['action'])and $_GET['action']=='search'){
+}elseif(isset($_GET['action'])and $_GET['action']=='search'){
 	if ($_GET['text'] =='' AND $_GET['category'] =='' AND $_GET['author'] ==''){
 		$error='Nie chcesz chyba wypisywać wszystkich produktów z bazy...? Zaznacz chociaż z 1 kryterium wyszukiwania!';
 	}else{
@@ -278,8 +272,8 @@ if(isset($_GET['action'])and $_GET['action']=='search'){
 			foreach ($newQuery as $newQuery2){
 			$newQuery3[]=array('id'=>$newQuery2['id_product'], 'name'=>$newQuery2['name'], 'quantity'=>$newQuery2['quantity'], 'price'=>$newQuery2['price']);
 		}
-	}
 	include 'templates/products.html.php';
+	}
 }
 if(isset($error)){
 	include $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/templates/error.html';
