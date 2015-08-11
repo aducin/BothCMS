@@ -1,0 +1,55 @@
+<?php $number=0; ?>
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Wyniki wyszukiwania kuponów rabatowych</title>
+	<style type="text/css">
+		th{
+			padding-left:40px; padding-right:40px;
+		}
+	</style>
+</head>
+<body>
+	<fieldset>
+		<legend>Wyniki wyszukiwania kuponów rabatowych</legend>
+		<center><b><big>Klient: <?php $clientName=($customerData['firstname']).' '.($customerData['lastname']);
+		htmlout($clientName); ?></big></b>
+		<table><th>Numer</th><th>ID zamówienia</th><th>Referencja</th><th>Koszt produktów</th><th>Koszt transportu</th><th>Data</th><th>Numer kuponu</th>
+			<?php foreach ($custOrders as $Orders):?>
+				<tr>
+					<td><center><?php $number=$number+1;
+						htmlout($number);?></td>
+						<td><center><?php htmlout($Orders["id"]); ?></td>
+						<td><center><?php htmlout($Orders["reference"]); ?></td>
+						<td><center><?php htmlout($Orders["total"]); ?></td>
+						<td><center>
+							<?php if($Orders["shipping"]!=0){
+								htmlout($Orders["shipping"]);
+							}else{?>Darmowa wysyłka<?php
+							} ?></td>
+							<td><center><?php htmlout($Orders["date"]); ?></td>
+							<td><center><?php 
+								if($Orders["orderNumber"]>6){
+									$division=$Orders["orderNumber"]/6.01;
+									$i=$Orders["orderNumber"];
+									while($i > 6){
+										$i=$i-(intval($division))*6;
+										if($i!=6){
+										htmlout($i);
+										}else{
+											echo'15% rabat!';
+										}
+									}
+								}else{
+									if($Orders["orderNumber"]==6){
+										echo'15% rabat!';
+									}else{
+										htmlout($Orders["orderNumber"]);
+									}
+								} 
+								?></td>
+							<?php endforeach; ?>
+						</table>
+					</fieldset>
+				</body>

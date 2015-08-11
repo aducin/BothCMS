@@ -56,6 +56,25 @@ if(isset($_GET['action'])&&$_GET['action']=='orderSearch'){
 			$this[]=array('id'=>$sOrder['product_id'], 'name'=>$sOrder['name'], 'onStock'=>$sOrder['product_quantity'], 'quantity'=>$sOrder['quantity']);
 		}
 	}
+	if ($_GET['orderVoucher'] !=''){
+		$order1= new OgicomOrder($secondHost, $secondLogin, $secondPassword);
+		$orderSearch = $order1->checkIfVoucherDue($_GET['orderVoucher']);
+		$totalProducts= $orderSearch['total_products'];
+		var_dump($totalProducts);
+		if($totalProducts<50){
+			$error='Kwota zamówienia wynosi: '.$totalProducts.'zł i jest zbyt mała, aby przyznać kolejny kupon.';
+			echo$error;
+		}else{
+			$orderCustomer= $orderSearch['id_customer'];
+			$customerData= $order1->getOrderCustomerData($orderCustomer);
+			$voucherHistory= $order1->getVoucherNumber($orderCustomer);
+			$ordNumb=1;
+			foreach ($voucherHistory as $custOrder){
+				$custOrders[]= array('id'=>$custOrder['id_order'], 'reference'=>$custOrder['reference'], 'total'=>$custOrder['total_products'], 'shipping'=>$custOrder['total_shipping'], 'date'=>$custOrder['date_add'], 'orderNumber'=>$ordNumb++);
+			}
+			require $rootDir.'/templates/voucherSearch.html';
+		}
+	}
 	if ($_GET['notification'] !=''){
 		if(isset($_GET['send'])&&$_GET['send']=='modele'){
 			$order1= new OgicomOrder($secondHost, $secondLogin, $secondPassword);
