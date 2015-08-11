@@ -60,7 +60,6 @@ if(isset($_GET['action'])&&$_GET['action']=='orderSearch'){
 		$order1= new OgicomOrder($secondHost, $secondLogin, $secondPassword);
 		$orderSearch = $order1->checkIfVoucherDue($_GET['orderVoucher']);
 		$totalProducts= $orderSearch['total_products'];
-		var_dump($totalProducts);
 		if($totalProducts<50){
 			$error='Kwota zamówienia wynosi: '.$totalProducts.'zł i jest zbyt mała, aby przyznać kolejny kupon.';
 			echo$error;
