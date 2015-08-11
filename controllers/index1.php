@@ -103,7 +103,9 @@ if(isset($_POST['orders'])){
 		if (isset($_POST['delete'])and $_POST['delete']== "deleteImages"){
 			$Query = $product1->deleteImage($_POST['id']);
 		}
-		$Query = $product1->updateDetailedBoth($_POST['id'], $_POST['nominalPriceOld'], $_POST['text'], $_POST['quantity'], $_POST['description'], $_POST['description_short'], $_POST['meta_title'], $_POST['meta_description'], $_POST['link'], $_POST['condition'], $_POST['active']);
+		$Query = $product1->updateDetailedBoth($_POST['id'], $_POST['nominalPriceOld'], $_POST['text'], $_POST['quantity'], $_POST['description'], $_POST['description_short'], $_POST['meta_title'], $_POST['meta_description'], str_replace(" ","-", $_POST['link']), $_POST['condition'], $_POST['active']);
+		$sth=str_replace(" ", "-", $_POST['link']);
+		var_dump($sth);
 		$Query = $product1->updateManufacturer($_POST['author'], $_POST['id']);
 		$Query = $product1->deleteCategory($_POST['id']);
 		if(isset($_POST['categories'])){
@@ -144,7 +146,7 @@ if(isset($_POST['orders'])){
 				if (isset($_POST['delete'])and $_POST['delete']== "deleteImages"){
 					$Query = $product2->deleteImage($_POST['id']);
 				}
-				$Query = $product2->updateDetailedBoth($_POST['id'], $_POST['nominalPriceOld'], $_POST['text'], $_POST['quantity'], $_POST['description'], $_POST['description_short'], $_POST['meta_title'], $_POST['meta_description'], $_POST['link'], $_POST['condition'], $_POST['active']);
+				$Query = $product2->updateDetailedBoth($_POST['id'], $_POST['nominalPriceOld'], $_POST['text'], $_POST['quantity'], $_POST['description'], $_POST['description_short'], $_POST['meta_title'], $_POST['meta_description'], str_replace(" ","-", $_POST['link']), $_POST['condition'], $_POST['active']);
 				$Query = $product2->updateManufacturer($_POST['author'], $_POST['id']);
 				$Query = $product2->deleteCategory($_POST['id']);
 				if(isset($_POST['categories'])){

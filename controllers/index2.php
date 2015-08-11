@@ -193,7 +193,7 @@ if(isset($_GET['editcompleteformnew'])OR(isset($_GET['editcompleteformold']))){
 		if (isset($_POST['delete'])and $_POST['delete']== "deleteImages"){
 			$Query = $product1->deleteImage($_POST['id']);
 		}
-		$Query = $product1->updateDetailedBoth($_POST['id'], $_POST['nominalPriceOld'], $_POST['text'], $_POST['quantity'], $_POST['description'], $_POST['description_short'], $_POST['meta_title'], $_POST['meta_description'], $_POST['link'], $_POST['condition'], $_POST['active']);
+		$Query = $product1->updateDetailedBoth($_POST['id'], $_POST['nominalPriceOld'], $_POST['text'], $_POST['quantity'], $_POST['description'], $_POST['description_short'], $_POST['meta_title'], $_POST['meta_description'], str_replace(" ","-", $_POST['link']), $_POST['condition'], $_POST['active']);
 	}catch (PDOExceptioon $e){
 		echo 'Aktualizacja nazwy nie powiodła się: ' . $e->getMessage();
 		exit();
@@ -237,7 +237,7 @@ if(isset($_GET['editcompleteformnew'])OR(isset($_GET['editcompleteformold']))){
 		if (isset($_POST['delete'])and $_POST['delete']== "deleteImages"){
 			$Query = $product2->deleteImage($_POST['id']);
 		}
-		$Query = $product2->updateDetailedBoth($_POST['id'], $_POST['nominalPriceOld'], $_POST['text'], $_POST['quantity'], $_POST['description'], $_POST['description_short'], $_POST['meta_title'], $_POST['meta_description'], $_POST['link'], $_POST['condition'], $_POST['active']);
+		$Query = $product2->updateDetailedBoth($_POST['id'], $_POST['nominalPriceOld'], $_POST['text'], $_POST['quantity'], $_POST['description'], $_POST['description_short'], $_POST['meta_title'], $_POST['meta_description'], str_replace(" ","-", $_POST['link']), $_POST['condition'], $_POST['active']);
 		try{
 			$Query = $product2->updateManufacturer($_POST['author'], $_POST['id']);
 		}catch (PDOExceptioon $e){
