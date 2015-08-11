@@ -38,12 +38,12 @@
 										if($i!=6){
 										htmlout($i);
 										}else{
-											echo'15% rabat!';
+											?><b>15% rabat!</b><?php
 										}
 									}
 								}else{
 									if($Orders["orderNumber"]==6){
-										echo'15% rabat!';
+										?><b>15% rabat!</b><?php
 									}else{
 										htmlout($Orders["orderNumber"]);
 									}
