@@ -18,19 +18,21 @@
 		<table><th>Numer</th><th>ID zamówienia</th><th>Referencja</th><th>Koszt produktów</th><th>Koszt transportu</th><th>Data</th><th>Numer kuponu</th>
 			<?php foreach ($custOrders as $Orders):?>
 				<tr>
-					<td><center><?php $number=$number+1;
-						htmlout($number);?></td>
+					<td><center><?php htmlout($Orders["orderNumber"]);?></td>
 						<td><center><?php htmlout($Orders["id"]); ?></td>
 						<td><center><?php htmlout($Orders["reference"]); ?></td>
 						<td><center><?php htmlout($Orders["total"]); ?></td>
 						<td><center>
 							<?php if($Orders["shipping"]!=0){
 								htmlout($Orders["shipping"]);
-							}else{?>Darmowa wysyłka<?php
-							} ?></td>
+							}else{
+								if($Orders["total"]>=250){
+								?>Darmowa wysyłka<?php
+								}else{?>Odbiór osobisty<?php
+							} }?></td>
 							<td><center><?php htmlout($Orders["date"]); ?></td>
 							<td><center><?php 
-								if($Orders["orderNumber"]>6){
+								/*if($Orders["orderNumber"]>6){
 									$division=$Orders["orderNumber"]/6.01;
 									$i=$Orders["orderNumber"];
 									while($i > 6){
@@ -47,7 +49,21 @@
 									}else{
 										htmlout($Orders["orderNumber"]);
 									}
-								} 
+								} */
+								if($Orders["orderNumber"]<=6){
+									if($Orders['orderNumber']!=6){
+										htmlout($Orders["orderNumber"]);
+									}else{
+										?><b>15% rabat!</b><?php
+									}
+								}else{
+									 $voucherNumber=((($Orders["orderNumber"]-1) % 6) + 1 );
+									 if($voucherNumber!=6){
+									 	htmlout($voucherNumber);
+									 }else{
+									 	?><b>15% rabat!</b><?php
+									 }
+								}
 								?></td>
 							<?php endforeach; ?>
 						</table>
