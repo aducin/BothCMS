@@ -78,7 +78,7 @@ if(isset($_POST['orders'])){
 			$oldQuery2 = $product2->confirmation($_POST['id']);
 			$idOld= $oldQuery2["id_product"];
 			$quantityOld= $oldQuery2["quantity"];
-		require $rootDir.'templates/confirmation.html.php';
+		require $rootDir.'/templates/confirmation.html.php';
 		exit();
 	}
 }elseif(isset($_GET['editcompleteformnew'])OR(isset($_GET['editcompleteformold']))){
