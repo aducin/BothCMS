@@ -1,5 +1,6 @@
 <?php
 
+require_once $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/model/CustomerClass/Customer.class.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/model/HelperClass/AbstractHelper.class.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/model/HelperClass/LinuxPlHelper.class.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/model/HelperClass/OgicomHelper.class.php';

@@ -1,4 +1,3 @@
-<?php $number=0; ?>
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -8,13 +7,23 @@
 		th{
 			padding-left:40px; padding-right:40px;
 		}
+		#sendVoucherMail{
+			background-color:#ffffe3;border: 4px ridge black;
+		}
+		#emailAdress{
+			padding-left:40px; padding-right:40px;font-size:13pt;font-style:italic;
+		}
 	</style>
 </head>
 <body>
 	<fieldset>
 		<legend>Wyniki wyszukiwania kuponów rabatowych</legend>
-		<center><b><big>Klient: <?php $clientName=($customerData['firstname']).' '.($customerData['lastname']);
-		htmlout($clientName); ?></big></b>
+		<center><h2>Klient: <?php $clientName=($customerData['firstname']).' '.($customerData['lastname']);
+		htmlout($clientName); ?></h2>
+		<?php 
+		if($customerSearch==6){
+			?><h3>UWAGA - Klient posiada już konto z 3% rabatem na nowym sklepie.</h3><?php
+			} ?>
 		<table><th>Numer</th><th>ID zamówienia</th><th>Referencja</th><th>Koszt produktów</th><th>Koszt transportu</th><th>Data</th><th>Numer kuponu</th>
 			<?php foreach ($custOrders as $Orders):?>
 				<tr>
@@ -51,6 +60,7 @@
 									}
 								} */
 								if($Orders["orderNumber"]<=6){
+									$voucherNumber=$Orders["orderNumber"];
 									if($Orders['orderNumber']!=6){
 										htmlout($Orders["orderNumber"]);
 									}else{
@@ -66,6 +76,13 @@
 								}
 								?></td>
 							<?php endforeach; ?>
-						</table>
-					</fieldset>
-				</body>
+						</table><div id="sendVoucherMail">
+						<form method="post">
+	<input type="hidden" name="voucherNumber" value="<?php htmlout($voucherNumber); ?>">
+	<input type="hidden" name="customerNumber" value="<?php htmlout($orderCustomer); ?>">
+	<input type="hidden" name="referenceNumber" value="<?php htmlout($Orders["reference"]); ?>">
+	<input type="submit" id="emailAdress" name="sendMessage" value="Poinformuj Klienta o ostatnim kuponie">
+	Wiadomość email zostanie wysłana na adres: <?php htmlout($customerData['email']); ?>
+</form></div>
+</fieldset>
+</body>

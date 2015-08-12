@@ -14,7 +14,6 @@ session_start();
 if(isset($_POST['logout'])){
 	unset($_SESSION['log']);
 	header('Location:templates/signIn.html');
-
 }
 if(!isset($_SESSION['log'])){
 	$userLogin=$_POST['login'];
@@ -30,6 +29,12 @@ if(!isset($_SESSION['log'])){
 	unset($db);
 }
 require $rootDir.'/templates/orderSearch.html';
+if(isset($_POST['sendMessage'])){
+	$order1= new OgicomOrder($secondHost, $secondLogin, $secondPassword);
+	$customerData= $order1->getOrderCustomerData($_POST['customerNumber']);
+	require $rootDir.'/templates/voucherMail.html';
+	exit();
+}
 if(isset($_GET['action'])&&$_GET['action']=='orderSearch'){
 	if ($_GET['neworder'] !=''){
 		$order2= new LinuxPlOrder($firstHost, $firstLogin, $firstPassword);
@@ -55,6 +60,8 @@ if(isset($_GET['action'])&&$_GET['action']=='orderSearch'){
 		}else{
 			$orderCustomer= $orderSearch['id_customer'];
 			$customerData= $order1->getOrderCustomerData($orderCustomer);
+			$customer= new LinuxPlCustomer($firstHost, $firstLogin, $firstPassword);
+			$customerSearch = $customer->checkIfClientExists($customerData['email']);
 			$voucherHistory= $order1->getVoucherNumber($orderCustomer);
 			$ordNumb=1;
 			foreach ($voucherHistory as $custOrder){
