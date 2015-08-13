@@ -303,5 +303,21 @@ if(isset($_GET['action'])&&$_GET['action']=='orderSearch'){
 	require $rootDir.'/templates/orderUpgrade.html.php';
 }
 if(isset($error)){
-	require $rootDir.'/templates/error.html';
+	$twig_lib = $rootDir.'/twig/vendor/Twig/lib/Twig';
+	$twig_templates = $rootDir.'/twig/templates';
+	$twig_cache = $rootDir.'/twig/cache'; // remember to `chmod 777 cache` (make this directory writable)
+
+	require_once $twig_lib . '/Autoloader.php';
+	Twig_Autoloader::register();
+
+	$loader = new Twig_Loader_Filesystem($twig_templates);
+	$twig = new Twig_Environment($loader, array(
+		'cache' => $twig_cache,
+		));
+	$output = $twig->render('/index.html', array(
+		'title' => 'Niepowodzenie wykonania operacji',
+		'result' => 'UWAGA! Operacja zakończona niepowodzeniem!',
+		'error' => $error,
+		));
+	echo $output;
 }
