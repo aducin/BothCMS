@@ -160,19 +160,14 @@ if(isset($_GET['action'])&&$_GET['action']=='orderSearch'){
 	}else try{
 		$product1= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
 		$newQuery = $product1->updateBoth($_POST['id'], $_POST['nominalPriceNew'], $_POST['text'], $_POST['quantity']);
-		$newQuery2 = $product1->confirmation($_POST['id']);
-		$quantityNew= $newQuery2["quantity"];
+		$firstConfirmation = $product1->confirmation($_POST['id']);
 	}catch (PDOExceptioon $e){
 		$error='Aktualizacja danych nie powiodła się: ' . $e->getMessage();
 	}
 	if(!isset($error)){
 		$product2= new OgicomProduct($secondHost, $secondLogin, $secondPassword);
 		$oldQuery = $product2->updateBoth($_POST['id'], $_POST['nominalPriceOld'], $_POST['text'], $_POST['quantity']);
-		$oldQuery2 = $product2->confirmation($_POST['id']);
-		$idOld= $oldQuery2["id_product"];
-		$quantityOld= $oldQuery2["quantity"];
-		require $rootDir.'/templates/confirmation.html.php';
-		exit();
+		$secondConfirmation = $product2->confirmation($_POST['id']);
 	}
 }elseif(isset($_GET['editcompleteformnew'])OR(isset($_GET['editcompleteformold']))){
 	if(isset($_GET['editcompleteformnew'])){
@@ -225,9 +220,7 @@ if(isset($_GET['action'])&&$_GET['action']=='orderSearch'){
 	}
 	if(!isset($error)){
 		try{
-			$Query = $product1->confirmation($_POST['id']);
-			$idOld= $Query["id_product"];
-			$quantityOld= $Query["quantity"];
+			$firstConfirmation = $product1->confirmation($_POST['id']);
 		}catch (PDOExceptioon $e){
 			$error='Pobranie uaktualnionych danych nie powiodło się: ' . $e->getMessage();
 		}
@@ -240,6 +233,7 @@ if(isset($_GET['action'])&&$_GET['action']=='orderSearch'){
 				}
 				$Query = $product2->updateDetailedBoth($_POST['id'], $_POST['nominalPriceOld'], $_POST['text'], $_POST['quantity'], $_POST['description'], $_POST['description_short'], $_POST['meta_title'], $_POST['meta_description'], str_replace(" ","-", $_POST['link']), $_POST['condition'], $_POST['active']);
 				$Query = $product2->updateManufacturer($_POST['author'], $_POST['id']);
+				$secondConfirmation = $product2->confirmation($_POST['id']);
 				$Query = $product2->deleteCategory($_POST['id']);
 				if(isset($_POST['categories'])){
 					$Query = $product2->insertDifferentCategory($_POST['categories'], $_POST['id']);	
@@ -266,10 +260,6 @@ if(isset($_GET['action'])&&$_GET['action']=='orderSearch'){
 			}
 		}
 	}
-	if(!isset($error)){
-		require $rootDir.'/templates/confirmation.html.php';
-		exit();
-	}
 }elseif (isset($_GET['BPSQO'])OR(isset($_GET['BPSQN']))){
 	if (isset($_GET['BPSQO'])){
 		$order1= new OgicomProduct($secondHost, $secondLogin, $secondPassword);
@@ -278,11 +268,7 @@ if(isset($_GET['action'])&&$_GET['action']=='orderSearch'){
 		$order1= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
 	}
 	$Query = $order1->updateQuantity($_GET['quantity'], $_GET['id']);
-	$Query = $order1->confirmation($_GET['id']);
-	$idOld= $Query["id_product"];
-	$quantityOld= $Query["quantity"];
-	require $rootDir.'/templates/confirmation.html.php';
-	exit();
+	$firstConfirmation = $order1->confirmation($_GET['id']);
 }elseif(isset($_GET['mergeQuantities'])){
 	if($_GET['mergeQuantities']== 'Uaktualnij ilości dla całego zamówienia'){
 		$include=0;
@@ -302,22 +288,33 @@ if(isset($_GET['action'])&&$_GET['action']=='orderSearch'){
 	}
 	require $rootDir.'/templates/orderUpgrade.html.php';
 }
-if(isset($error)){
+if(isset($error)OR(isset($firstConfirmation))){
 	$twig_lib = $rootDir.'/twig/vendor/Twig/lib/Twig';
 	$twig_templates = $rootDir.'/twig/templates';
 	$twig_cache = $rootDir.'/twig/cache'; // remember to `chmod 777 cache` (make this directory writable)
-
 	require_once $twig_lib . '/Autoloader.php';
 	Twig_Autoloader::register();
-
 	$loader = new Twig_Loader_Filesystem($twig_templates);
 	$twig = new Twig_Environment($loader, array(
 		'cache' => $twig_cache,
 		));
-	$output = $twig->render('/index.html', array(
+
+	if(isset($error)){
+		$output = $twig->render('/index.html', array(
 		'title' => 'Niepowodzenie wykonania operacji',
 		'result' => 'UWAGA! Operacja zakończona niepowodzeniem!',
 		'error' => $error,
 		));
+	}else{
+		$conf=array('Wykonanie aktualizacji produktu ID '.$firstConfirmation["id_product"], 'Obecna ilość produktu w edytowanej bazie wynosi: '.$firstConfirmation["quantity"]);
+		if(isset($secondConfirmation)){
+			array_push($conf, 'Obecna ilość produktu w drugiej bazie wynosi: '.$secondConfirmation["quantity"]);
+		}
+		$output = $twig->render('/index.html', array(
+		'title' => 'Potwierdzenie wykonania operacji',
+		'result' => 'Operacja zakończyła się powodzeniem!',
+		'message' => $conf,
+		));
+	}
 	echo $output;
 }

@@ -14,7 +14,6 @@ session_start();
 if(isset($_POST['logout'])){
 	unset($_SESSION['log']);
 	header('Location:templates/signIn.html');
-
 }
 if(!isset($_SESSION['log'])){
 	$userLogin=$_POST['login'];
@@ -140,6 +139,7 @@ if(isset($_POST['orders'])){
 				}
 				$Query = $product2->updateDetailedBoth($_POST['id'], $_POST['nominalPriceOld'], $_POST['text'], $_POST['quantity'], $_POST['description'], $_POST['description_short'], $_POST['meta_title'], $_POST['meta_description'], str_replace(" ","-", $_POST['link']), $_POST['condition'], $_POST['active']);
 				$Query = $product2->updateManufacturer($_POST['author'], $_POST['id']);
+				$secondConfirmation = $product2->confirmation($_POST['id']);
 				$Query = $product2->deleteCategory($_POST['id']);
 				if(isset($_POST['categories'])){
 					$Query = $product2->insertDifferentCategory($_POST['categories'], $_POST['id']);	
@@ -268,33 +268,28 @@ if(isset($error)OR(isset($firstConfirmation))){
 	$twig_lib = $rootDir.'/twig/vendor/Twig/lib/Twig';
 	$twig_templates = $rootDir.'/twig/templates';
 	$twig_cache = $rootDir.'/twig/cache'; // remember to `chmod 777 cache` (make this directory writable)
-
 	require_once $twig_lib . '/Autoloader.php';
 	Twig_Autoloader::register();
-
 	$loader = new Twig_Loader_Filesystem($twig_templates);
 	$twig = new Twig_Environment($loader, array(
 		'cache' => $twig_cache,
 		));
+
 	if(isset($error)){
 		$output = $twig->render('/index.html', array(
 		'title' => 'Niepowodzenie wykonania operacji',
 		'result' => 'UWAGA! Operacja zakończona niepowodzeniem!',
-		'message' => $error,
+		'error' => $error,
 		));
 	}else{
-		$confirmation1='Wykonanie aktualizacji produktu ID '.$firstConfirmation["id_product"].':';
-		$confirmation2='Obecna ilość produktu w edytowanej bazie wynosi: '.$firstConfirmation["quantity"];
-		$confirmation3='';
+		$conf=array('Wykonanie aktualizacji produktu ID '.$firstConfirmation["id_product"], 'Obecna ilość produktu w edytowanej bazie wynosi: '.$firstConfirmation["quantity"]);
 		if(isset($secondConfirmation)){
-			$confirmation3='Obecna ilość produktu w drugiej bazie wynosi: '.$secondConfirmation["quantity"];
+			array_push($conf, 'Obecna ilość produktu w drugiej bazie wynosi: '.$secondConfirmation["quantity"]);
 		}
 		$output = $twig->render('/index.html', array(
 		'title' => 'Potwierdzenie wykonania operacji',
 		'result' => 'Operacja zakończyła się powodzeniem!',
-		'message' => $confirmation1,
-		'message2' => $confirmation2,
-		'message3' => $confirmation3,
+		'message' => $conf,
 		));
 	}
 	echo $output;
