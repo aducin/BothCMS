@@ -1,6 +1,4 @@
 <?php 
-$rootDir = $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS';
-require_once $rootDir.'/config/bootstrap.php';
 
 $DBHandler=parse_ini_file($_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/config/database.ini',true);
 $firstHost=$DBHandler["firstDB"]["host"];
@@ -28,11 +26,11 @@ if(!isset($_SESSION['log'])){
 	} 
 	unset($db);
 }
-require $rootDir.'/templates/orderSearch.html';
+require $root_dir.'/templates/orderSearch.html';
 if(isset($_POST['sendMessage'])){
 	$order1= new OgicomOrder($secondHost, $secondLogin, $secondPassword);
 	$customerData= $order1->getOrderCustomerData($_POST['customerNumber']);
-	require $rootDir.'/templates/voucherMail.html';
+	require $root_dir.'/templates/voucherMail.html';
 	exit();
 }
 if(isset($_GET['action'])&&$_GET['action']=='orderSearch'){
@@ -67,7 +65,7 @@ if(isset($_GET['action'])&&$_GET['action']=='orderSearch'){
 			foreach ($voucherHistory as $custOrder){
 				$custOrders[]= array('id'=>$custOrder['id_order'], 'reference'=>$custOrder['reference'], 'total'=>$custOrder['total_products'], 'shipping'=>$custOrder['total_shipping'], 'date'=>$custOrder['date_add'], 'orderNumber'=>$ordNumb++);
 			}
-			require $rootDir.'/templates/voucherSearch.html';
+			require $root_dir.'/templates/voucherSearch.html';
 		}
 	}elseif ($_GET['notification'] !=''){
 		if(isset($_GET['send'])&&$_GET['send']=='modele'){
@@ -90,9 +88,9 @@ if(isset($_GET['action'])&&$_GET['action']=='orderSearch'){
 			$detail2[]=array('id'=>$sDetail['product_id'], 'name'=>$sDetail['name'], 'price'=>$sDetail['product_price'], 'reduction'=>$sDetail['reduction_amount'], 'quantity'=>$sDetail['product_quantity'], 'total'=>$sDetail['total_price_tax_incl'], 'productSum'=>$sDetail['total_products'], 'totalPaid'=>$sDetail['total_paid'], 'mail'=>$sDetail['email'], 'first'=>$sDetail['firstname'], 'last'=>$sDetail['lastname'], 'reference'=>$sDetail['reference'], 'payment'=>$sDetail['payment']);
 		}
 	}
-	require $rootDir.'/templates/orders.html';
+	require $root_dir.'/templates/orders.html';
 }elseif(isset($_GET['shipmentNumber'])){
-	require $rootDir.'/templates/shipmentMail.html';
+	require $root_dir.'/templates/shipmentMail.html';
 	exit();
 }elseif(isset($_GET['shortEdition'])){
 	try{
@@ -113,7 +111,7 @@ if(isset($_GET['action'])&&$_GET['action']=='orderSearch'){
 		$error='Błąd przy pobieraniu informacji o produkcie: ' . $e->getMessage();
 	}
 	if(!isset($error)){
-		require $rootDir.'/templates/form.html.php';
+		require $root_dir.'/templates/form.html.php';
 		exit();
 	}
 }elseif(isset($_GET['fullEditionN'])OR(isset($_GET['fullEditionO']))){
@@ -153,7 +151,7 @@ if(isset($_GET['action'])&&$_GET['action']=='orderSearch'){
 	}
 	$secondPrice = $product2->getPrice($_GET['id']);
 	$reduction2= $product2->getReductionData($_GET['id']);
-	require $rootDir.'/templates/completeForm.html.php';
+	require $root_dir.'/templates/completeForm.html.php';
 	exit();
 }elseif(isset($_GET['editformBoth'])){
 	if ($_POST['text']==''){
@@ -289,12 +287,12 @@ if(isset($_GET['action'])&&$_GET['action']=='orderSearch'){
 		echo 'Pobranie ilości w zamówieniu nie powiodło się: ' . $e->getMessage();
 		exit();
 	}
-	require $rootDir.'/templates/orderUpgrade.html.php';
+	require $root_dir.'/templates/orderUpgrade.html.php';
 }
 if(isset($error)OR(isset($firstConfirmation))){
-	$twig_lib = $rootDir.'/twig/vendor/Twig/lib/Twig';
-	$twig_templates = $rootDir.'/twig/templates';
-	$twig_cache = $rootDir.'/twig/cache'; // remember to `chmod 777 cache` (make this directory writable)
+	$twig_lib = $root_dir.'/twig/vendor/Twig/lib/Twig';
+	$twig_templates = $root_dir.'/twig/templates';
+	$twig_cache = $root_dir.'/twig/cache'; // remember to `chmod 777 cache` (make this directory writable)
 	require_once $twig_lib . '/Autoloader.php';
 	Twig_Autoloader::register();
 	$loader = new Twig_Loader_Filesystem($twig_templates);

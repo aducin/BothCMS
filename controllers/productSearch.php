@@ -1,6 +1,5 @@
 <?php
 ob_start();
-require_once $rootDir.'/config/bootstrap.php';
 
 $DBHandler=parse_ini_file($_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/config/database.ini',true);
 $firstHost=$DBHandler["firstDB"]["host"];
@@ -49,7 +48,7 @@ foreach ($result as $mod){
 	$mods[]= array('id'=>$mod['id_number'], 'nazwa'=>$mod['name'], 'data'=>$mod['date'], 'cena'=>$mod['price']);
 }
 unset($helper);
-require $rootDir.'/templates/searchForm.html.php';
+require $root_dir.'/templates/searchForm.html.php';
 
 if(isset($_POST['orders'])){
 	header('Location:controllers/orderSearch.php');
@@ -222,7 +221,7 @@ if(isset($_POST['orders'])){
 	}
 	$secondPrice = $product2->getPrice($_GET['id']);
 	$reduction2= $product2->getReductionData($_GET['id']);
-	require $rootDir.'/templates/completeForm.html.php';
+	require $root_dir.'/templates/completeForm.html.php';
 	exit();
 }elseif(isset($_GET['action'])and $_GET['action']=='idsearch'){
 	$product1= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
@@ -270,11 +269,11 @@ if(isset($_POST['orders'])){
 				if(($oldQuery2['name']==$newQuery2['name'])AND($oldQuery2['quantity']==$newQuery2['quantity'])){
 					$queryResult='Zgodność ilości i nazw produktu nr '.$oldQuery2['id_product'].' w obu panelach';
 				}elseif(($oldQuery2['name']==$newQuery2['name'])AND($oldQuery2['quantity']!=$newQuery2['quantity'])){
-					$queryResult='Zgodność nazw produktu nr '.$oldQuery2['id_product'].', ale <b>ilość w starym panelu to: '.$oldQuery2['quantity'].'</b>';
+					$queryResult='Zgodność nazw produktu nr '.$oldQuery2['id_product'].", ale ilość w starym panelu to: ".$oldQuery2['quantity'];
 				}elseif(($oldQuery2['name']!=$newQuery2['name'])AND($oldQuery2['quantity']==$newQuery2['quantity'])){
-					$queryResult='Zgodność ilości produktu nr '.$oldQuery2['id_product'].', ale <b>nazwa w starej bazie to: '.$oldQuery2['name'].'</b>';
+					$queryResult='Zgodność ilości produktu nr '.$oldQuery2['id_product'].", ale nazwa w starej bazie to: ".$oldQuery2['name'];
 				}elseif(($oldQuery2['name']!=$newQuery2['name'])AND($oldQuery2['quantity']!=$newQuery2['quantity'])){
-					$queryResult='Niezgodność ilości oraz nazw produktu nr '.$oldQuery2['id_product'].'.<br>Nazwa w starej bazie to: '.$oldQuery2['name'];
+					$queryResult='Niezgodność ilości oraz nazw produktu nr '.$oldQuery2['id_product'].". Nazwa w starej bazie to: ".$oldQuery2['name'];
 				}
 				if(($reduction!=0)AND($reduction2!=0)){
 					$searchResult[]=array('id'=>$newQuery2['id_product'], 'name'=>$newQuery2['name'], 'quantity'=>$newQuery2['quantity'], 'price'=>($product1->countReduction($newQuery2['price'], $reduction)), 'result'=>$queryResult, 'price2'=>($product2->countReduction($oldQuery2['price'], $reduction2)), 'lastID'=>$newQuery2['id_product']);
@@ -288,20 +287,14 @@ if(isset($_POST['orders'])){
 				$error='W bazie nie znaleziono produktów spełniających podane kryteria!';
 			}else{
 				var_dump($searchResult);
-				require $rootDir.'/templates/products.html.php';
+				$phrase=($_GET['text']);
+				//require $root_dir.'/templates/products.html.php';
+				//exit();
 			}	
 		}
 	}
-	if(isset($error)OR(isset($firstConfirmation)OR(isset($bothEdit))OR(isset($newQueryResult)))){
-		$twig_lib = $rootDir.'/twig/vendor/Twig/lib/Twig';
-		$twig_templates = $rootDir.'/twig/templates';
-	$twig_cache = $rootDir.'/twig/cache'; // remember to `chmod 777 cache` (make this directory writable)
-	require_once $twig_lib . '/Autoloader.php';
-	Twig_Autoloader::register();
-	$loader = new Twig_Loader_Filesystem($twig_templates);
-	$twig = new Twig_Environment($loader, array(
-		'cache' => $twig_cache,
-		));
+	if(isset($error)OR(isset($firstConfirmation)OR(isset($bothEdit))OR(isset($newQueryResult))OR(isset($searchResult)))){
+
 
 	if(isset($error)){
 		$output = $twig->render('/index.html', array(
@@ -327,6 +320,11 @@ if(isset($_POST['orders'])){
 		$output = $twig->render('/editionTemplateIdSearch.html', array(
 			'result1' => $newQueryResult,
 			'result2' => $oldQueryResult,
+			));
+	}elseif(isset($searchResult)){
+		$output = $twig->render('/phraseSearchTemplate.html', array(
+			'result' => $searchResult,
+			'phrase'=>$phrase,
 			));
 	}
 	echo $output;
