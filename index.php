@@ -1,6 +1,7 @@
 <?php
 $root_dir = $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS';
 $vendor_dir = $root_dir.'/vendor';
+$mail_dir = $root_dir.'/templates/mails';
 
 $twig_lib = $vendor_dir.'/Twig/lib/Twig';
 $twig_templates = $root_dir.'/templates';

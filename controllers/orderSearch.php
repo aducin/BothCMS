@@ -30,7 +30,7 @@ require $root_dir.'/templates/orderSearch.html';
 if(isset($_POST['sendMessage'])){
 	$order1= new OgicomOrder($secondHost, $secondLogin, $secondPassword);
 	$customerData= $order1->getOrderCustomerData($_POST['customerNumber']);
-	require $root_dir.'/templates/voucherMail.html';
+	require $mail_dir.'/voucherMail.html';
 	exit();
 }
 if(isset($_GET['action'])&&$_GET['action']=='orderSearch'){
@@ -90,7 +90,7 @@ if(isset($_GET['action'])&&$_GET['action']=='orderSearch'){
 	}
 	require $root_dir.'/templates/orders.html';
 }elseif(isset($_GET['shipmentNumber'])){
-	require $root_dir.'/templates/shipmentMail.html';
+	require $mail_dir.'/shipmentMail.html';
 	exit();
 }elseif(isset($_GET['shortEdition'])){
 	try{
