@@ -24,19 +24,22 @@ Pamiętaj, że 6. zamówienie na kwotę powyżej 50zł (bez kosztów wysyłki) n
 Zapraszamy ponownie w przyszłości.
 <br><br>
 Pozdrawiam serdecznie,<br>
-Albert Ducin<br>
-----------------------<br>
+Albert Ducin
+
+<hr>
+
 P.H.U. Ad9bis<br>
 ul. Świerkowa 22,<br>
 20-834 - Lublin<br>
 (48) 660413844<br>
-ad9bis@gmail.com
+ad9bis@gmail.com<br>
+<img src="http://modele-ad9bis.pl/img/logo.jpg" />
 </body>
 </html>
 ';
 $headers  = 'MIME-Version: 1.0' . "\r\n";
 $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-$headers = 'From: ad9bis@gmail.com' . "\r\n";
+$headers .= 'From: ad9bis@gmail.com' . "\r\n";
 echo'Treść wiadomości:<br>'.$message;
 if(mail($to, $subject, $message, $headers)){
   echo 'Wiadomość została wysłana na adres: <b>'.($customerData['email']).'.</b>';
