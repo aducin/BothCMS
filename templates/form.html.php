@@ -55,7 +55,7 @@
 	<legend><h1 id="h1">Edycja produktu ID: <?php htmlout($QueryResult[0]);
 	echo' ';
 	htmlout($baza); ?><h1></legend>
-	<form name="form" action="<?php htmlout($editForm); ?>" method="post" onsubmit="wyswietlAlert()">
+	<form name="form" action="<?php htmlout($helper['editForm']); ?>" method="post" onsubmit="wyswietlAlert()">
 		<div id="ramka">
 			<label for="text">Aktualna nazwa produktu:</label>
 			<textarea id="nameText" name="text" rows="1" cols="30"><?php 
@@ -81,21 +81,17 @@ if(isset($_GET['shortEdition'])and $_GET['shortEdition']== 'Zmiana obu przez now
 			</label>
 			</div>
 			<div id="ramka">
-				<label for="priceOld">Cena produktu (SP): <?php if(isset($Query4)){
-				$product2= new OgicomProduct($secondHost, $secondLogin, $secondPassword);
-				$oldQuery = $product2->countReduction($QueryResult2[3],$Query4);
-				echo$oldQuery;} ?></label>
+				<label for="priceOld">Cena produktu (SP): <?php if(isset($QueryResult2['countReduction'])){
+				echo$QueryResult2['countReduction'];} ?></label>
 				<input type="text" id="priceS" name="nominalPriceOld" size="15" value="<?php htmlout($QueryResult2[3]); ?>"</><br>
 				</div><div id="ramka">
-				<label for="pricenew">Cena produktu (NP): <?php if(isset($Query3)){
-				$product1= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
-				$newQuery = $product1->countReduction($QueryResult[3],$Query3);
-				echo$newQuery;} ?></label>
+				<label for="pricenew">Cena produktu (NP): <?php if(isset($QueryResult['countReduction'])){
+				echo$QueryResult['countReduction'];} ?></label>
 				<input type="text" id="priceN" name="nominalPriceNew" size="15" value="<?php htmlout($QueryResult[3]); ?>"</>
 			</div>
 					<div>
 						<input type="hidden" name="id" value="<?php htmlout($QueryResult[0]); ?>">
-						<input type="submit" value="<?php htmlout($button); ?>">
+						<input type="submit" value="<?php htmlout($helper['button']); ?>">
 					</div>
 			</form>
 		</body>

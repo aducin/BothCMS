@@ -53,6 +53,17 @@ abstract class Product
 		return $c;
 	}
 
+	public function getProductDetailedData($productId) {
+		$this->idProduct=$productId;
+		$sql=$this->getSelectProductSubquery($productId) . $this->getWhereProductSubquery();
+		$c=$this->pdo->prepare($sql);
+		$c->bindValue(':id_number', $productId);
+		$c->execute();
+		$subResult = $c->fetch();
+		$result=array('id_product'=>$subResult['id_product'],'name'=>$subResult['name'], 'quantity'=>$subResult['quantity'], 'price'=>$subResult['price'], 'id_manufacturer'=>$subResult['id_manufacturer']);
+		return $result;
+	}
+
 	public function getName($productId) {
 		$this->idProduct=$productId;
 		$sql=$this->getNameSubquery($productId) . $this->getWhereProductSubquery();

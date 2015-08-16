@@ -18,8 +18,19 @@ class LinuxPlProduct extends Product
 		$new0=number_format($price, 2,'.','');
 		$new=floatval($reduction);
 		$newQueryResult2=$new0-$new0*$new;
+		$newQueryResult22=number_format($newQueryResult2, 2,'.','');
 		$newQueryResult3=$new*100;
-		$newQueryResult4=$newQueryResult3."%</b>";
-		return$newQueryResult2.'zł<br>W tym rabat: <b>'.$newQueryResult4;
+		$newQueryResult4=$newQueryResult3."%";
+		return$newQueryResult22.'zł.'."\r\n".'W tym rabat: '.$newQueryResult4;
+	}
+	public function countRealPrice($price, $reduction) {
+		$new0=number_format($price, 2,'.','');
+		$new=floatval($reduction);
+		$newQueryResult2=$new0-$new0*$new;
+		$newQueryResult22=number_format($newQueryResult2, 2,'.','');
+		$newQueryResult3=$new*100;
+		$newQueryResult4=$newQueryResult3."%";
+		$result=array('reduction'=>'Rabat: '.$newQueryResult4, 'realPrice'=>'Cena rzeczywista: '.$newQueryResult22.'zł');
+		return$result;
 	}
 }

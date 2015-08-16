@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+	<meta charset="utf-8">
+	<title>{{ title }}</title>
+	<style type="text/css">
+	#title{
+		text-align:center;width:680px;
+	}
+	</style>
+</head>
+<body>
+<div id="title"><h1>Edycja produktu ID: {{ result.id_product }}</h1>
+<h2>- informacje z nowego panelu.</h2>
+<form name="form" action="?editformBoth" method="post">
+<label for="text">Aktualna nazwa produktu:</label>
+<textarea name="text" rows="1" cols="30">
+{{ result.name }}</textarea><br>
+<label for="quantity">Obecna ilość na sklepie:{{ result.quantity }}<br>
+Podaj ilość do zmiany: <input type="text" id="quantityAdd" name="quantity"></label>
+<label for="priceOld">Cena produktu (SP): {{ result.countReduction2 }}</label>
+<input type="text" name="nominalPriceOld" size="15" value="{{ result.price2 }}"</><br>
+<label for="priceNew">Cena produktu (NP): {{ result.countReduction }}</label>
+<input type="text" name="nominalPriceNew" size="15" value="{{ result.price }}"</><br>
+<input type="hidden" name="id" value="{{ result.id_product }}">
+<input type="submit" value="Aktualizuj produkt w obu bazach"><br>
+</body>
+</html>

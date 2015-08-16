@@ -99,13 +99,16 @@ if(isset($_GET['action'])&&$_GET['action']=='orderSearch'){
 		$product1= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
 		$Query = $product1->getProductQuery($_GET['id']);
 		$QueryResult = $Query->fetch();
-		$Query3= $product1->getReductionData($_GET['id']);
+		if($product1->getReductionData($_GET['id'])!=0){
+		$QueryResult['countReduction']=$product1->countReduction($QueryResult['price'], $product1->getReductionData($_GET['id']));
+		}
 		$product2= new OgicomProduct($secondHost, $secondLogin, $secondPassword);
 		$Query2 = $product2->getProductQuery($_GET['id']);
 		$QueryResult2 = $Query2->fetch();
-		$Query4= $product2->getReductionData($_GET['id']);
-		$button= 'Aktualizuj produkt w obu bazach';
-		$editForm='?editformBoth';
+		if($product2->getReductionData($_GET['id'])!=0){
+		$QueryResult2['countReduction']=$product2->countReduction($QueryResult2['price'], $product2->getReductionData($_GET['id']));
+		}
+		$helper=array("button"=>"Aktualizuj produkt w obu bazach","editForm"=>"?editformBoth");
 	}catch (PODException $e){
 		$error='Błąd przy pobieraniu informacji o produkcie: ' . $e->getMessage();
 	}

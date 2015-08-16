@@ -20,6 +20,15 @@ class OgicomProduct extends Product
 		$new2=number_format($new, 2,'.','');
 		$oldQueryResult1=$new0-$new;
 		$oldQueryResult2=number_format($oldQueryResult1, 2,'.','');
-		return$oldQueryResult2.'zł<br>W tym rabat: <b>'.$new2.'zł</b>';
+		return$oldQueryResult2.'zł. W tym rabat: '.$new2.'zł.';
+	}
+	public function countRealPrice($price, $reduction) {
+		$new0=number_format($price, 2,'.','');
+		$new=floatval($reduction);
+		$new2=number_format($new, 2,'.','');
+		$oldQueryResult1=$new0-$new;
+		$oldQueryResult2=number_format($oldQueryResult1, 2,'.','');
+		$result=array('reduction'=>'Rabat: '.$new2.'zł', 'realPrice'=>'Cena rzeczywista: '.$oldQueryResult2.'zł');
+		return$result;
 	}
 }
