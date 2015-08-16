@@ -14,5 +14,14 @@ $twig = new Twig_Environment($loader, array(
 ));
 
 require_once $root_dir.'/config/bootstrap.php';
-require_once $root_dir.'/controllers/productSearch.php';
-require_once $root_dir.'/controllers/orderSearch.php';
+// http://localhost/Ad9bisCMS/
+$controller = isset($_GET['controller']) ? $_GET['controller'] : 'product';
+if ($controller == 'product') {
+	// http://localhost/Ad9bisCMS/?controller=product
+	require_once $root_dir.'/controllers/productSearch.php';
+} elseif ($controller == 'order') {
+	// http://localhost/Ad9bisCMS/?controller=order
+	require_once $root_dir.'/controllers/orderSearch.php';
+} else {
+	throw new Exception("Invalid controller name");
+}
