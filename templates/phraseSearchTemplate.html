@@ -1,0 +1,30 @@
+{% extends "editionTemplate.html" %}
+
+{% block css %}
+{{ parent() }}
+<style type="text/css">
+#fieldset{
+		font-weight:normal;
+}#table{
+	text-align:center;
+}
+</style>
+{% endblock %}
+
+{% block title %}
+Wyniki wyszukiwania po frazie: {{ phrase }}
+{% endblock %}
+
+{% block result %}
+<table id="table">
+<tr><th>Numer ID</th><th>Nazwa produktu (NP)</th><th>Na stanie (NP)</th><th>Cena (NP)</th>
+<tr>{% for results in result %}
+<tr><td>{{ results.id }}</td>
+<td>{{ results.name }}<br>
+{{ results.result }}</td>
+<td>{{ results.quantity }}</td>
+<td>{{ results.price }}</td></tr>
+</tr>
+{% endfor %}
+</table>
+{% endblock %}

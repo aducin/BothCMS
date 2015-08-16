@@ -9,6 +9,8 @@ $secondHost=$DBHandler["secondDB"]["host"];
 $secondLogin=$DBHandler["secondDB"]["login"];
 $secondPassword=$DBHandler["secondDB"]["password"];
 
+echo 'siema flap';
+
 session_start();
 if(isset($_POST['logout'])){
 	unset($_SESSION['log']);
@@ -27,35 +29,39 @@ if(!isset($_SESSION['log'])){
 	} 
 	unset($db);
 }
+
 try{
 	$helper= new OgicomHelper($secondHost, $secondLogin, $secondPassword);
 	$result= $helper->selectWholeManufacturer();
-}catch (PDOException $e){
+	foreach ($result as $row){
+		$authors[]= array('id'=> $row['id_manufacturer'], 'name'=> $row['name']);
+	}
+} catch (PDOException $e){
 	$error='Pobieranie listy producentów nie powiodło się: ' . $e->getMessage();
 }
-foreach ($result as $row){
-	$authors[]= array('id'=> $row['id_manufacturer'], 'name'=> $row['name']);
-}try{
+
+try{
 	$result= $helper->getCategoryData();
-}catch (PDOException $e){
+	foreach ($result as $row){
+		$categories[]= array('id'=>$row['id_category'], 'name'=>$row['meta_title']);
+	}
+} catch (PDOException $e){
 	$error='Pobieranie listy kategorii nie powiodło się: ' . $e->getMessage();
 }
-foreach ($result as $row){
-	$categories[]= array('id'=>$row['id_category'], 'name'=>$row['meta_title']);
-}
+
+
 $result= $helper->getModyfiedData();
 foreach ($result as $mod){
 	$mods[]= array('id'=>$mod['id_number'], 'nazwa'=>$mod['name'], 'data'=>$mod['date'], 'cena'=>$mod['price']);
 }
-unset($helper);
-require $root_dir.'/templates/searchForm.html.php';
 
-if(isset($_POST['orders'])){
-	header('Location:controllers/orderSearch.php');
-}elseif(isset($_GET['deleterow'])){
+unset($helper);
+require $root_dir.'/templates/productSearch.html.php';
+
+if(isset($_GET['deleterow'])){
 	$helper= new OgicomHelper($secondHost, $secondLogin, $secondPassword);
 	$result= $helper->deleteModyfied($_GET['idMod']);
-	header('Location:.');
+	executeController('product');
 	unset($helper);
 }elseif(isset($_GET['editformBoth'])){
 	if ($_POST['text']==''){
@@ -329,5 +335,6 @@ if(isset($_POST['orders'])){
 	}
 	echo $output;
 }
+
 ob_end_flush();
 exit();

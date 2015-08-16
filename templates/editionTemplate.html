@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+	<meta charset="utf-8">
+	{% block css %}
+	<style type="text/css">
+	#fieldset{
+		font-weight:bold;border: 3px ridge purple; text-align:left;
+		background-color:silver; width:650px;
+	}
+	#h1{
+		width:645px;text-align:center;
+	}
+	</style>
+	{% endblock %}
+	<script src="/Ad9bisCMS/assets/jquery.js" ></script>
+	<script src="/Ad9bisCMS/assets/jscript.js"></script>
+	<script type="text/javascript" language="javascript">
+	function showAlert(){
+		if(document.form.quantity.value==""){
+			alert("Proszę podać ilość produktu do zapisania!");
+			return false;}
+			else if(document.form.text.value==""){
+				alert("Proszę podać nową nazwę produktu!");
+				return false;}
+			}
+			function focus(quantityAdd)
+			{
+				var el = document.getElementById(quantityAdd);
+				el.focus();
+			}
+			</script>
+	</head>
+	{% block body %}
+	<body>
+	{% endblock %}>
+	<fieldset id='fieldset'>
+	<h1 id="h1">
+	{% block title %}
+	{% endblock %}
+	</h1>
+	{% block result %}
+	{% endblock %}
+	</fieldset>
+	{% block finish %}
+	{% endblock %}
+	</body>

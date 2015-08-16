@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pl">
+    <head>
+        <meta charset="utf-8">
+        <title>{{ title }}</title>
+            <style type="text/css">
+            fieldset{
+                border: 2px ridge purple;
+                background-color:silver;
+                width: 645px; 
+            }
+            #field{
+                margin:50px 0px; 
+            }
+            #title{
+               font-size:18pt;font-style:italic;
+            }
+            #rest{
+                text-align: right;
+            }
+            </style>
+    </head>
+    <body>
+    {% block sidebar %}
+          <div id='field'><fieldset>
+        <div id="title">{{ result }}</div>
+        <ul> <div id="rest">
+        {% if message %}
+        {% for item in message %}
+     <b><big>{{ item }}</big></b><br>
+      {% endfor %}
+      {% else %}
+      <b><big>{{ error }}</big></b><br>
+      {% endif %}
+      </div></ul>
+     {% endblock %}
+        </fieldset>
+    </body>
+</html>
