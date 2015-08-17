@@ -1,3 +1,6 @@
 [submodule "vendor/Twig"]
 	path = vendor/Twig
 	url = https://github.com/twigphp/Twig
+[submodule "vendor/swiftmailer"]
+	path = vendor/swiftmailer
+	url = https://github.com/swiftmailer/swiftmailer
