@@ -118,6 +118,16 @@ abstract class Product
 		return($result[0]);
 	}
 
+	public function getQuantity($id){
+		$sql='SELECT quantity FROM ps_stock_available
+		WHERE ps_stock_available.id_product= :id';
+		$s=$this->pdo->prepare($sql);
+		$s->bindValue(':id', $id);
+		$s->execute();
+		$result =$s->fetch();
+		return ($result[0]);
+	}
+
 		public function getPrice($productId) {
 		$sql='SELECT price FROM ps_product
 		WHERE ps_product.id_product=:id';
