@@ -1,0 +1,18 @@
+{% block fieldset %}
+	<fieldset class="fieldset">
+		<table id="table">
+			<h1 class="finish1">
+			{% block title %}
+			{% endblock %}
+			</h1>
+			
+			{% block result %}	
+			{% endblock %}
+
+		</table>
+	</fieldset>
+{% endblock %}
+
+{% block finish %}
+	<p class="finish"><a href="?controller=product">Nowe wyszukiwanie</a></p>
+{% endblock %}

@@ -1,0 +1,86 @@
+{% extends "searchTemplate.html" %}
+
+{% block title %}
+	Wyniki wyszukiwania po frazie: {{ phrase }}
+{% endblock %}
+
+{% block result %}
+<tr class="row1">
+	<th>
+		Numer ID
+	</th>
+	<th>
+		Nazwa produktu (NP)
+	</th>
+	<th>
+		Ilość (NP)
+	</th>
+	<th>
+		Cena (NP)
+	</th>
+	<th>
+		Cena (SP)
+	</th>
+	<th>
+		Opcje
+	</th>
+</tr>
+<tr>
+	{% for results in result %}
+	<tr class="row">
+		<td>
+			{{ results.id }}
+		</td>
+		<td>
+			{{ results.name }}
+			<br>
+			{% if not results.result.coherence %}
+			<b>
+				{{ results.result }} 
+			</b>
+			{% endif %}
+			{% if results.result.coherence %}
+			{{ results.result.confirmation }}
+			{% endif %}
+		</td>
+		<td>
+			{{ results.quantity }}
+		</td>
+		<td>
+			{% if not results.price %}
+			{{ results.priceRed.realPrice }} 
+			<br>
+			<b> 
+				{{ results.priceRed.reduction }} 
+			</b>
+			{% endif %}
+			{% if results.price %}
+			{{ results.price }}
+			{% endif %}
+		</td>
+		<td>
+			{% if not results.price2 %}
+			{{ results.priceRed2.realPrice }} 
+			<br>
+			<b> 
+				{{ results.priceRed2.reduction }} 
+			</b>
+			{% endif %}
+			{% if results.price2 %}
+			{{ results.price2 }}
+			{% endif %}
+		</td>
+		<td>
+			<form action="?" method="get">
+				<div id="option">
+					<input type="hidden" name="id" value="{{ results.id }}">
+					<input type="submit" name="shortEdition" value="Zmiana obu przez nowy panel"><br>
+					<input type="submit" name="fullEditionN" value="Kompletna edycja w NP">
+				</div>
+			</form>
+		</td>
+	</tr>
+	{% endfor %}
+</tr>
+
+{% endblock %}
