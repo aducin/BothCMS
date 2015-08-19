@@ -1,0 +1,150 @@
+{% extends "editionTemplate.html" %}
+
+{% block menu %}
+	{% include 'menu.html' %}
+{% endblock %}
+
+{% block fieldset %}
+<h1 class="finish1">Zarządzanie produktami obu sklepów</h1>
+
+<fieldset class="IDfieldset">
+
+	{% block result %}
+	<table class="border">
+		<form action="" method="get">
+			<h2>Wyszukaj konkretny produkt w obu bazach</h2>
+			<tr>
+				<td class="row1000-3px">
+					<input type="hidden" name="controller" value="product" />
+					<label for="idnr">
+						Wprowadź numer ID:
+					</label>
+				</td>
+				<td class="row1000-3px">
+					<input type="text" name="idnr">
+				</td>
+				<td class="row1000-3px">
+					<input type="hidden" name="action" value="idsearch">
+					<input id="searchInput" type="submit" value="Wyszukaj">
+				</td>
+			</tr>
+		</form>
+	</table>
+	<hr>
+	<h2>
+		Wyświetl produkty, które spełniają następujące kryteria:
+	</h2>
+	<form action="" method="get">
+		<table class="border">
+			<tr>
+				<td class="row1000-2px">
+					<label for="author">
+						Producent produktu:
+					</label>
+				</td>
+				<td class="row1000-2px">
+					<select name="author" class="selectWidth">
+						<option value="">
+							Dowolny producent
+						</option>
+						{% for manufactorer in authors %}
+						<option value="{{ manufactorer.id }}">
+							{{ manufactorer.name }}
+						</option>
+						{% endfor %}
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td class="row1000-2px">
+					<label for="category">
+						Kategoria produktu:
+					</label>
+				</td>
+				<td class="row1000-2px">
+					<select name="category" class="selectWidth">
+						<option value="">Dowolna kategoria</option>
+						{% for category in categories %}
+						<option value="{{ category.id }}">
+							{{ category.name }}
+						</option>
+						{% endfor %}
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td class="row1000-2px">
+					<label for="text">
+						Zawierające tekst:
+					</label>
+				</td>
+				<td class="row1000-2px">
+					<input type="text" name="text" class="selectWidth">
+				</td>
+			</tr>
+			<tr>
+				<td colspan=2 class="row">
+					<input type="hidden" name="action" value="search">
+					<input id="searchInput" type="submit" value="Wyszukaj">
+				</td>
+			</tr>
+		</table>
+	</form>
+</fieldset>
+{% endblock %}
+
+{% endblock %}
+
+{% block finish %}
+{% if mods %}
+<fieldset class="fieldset">
+	<h2>Produkty podmienione</h2>
+	<table class="border">
+		<tr>
+			<th>Numer ID</th>
+			<th>
+				<b>Nazwa produktu</b>
+			</th>
+			<th>Cena</th>
+			<th>Data wpisu</th>
+			<th>Akcja</th>
+		</tr>
+		{% for modyfied in mods %}
+		<tr>
+			<td class="row1000-2px">
+				<center>
+					{{ modyfied.id }}
+				</center>
+			</td>
+			<td class="row1000-2px">
+				<b>
+					<a href="http://ad9bis.vot.pl/tory-h0/{{ modyfied.id }}-cysterna-francuska-primagaz-bttb.html" target="_blank">
+						{{ modyfied.nazwa }}
+					</a>
+					{% if modyfied.reduction %}
+				<h6>Uwaga - sprawdź rabaty produktu!</h6>
+				{% endif %}
+				</b>
+			</td>
+			<td class="row1000-8px">
+				<center>
+					{{ modyfied.cena }}
+				</center>
+			</td>
+			<td class="row1000-8px">
+				<center>
+					{{ modyfied.data }}
+				</center>
+			</td>
+			<td class="row1000-8px">
+				<form action="?" method="get">
+					<input type="hidden" name="idMod" value="{{ modyfied.id }}">
+					<input type="submit" name="deleterow" value="Usuń wpis">
+				</form>
+			</td>
+		</tr>
+		{% endfor %}
+	</table>
+</fieldset>
+{% endif %}
+{% endblock %}
