@@ -85,25 +85,21 @@
 					</td><td><center>
 					<?php htmlout($stry["quantity"]); ?>
 					<form action="?" method="get">
-						<div>
-							<input type="hidden" name="id" value="<?php htmlout($stry["id"]); ?>">
-							<input type="hidden" name="quantity" value="<?php htmlout($stry["quantity"]); ?>">
-							<center><input type="submit" name="<?php htmlout($action)?>" value="<?php htmlout($uaktualnij); ?>">
-							</div></td><td><center>
-									<?php htmlout($stry["onStock"]); ?></td><td>
-								<div>
-									<center><input type="submit" name="<?php htmlout($fullAction);?>" value="<?php htmlout($edycja); ?>">
-									</div>
-					<div>
-						<center><input type="submit" name="shortEdition" value="<?php htmlout($uaktualnij3); ?>">
-					</div></form></td></tr>
-									<?php endforeach; } } ?>
-								<br></table>
+						<input type="hidden" name="controller" value="order" />
+						<input type="hidden" name="id" value="<?php htmlout($stry["id"]); ?>">
+						<input type="hidden" name="quantity" value="<?php htmlout($stry["quantity"]); ?>">
+						<center><input type="submit" name="<?php htmlout($action)?>" value="<?php htmlout($uaktualnij); ?>">
+						</td><td><center>
+						<?php htmlout($stry["onStock"]); ?></td><td>
+						<center><input type="submit" name="<?php htmlout($fullAction);?>" value="<?php htmlout($edycja); ?>">
+							<center><input type="submit" name="shortEdition" value="<?php htmlout($uaktualnij3); ?>">
+							</form></td></tr>
+						<?php endforeach; } } ?>
+						<br></table>
 <form action="?" method="get">
-<div>
+<input type="hidden" name="controller" value="order" />
 <input type="hidden" name="id_number" value="<?php htmlout ($order); ?>">
 <center><input type="submit" name="mergeQuantities" value="<?php htmlout($uaktualnij2); ?>">
-</div>
 </form></fieldset><?php }
 if(isset($_GET['detailorder'])and $_GET['detailorder']!=''){ 
 	if(!isset($detail2)){

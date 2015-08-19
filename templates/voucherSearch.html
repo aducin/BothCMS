@@ -79,7 +79,7 @@
 						</table><div id="sendVoucherMail">
 						<form method="post">
 	<input type="hidden" name="voucherNumber" value="<?php htmlout($voucherNumber); ?>">
-	<input type="hidden" name="customerNumber" value="<?php htmlout($orderCustomer); ?>">
+	<input type="hidden" name="customerNumber" value="<?php htmlout($orderSearch['id_customer']); ?>">
 	<input type="hidden" name="referenceNumber" value="<?php htmlout($Orders["reference"]); ?>">
 	<input type="submit" id="emailAdress" name="sendMessage" value="Poinformuj Klienta o ostatnim kuponie">
 	Wiadomość email zostanie wysłana na adres: <?php htmlout($customerData['email']); ?>

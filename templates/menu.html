@@ -1,2 +1,13 @@
-<a href="?controller=product">Produkty</a>
-<a href="?controller=order">Zamówienia</a>
+{% block menu %}
+<h4>Witamy z systemie CMS Ad9BIS!</h4>
+<fieldset class="upperMenu">
+	<form method="post">
+		<div id="menuText">
+			Wybierz odpowiednią zakładkę: 
+			<a href="?controller=product">Produkty</a>
+			<a href="?controller=order">Zamówienia</a>
+			<input type="submit" name="logout" value="Wyloguj" class="textRight">
+		</div>
+	</form>
+</fieldset>
+{% endblock %}
