@@ -1,15 +1,4 @@
 <?php
-ob_start();
-
-$DBHandler=parse_ini_file($_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/config/database.ini',true);
-$firstHost=$DBHandler["firstDB"]["host"];
-$firstLogin=$DBHandler["firstDB"]["login"];
-$firstPassword=$DBHandler["firstDB"]["password"];
-$secondHost=$DBHandler["secondDB"]["host"];
-$secondLogin=$DBHandler["secondDB"]["login"];
-$secondPassword=$DBHandler["secondDB"]["password"];
-
-echo 'siema flap';
 
 session_start();
 if(isset($_POST['logout'])){
@@ -49,14 +38,27 @@ try{
 	$error='Pobieranie listy kategorii nie powiodło się: ' . $e->getMessage();
 }
 
-
 $result= $helper->getModyfiedData();
+$product= new OgicomProduct($secondHost, $secondLogin, $secondPassword);
 foreach ($result as $mod){
-	$mods[]= array('id'=>$mod['id_number'], 'nazwa'=>$mod['name'], 'data'=>$mod['date'], 'cena'=>$mod['price']);
+	$productReduction=$product->getReductionData($mod['id_number']);
+	$mods[]= array('id'=>$mod['id_number'], 'nazwa'=>$mod['name'], 'data'=>$mod['date'], 'cena'=>number_format($mod['price'], 2,'.','').'zł', 'reduction'=>$productReduction);
 }
-
 unset($helper);
-require $root_dir.'/templates/productSearch.html.php';
+unset($product);
+if(isset($mods)){
+	$output = $twig->render('/productSearch.html', array(
+		'authors' => $authors,
+		'categories'=>$categories,
+		'mods'=>$mods,
+		));
+}else{
+	$output = $twig->render('/productSearch.html', array(
+		'authors' => $authors,
+		'categories'=>$categories,
+		));
+}
+echo $output;
 
 if(isset($_GET['deleterow'])){
 	$helper= new OgicomHelper($secondHost, $secondLogin, $secondPassword);
@@ -76,9 +78,9 @@ if(isset($_GET['deleterow'])){
 		$error='Aktualizacja danych nie powiodła się: ' . $e->getMessage();
 	}
 	if(!isset($error)){
-			$product2= new OgicomProduct($secondHost, $secondLogin, $secondPassword);
-			$oldQuery = $product2->updateBoth($_POST['id'], $_POST['nominalPriceOld'], $_POST['text'], $_POST['quantity']);
-			$secondConfirmation = $product2->confirmation($_POST['id']);
+		$product2= new OgicomProduct($secondHost, $secondLogin, $secondPassword);
+		$oldQuery = $product2->updateBoth($_POST['id'], $_POST['nominalPriceOld'], $_POST['text'], $_POST['quantity']);
+		$secondConfirmation = $product2->confirmation($_POST['id']);
 	}
 }elseif(isset($_GET['editcompleteformnew'])OR(isset($_GET['editcompleteformold']))){
 	if(isset($_GET['editcompleteformnew'])){
@@ -180,7 +182,7 @@ if(isset($_GET['deleterow'])){
 		$product1= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
 		$bothEdit = $product1->getProductDetailedData($_GET['id']);
 		if($product1->getReductionData($_GET['id'])!=0){
-		$bothEdit['countReduction']=$product1->countReduction($bothEdit['price'], $product1->getReductionData($_GET['id']));
+			$bothEdit['countReduction']=$product1->countReduction($bothEdit['price'], $product1->getReductionData($_GET['id']));
 		}
 		$product2= new OgicomProduct($secondHost, $secondLogin, $secondPassword);
 		$bothEdit['price2']= $product2->getPrice($_GET['id']);
@@ -263,7 +265,7 @@ if(isset($_GET['deleterow'])){
 			}else{
 				$prequery[]= " id_manufacturer =".$_GET['author'];
 			}
-			$implodeSelect=' WHERE'.implode(" AND",$prequery).' ORDER BY id_product';
+			$implodeSelect=' WHERE'.implode(" AND",$prequery).' GROUP BY id_product ORDER BY id_product';
 			$product1= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
 			$newQuery = $product1->getProductData($implodeSelect);
 			$product2= new OgicomProduct($secondHost, $secondLogin, $secondPassword);
@@ -273,68 +275,63 @@ if(isset($_GET['deleterow'])){
 				$oldQuery2 = $oldQuery->fetch();
 				$reduction2=$product2->getReductionData($oldQuery2['id_product']);
 				if(($oldQuery2['name']==$newQuery2['name'])AND($oldQuery2['quantity']==$newQuery2['quantity'])){
-					$queryResult='Zgodność ilości i nazw produktu nr '.$oldQuery2['id_product'].' w obu panelach';
+					$queryResult=array('confirmation'=>'Zgodność ilości i nazw produktu nr '.$oldQuery2['id_product'], 'coherence'=>1);
 				}elseif(($oldQuery2['name']==$newQuery2['name'])AND($oldQuery2['quantity']!=$newQuery2['quantity'])){
-					$queryResult='Zgodność nazw produktu nr '.$oldQuery2['id_product'].", ale ilość w starym panelu to: ".$oldQuery2['quantity'];
+					$queryResult="Ilość produktu ".$oldQuery2['id_product']." w starym panelu to: ".$oldQuery2['quantity'];
 				}elseif(($oldQuery2['name']!=$newQuery2['name'])AND($oldQuery2['quantity']==$newQuery2['quantity'])){
-					$queryResult='Zgodność ilości produktu nr '.$oldQuery2['id_product'].", ale nazwa w starej bazie to: ".$oldQuery2['name'];
+					$queryResult="Nazwa produktu ".$oldQuery2['id_product']." w starej bazie to: ".$oldQuery2['name'];
 				}elseif(($oldQuery2['name']!=$newQuery2['name'])AND($oldQuery2['quantity']!=$newQuery2['quantity'])){
-					$queryResult='Niezgodność ilości oraz nazw produktu nr '.$oldQuery2['id_product'].". Nazwa w starej bazie to: ".$oldQuery2['name'];
+					$queryResult="Podwójna niezgodność - (SB): ".$oldQuery2['name'].", a ilość to: ".$oldQuery2['quantity'];
 				}
 				if(($reduction!=0)AND($reduction2!=0)){
-					$searchResult[]=array('id'=>$newQuery2['id_product'], 'name'=>$newQuery2['name'], 'quantity'=>$newQuery2['quantity'], 'price'=>($product1->countReduction($newQuery2['price'], $reduction)), 'result'=>$queryResult, 'price2'=>($product2->countReduction($oldQuery2['price'], $reduction2)), 'lastID'=>$newQuery2['id_product']);
+					$searchResult[]=array('id'=>$newQuery2['id_product'], 'name'=>$newQuery2['name'], 'quantity'=>$newQuery2['quantity'], 'priceRed'=>($product1->countRealPrice($newQuery2['price'], $reduction)), 'result'=>$queryResult, 'priceRed2'=>($product2->countRealPrice($oldQuery2['price'], $reduction2)), 'priceResult'=>1);
 				}elseif(($reduction==0)AND($reduction2!=0)){
-					$searchResult[]=array('id'=>$newQuery2['id_product'], 'name'=>$newQuery2['name'], 'quantity'=>$newQuery2['quantity'], 'price'=>number_format($newQuery2['price'], 2,'.','').'zł', 'result'=>$queryResult, 'price2'=>($product2->countReduction($oldQuery2['price'], $reduction2)), 'lastID'=>$newQuery2['id_product']);
+					$searchResult[]=array('id'=>$newQuery2['id_product'], 'name'=>$newQuery2['name'], 'quantity'=>$newQuery2['quantity'], 'price'=>number_format($newQuery2['price'], 2,'.','').'zł', 'result'=>$queryResult, 'priceRed2'=>($product2->countRealPrice($oldQuery2['price'], $reduction2)),'priceResult'=>1);
+				}elseif(($reduction!=0)AND($reduction2==0)){
+					$searchResult[]=array('id'=>$newQuery2['id_product'], 'name'=>$newQuery2['name'], 'quantity'=>$newQuery2['quantity'], 'priceRed'=>($product1->countRealPrice($newQuery2['price'], $reduction)), 'result'=>$queryResult, 'price2'=>number_format($oldQuery2['price'], 2,'.','').'zł', 'priceResult'=>1);
 				}else{
-					$searchResult[]=array('id'=>$newQuery2['id_product'], 'name'=>$newQuery2['name'], 'quantity'=>$newQuery2['quantity'], 'price'=>number_format($newQuery2['price'], 2,'.','').'zł', 'result'=>$queryResult, 'price2'=>number_format($oldQuery2['price'], 2,'.','').'zł', 'lastID'=>$newQuery2['id_product']);
+					$searchResult[]=array('id'=>$newQuery2['id_product'], 'name'=>$newQuery2['name'], 'quantity'=>$newQuery2['quantity'], 'price'=>number_format($newQuery2['price'], 2,'.','').'zł', 'result'=>$queryResult, 'price2'=>number_format($oldQuery2['price'], 2,'.','').'zł');
 				}
 			}
 			if(!isset($searchResult)){
 				$error='W bazie nie znaleziono produktów spełniających podane kryteria!';
 			}else{
-				var_dump($searchResult);
 				$phrase=($_GET['text']);
-				//require $root_dir.'/templates/products.html.php';
-				//exit();
 			}	
 		}
 	}
+
 	if(isset($error)OR(isset($firstConfirmation)OR(isset($bothEdit))OR(isset($newQueryResult))OR(isset($searchResult)))){
-
-
-	if(isset($error)){
-		$output = $twig->render('/index.html', array(
-			'title' => 'Niepowodzenie wykonania operacji',
-			'result' => 'UWAGA! Operacja zakończona niepowodzeniem!',
-			'error' => $error,
-			));
-	}elseif(isset($firstConfirmation)){
-		$conf=array('Wykonanie aktualizacji produktu ID '.$firstConfirmation["id_product"], 'Obecna ilość produktu w edytowanej bazie wynosi: '.$firstConfirmation["quantity"]);
-		if(isset($secondConfirmation)){
-			array_push($conf, 'Obecna ilość produktu w drugiej bazie wynosi: '.$secondConfirmation["quantity"]);
+		if(isset($error)){
+			$output = $twig->render('/index.html', array(
+				'title' => 'Niepowodzenie wykonania operacji',
+				'result' => 'UWAGA! Operacja zakończona niepowodzeniem!',
+				'error' => $error,
+				));
+		}elseif(isset($firstConfirmation)){
+			$conf=array('Wykonanie aktualizacji produktu ID '.$firstConfirmation["id_product"], 'Obecna ilość produktu w edytowanej bazie wynosi: '.$firstConfirmation["quantity"]);
+			if(isset($secondConfirmation)){
+				array_push($conf, 'Obecna ilość produktu w drugiej bazie wynosi: '.$secondConfirmation["quantity"]);
+			}
+			$output = $twig->render('/index.html', array(
+				'title' => 'Potwierdzenie wykonania operacji',
+				'result' => 'Operacja zakończyła się powodzeniem!',
+				'message' => $conf,
+				));
+		}elseif(isset($bothEdit)){
+			$output = $twig->render('/editionShortTemplate.html', array(
+				'result' => $bothEdit,
+				));
+		}elseif(isset($newQueryResult)){
+			$output = $twig->render('/idProductResult.html', array(
+				'result1' => $newQueryResult,
+				'result2' => $oldQueryResult,
+				));
+		}elseif(isset($searchResult)){
+			$output = $twig->render('/phraseResult.html', array(
+				'result' => $searchResult,
+				'phrase'=>$phrase,
+				));
 		}
-		$output = $twig->render('/index.html', array(
-			'title' => 'Potwierdzenie wykonania operacji',
-			'result' => 'Operacja zakończyła się powodzeniem!',
-			'message' => $conf,
-			));
-	}elseif(isset($bothEdit)){
-		$output = $twig->render('/editionShortTemplate.html', array(
-			'result' => $bothEdit,
-			));
-	}elseif(isset($newQueryResult)){
-		$output = $twig->render('/editionTemplateIdSearch.html', array(
-			'result1' => $newQueryResult,
-			'result2' => $oldQueryResult,
-			));
-	}elseif(isset($searchResult)){
-		$output = $twig->render('/phraseSearchTemplate.html', array(
-			'result' => $searchResult,
-			'phrase'=>$phrase,
-			));
+		echo $output;
 	}
-	echo $output;
-}
-
-ob_end_flush();
-exit();
