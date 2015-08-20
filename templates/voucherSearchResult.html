@@ -1,0 +1,96 @@
+{% extends "searchTemplate.html" %}
+
+{% block title %}
+	Wyniki wyszukiwania kuponów dla Klienta:<br>
+	 {{ customerData.firstname }} {{ customerData.lastname }}
+	 {% if customerData.new %}
+<h3 id="title">UWAGA - Klient posiada już konto z 3% rabatem na nowym sklepie.</h3>
+{% endif %}
+{% endblock %}
+
+{% block result %}
+<tr>
+	<th class="row">
+		Numer
+	</th>
+	<th class="row">
+		ID zamówienia
+	</th>
+	<th class="row">
+		Referencja
+	</th>
+	<th class="row">
+		Koszt produktów
+	</th>
+	<th class="row">
+		Koszt transportu
+	</th>
+	<th class="row">
+		Data
+	</th>
+	<th class="row">
+		Numer kuponu
+	</th>
+	</tr>
+	{% for results in result %}
+	<tr>
+	<td class="row">
+	{{ results.orderNumber }}
+	</td>
+	<td class="row1">
+	{{ results.id }}
+	</td>
+	<td class="row1">
+	{{ results.reference }}
+	</td>
+	<td class="row1">
+	{{ results.total }}
+	</td>
+	<td class="row1">
+	 {% if results.total >=250 %}
+	 Darmowa wysyłka
+	 {% elseif results.shipping ==0 %}
+	 Odbiór osobisty
+	 {% elseif not results.shipping ==0 %}
+	{{ results.shipping }}zł
+	{% endif %}
+	</td>
+	<td class="row1">
+	{{ results.date }}
+	</td>
+	<td class="row1">
+	{% if results.orderNumber !=6 %}
+	{{ results.orderNumber }}
+	{% elseif results.orderNumber ==6 %}
+	<div class="fieldChanged">15% rabat!</div>
+	{% endif %}
+	</td>
+	</tr>
+	{% endfor %}
+	{{ number }}
+	</table>
+	<table class="fieldset">
+	<tr>
+	<td>
+	<form method="post">
+	<input type="hidden" name="voucherNumber" value="{{ customerData.voucher }}">
+	<input type="hidden" name="customerNumber" value="{{ customerData.idCustomer }}">
+	<input type="hidden" name="referenceNumber" value="{{ customerData.voucherLast }}">
+	Nadpisz numer kuponu: 
+	</td>
+	<td>
+	<input type="text" size="10" name="changedVoucherNumber">
+	<td>
+	<input type="submit" id="emailAdress" name="sendMessage" value="Poinformuj Klienta o ostatnim kuponie">
+	</td>
+	<td>
+	Wiadomość email zostanie wysłana na adres: {{ customerData.email }}
+</form>
+</td>
+</tr>
+{% endblock %}
+
+{% block finish %}
+	<p class="finish"><a href="?controller=order">Nowe wyszukiwanie</a></p>
+{% endblock %}
+

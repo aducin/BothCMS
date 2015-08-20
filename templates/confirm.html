@@ -1,0 +1,30 @@
+{% extends "searchTemplate.html" %}
+
+{% block menu %}
+{% if not message.1 %}
+<hr>
+{% elseif  message.1%}
+ {{ parent() }}
+  {% endif %}
+  {% endblock %}
+
+{% block fieldset %}
+<fieldset class="fieldset">
+<h1 class="finish1">{{ title }}</h1>
+</fieldset>
+{% endblock %}
+{% block finish %}
+<fieldset class="fieldset">
+  <h2 class="finish1">{{ result }}</h2>
+{% if message.0 %}
+  <h3 class="row">{{ message.0 }}</h3>
+  {% else %}
+  <h3 class="row">{{ message }}</h3>
+ {% endif %}
+  <h3 class="row1">{{ message.1 }}</h3>
+  {% if message.2 %}
+  <h3 class="row1">{{ message.2 }}</h3>
+  {% endif %}
+</fieldset>
+<p class="finish"><a href="?controller=product">Nowe wyszukiwanie produktów</a></p>
+{% endblock %}
