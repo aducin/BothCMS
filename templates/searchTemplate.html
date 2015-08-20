@@ -1,3 +1,36 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<link rel="shortcut icon" href="ad9bis.ico"/>
+	<link rel="stylesheet" href="/Ad9bisCMS/assets/styles.css" type="text/css" />
+	<script src="/Ad9bisCMS/assets/jquery.js" >
+	</script>
+	<script src="/Ad9bisCMS/assets/jscript.js">
+	</script>
+	<script type="text/javascript" language="javascript">
+		function showAlert(){
+			if(document.form.quantity.value==""){
+				alert("Proszę podać ilość produktu do zapisania!");
+				return false;}
+				else if(document.form.text.value==""){
+					alert("Proszę podać nową nazwę produktu!");
+					return false;}
+				}
+				function focus(quantityAdd)
+				{
+					var el = document.getElementById(quantityAdd);
+					el.focus();
+				}
+	</script>
+</head>
+{% block body %}
+<body>
+{% endblock %}
+{% block menu %}
+	{% include 'menu.html' %}
+{% endblock %}
+
 {% block fieldset %}
 	<fieldset class="fieldset">
 		<table id="table">
@@ -16,3 +49,4 @@
 {% block finish %}
 	<p class="finish"><a href="?controller=product">Nowe wyszukiwanie</a></p>
 {% endblock %}
+</body>
