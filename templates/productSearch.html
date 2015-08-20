@@ -1,16 +1,10 @@
-{% extends "editionTemplate.html" %}
+{% extends "searchTemplate.html" %}
 
-{% block menu %}
-	{% include 'menu.html' %}
+{% block title %}
+<h1 class="finish1">Zarządzanie produktami obu sklepów</h1>
 {% endblock %}
 
-{% block fieldset %}
-<h1 class="finish1">Zarządzanie produktami obu sklepów</h1>
-
-<fieldset class="IDfieldset">
-
 	{% block result %}
-	<table class="border">
 		<form action="" method="get">
 			<h2>Wyszukaj konkretny produkt w obu bazach</h2>
 			<tr>
@@ -88,12 +82,10 @@
 					<input id="searchInput" type="submit" value="Wyszukaj">
 				</td>
 			</tr>
-		</table>
 	</form>
-</fieldset>
-{% endblock %}
 
 {% endblock %}
+
 
 {% block finish %}
 {% if mods %}
@@ -146,5 +138,7 @@
 		{% endfor %}
 	</table>
 </fieldset>
+{% elseif message %}
+{% include 'confirm.html' %}
 {% endif %}
 {% endblock %}

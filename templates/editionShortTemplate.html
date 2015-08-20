@@ -1,82 +1,82 @@
-{% extends "editionTemplate.html" %}
+{% extends "searchTemplate.html" %}
 
-{% block css %}
-{{ parent() }}
-{% endblock %}
 
 {% block body %}
 <body onload="focus('quantityAdd');">
 	{% endblock %}
 
-	{% block fieldset %}
-	<fieldset class="fieldset">
+	{% block title %}
+	Skrócona edycja produktu ID: {{ result.id_product }}
+		- informacje z nowego panelu.
+	{% endblock %}
 
-		{% block title %}
-		<h2>Edycja produktu ID: {{ result.id_product }}
-		- informacje z nowego panelu.</h2>
-		{% endblock %}
-
-		{% block result %}
+	{% block result %}
 		<form class="row1" name="form" action="?editformBoth" method="post" onsubmit="showAlert()">
-			<div id="rows">
+			<tr>
+			<td class="row1">
 				<label for="text">
 					Aktualna nazwa produktu:
 				</label>
+				</td>
+				<td class="row1">
 				<textarea id="nameText" name="text" rows="1" cols="30">{{ result.name }}</textarea>
-				<br>
-				<table>
+				</td>
+				</tr>
 					<tr>
-						<td>
+						<td class="row1">
 							<label for="quantity">
 								Obecna ilość na sklepie: 
 							</label>
 						</td>
-						<td>
+						<td class="row1">
 							<div id="quantity">
 								{{ result.quantity }}
 							</div>
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td class="row1">
 							<label for="quantity">
 								Podaj ilość do zmiany: 
 							</label>
 						</td>
-						<td>
+						<td class="row1">
 							<input type="text" id="quantityAdd" name="quantity">
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td class="row1">
 							<label for="priceOld">
 								Cena produktu (SP): 
 								{{ result.countReduction2 }}
 							</label>
 						</td>
-						<td>
+						<td class="row1">
 							<input type="text" id="priceS" name="nominalPriceOld" size="15" value="{{ result.price2 }}">
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td class="row1">
 							<label for="priceNew">
 								Cena produktu (NP): 
 								{{ result.countReduction }}
 							</label>
 						</td>
-						<td>
+						<td class="row1">
 							<input type="text" id="priceN" name="nominalPriceNew" size="15" value="{{ result.price }}">
 						</td>
 					</tr>
-				</table>
-			</div>
+				<tr>
+				<td colspan=2 class="row">
 			<div id="button">
 				<input type="hidden" name="id" value="{{ result.id_product }}">
-				<input type="submit" value="Aktualizuj produkt w obu bazach">
+				<input type="submit" id="searchInput" value="Aktualizuj produkt w obu bazach">
 			</div>
-			<br>
+			</td>
+			</tr>
 		</form>
 		{% endblock %}
-	</fieldset>
-{% endblock %}
+
+		{% block finish %}
+			<p class="finish"><a href="?controller=product">Nowe wyszukiwanie produktów</a></p>
+		{% endblock %}

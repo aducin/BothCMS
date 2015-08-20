@@ -1,13 +1,10 @@
-{% extends "editionTemplate.html" %}
+{% extends "searchTemplate.html" %}
 
-{% block menu %}
-	{% include 'menu.html' %}
+{% block title %}
+<h1 class="finish1">Zarządzanie zamówieniami obu sklepów</h1>
 {% endblock %}
 
-{% block fieldset %}
-<h1 class="finish1">Zarządzanie zamówieniami obu sklepów</h1>
-<fieldset class="IDfieldset">
-	<table class="border">
+{% block result %}
 		<form action="?" method="get">
 			<input type="hidden" name="controller" value="order" />
 			<h2>Wyświetl zamówienie spełniające następujące kryteria:</h2>
@@ -37,24 +34,6 @@
 			</tr>
 			<tr>
 				<td class="row1000-2px">
-					Prześlij link do przesyłki:
-				</td>
-				<td class="row1000-2px">
-					<input type="text" size="11" name="notification" id="orderNumber">
-				</td>
-			</tr>
-			<tr>
-				<td class="row1000-2px">
-					<input type="radio" name="send" value="modele" checked="checked">
-					Stary panel</input>
-				</td>
-				<td class="row1000-2px">
-					<input type="radio" name="send" value="ad9bis" >
-					Nowy panel</input>
-				</td>
-			</tr>
-			<tr>
-				<td class="row1000-2px">
 					Oblicz 15% rabat - tylko SP:
 				</td>
 				<td class="row1000-2px">
@@ -63,11 +42,20 @@
 			</tr>
 			<tr>
 				<td class="row1000-2px">
-					<input type="checkbox" name="mail" value="send">
-					Wyślij mail o rabacie do klienta</input>
+					Prześlij link do przesyłki:
 				</td>
 				<td class="row1000-2px">
-					(wiadomość zostanie wysłana automatycznie)
+					<input type="text" size="11" name="notification" id="orderNumber">
+				</td>
+			</tr>
+			<tr>
+				<td class="row1000-2px">
+					<input type="radio" name="send" value="ogicom" checked="checked">
+					Stary panel</input>
+				</td>
+				<td class="row1000-2px">
+					<input type="radio" name="send" value="linuxPl" >
+					Nowy panel</input>
 				</td>
 			</tr>
 			<tr>
@@ -77,6 +65,10 @@
 				</td>
 			</tr>
 		</form>
-	</table>
-</fieldset>
+{% endblock %}
+
+{% block finish %}
+{% if message %}
+{% include 'confirm.html' %}
+{% endif %}
 {% endblock %}
