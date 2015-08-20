@@ -19,8 +19,7 @@ if(!isset($_SESSION['log'])){
 	}
 }
 if($_SESSION['log']==0){
-		header('Location:templates/signIn.html');
-		die();	
+	header('Location:templates/signIn.html');
 }
 unset($db);
 
@@ -52,8 +51,6 @@ foreach ($result as $mod){
 }
 unset($helper);
 unset($product);
-
-
 
 if(isset($_GET['deleterow'])){
 	$helper= new OgicomHelper($secondHost, $secondLogin, $secondPassword);
@@ -303,25 +300,29 @@ if(isset($_GET['action'])and $_GET['action']=='search'){
 			'categories'=>$categories,
 			'mods'=>$mods,
 			));
-	}elseif(isset($authors)AND(!isset($mods))){
+	}elseif(isset($error)AND(isset($authors))){
+		$output = $twig->render('/productSearch.html', array(
+			'authors' => $authors,
+			'categories'=>$categories,
+			'title' => 'Niepowodzenie wykonania operacji',
+			'result' => 'UWAGA! Operacja zakończona niepowodzeniem!',
+			'message' => $error,
+			));
+	}
+	elseif(isset($authors)AND(!isset($mods))){
 		$output = $twig->render('/productSearch.html', array(
 			'authors' => $authors,
 			'categories'=>$categories,
 			));
 	}
-	if(isset($error)OR(isset($firstConfirmation))OR(isset($bothEdit))OR(isset($newQueryResult))OR(isset($searchResult))){
-		if(isset($error)){
-			$output = $twig->render('/index.html', array(
-				'title' => 'Niepowodzenie wykonania operacji',
-				'result' => 'UWAGA! Operacja zakończona niepowodzeniem!',
-				'error' => $error,
-				));
-		}elseif(isset($firstConfirmation)){
+	if(isset($firstConfirmation)OR(isset($bothEdit))OR(isset($newQueryResult))OR(isset($searchResult))){
+		if(isset($firstConfirmation)){
 			$conf=array('Wykonanie aktualizacji produktu ID '.$firstConfirmation["id_product"], 'Obecna ilość produktu w edytowanej bazie wynosi: '.$firstConfirmation["quantity"]);
 			if(isset($secondConfirmation)){
 				array_push($conf, 'Obecna ilość produktu w drugiej bazie wynosi: '.$secondConfirmation["quantity"]);
+
 			}
-			$output = $twig->render('/index.html', array(
+			$output = $twig->render('/confirm.html', array(
 				'title' => 'Potwierdzenie wykonania operacji',
 				'result' => 'Operacja zakończyła się powodzeniem!',
 				'message' => $conf,
@@ -343,4 +344,3 @@ if(isset($_GET['action'])and $_GET['action']=='search'){
 		}
 	}	
 	echo $output;
-
