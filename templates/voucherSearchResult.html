@@ -73,15 +73,17 @@
 	<tr>
 	<td>
 	<form method="post">
+	<input type="hidden" name="email" value="{{ customerData.email }}">
 	<input type="hidden" name="voucherNumber" value="{{ customerData.voucher }}">
-	<input type="hidden" name="customerNumber" value="{{ customerData.idCustomer }}">
-	<input type="hidden" name="referenceNumber" value="{{ customerData.voucherLast }}">
+	<input type="hidden" name="firstname" value="{{ customerData.firstname }}">
+	<input type="hidden" name="lastname" value="{{ customerData.lastname }}">
+	<input type="hidden" name="reference" value="{{ customerData.voucherLast }}">
 	Nadpisz numer kuponu: 
 	</td>
 	<td>
 	<input type="text" size="10" name="changedVoucherNumber">
 	<td>
-	<input type="submit" id="emailAdress" name="sendMessage" value="Poinformuj Klienta o ostatnim kuponie">
+	<input type="submit" id="emailAdress" name="sendVoucherMessage" value="Poinformuj Klienta o ostatnim kuponie">
 	</td>
 	<td>
 	Wiadomość email zostanie wysłana na adres: {{ customerData.email }}

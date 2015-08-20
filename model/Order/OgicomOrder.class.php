@@ -6,13 +6,18 @@ class OgicomOrder extends Order
 		return " WHERE ps_product_lang.id_lang=3 AND ps_order_detail.id_order = :id_number";
 	}
 
+	protected function getWhereLessSubquery() {
+		return " WHERE ps_orders.id_order = :id_number";
+	}
+
 	public function getCount($orderId){
 		$sql= 'SELECT COUNT(product_name) FROM ps_order_detail 
 		WHERE id_order= :id';
 		$s=$this->pdo->prepare($sql);
 		$s->bindValue(':id', $orderId);
 		$s->execute();
-		return $s;
+		$result = $s->fetch();
+		return($result);
 	}
 	public function checkIfVoucherDue($orderId){
 		$sql= 'SELECT id_customer, total_products FROM ps_orders 
@@ -39,5 +44,14 @@ class OgicomOrder extends Order
 		$result->bindValue(':id', $customerId);
 		$result->execute();
 		return($result);
+	}
+	public function getLastVoucherNumber($customerId){
+		$sql= 'SELECT ps_orders.id_order, ps_orders.reference  
+		FROM ps_orders WHERE id_customer = :id AND ps_orders.total_products>=50 GROUP BY ps_orders.reference  ORDER BY ps_orders.date_add DESC';
+		$r=$this->pdo->prepare($sql);
+		$r->bindValue(':id', $customerId);
+		$r->execute();
+		$result=$r->fetch();
+		return($result['reference']);
 	}
 }

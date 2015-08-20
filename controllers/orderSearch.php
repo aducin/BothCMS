@@ -23,27 +23,8 @@ if($_SESSION['log']==0){
 }
 unset($db);
 
-if(isset($_POST['sendMessage'])){
-	$order1= new OgicomOrder($secondHost, $secondLogin, $secondPassword);
-	$customerData= $order1->getOrderCustomerData($_POST['customerNumber']);
-	if($_POST['changedVoucherNumber']!=''){
-		$number=$_POST['changedVoucherNumber'];
-	}elseif($_POST['voucherNumber']!=''){
-		$number=$_POST['voucherNumber'];
-	}
-	require $mail_dir.'/voucherMail.html';
-	exit();
-}elseif(isset($_POST['sendDiscountMessage'])){
-	if($_POST['paymentOption']=='Przelew bankowy'){
-		$option=1;
-	}elseif($_POST['paymentOption']=='Płatność przy odbiorze'){
-		$option=2;
-	}
-	require $mail_dir.'/discountMail.html';
-	exit();
-}elseif(isset($_GET['shipmentNumber'])){
-	require $mail_dir.'/shipmentMail.html';
-	exit();
+if(isset($_POST['sendVoucherMessage'])OR(isset($_POST['sendDiscountMessage'])OR(isset($_POST['shipmentNumber'])))){
+	require_once $root_dir.'/controllers/mail.php'; 
 }
 if(isset($_GET['action'])AND(($_GET['action'])=='orderSearch')){
 	if(($_GET['neworder']!='')OR($_GET['oldorder']!='')){
@@ -101,13 +82,11 @@ if(isset($_GET['action'])AND(($_GET['action'])=='orderSearch')){
 		}	
 	}elseif (isset($_GET['notification'])AND($_GET['notification']) !=''){
 		if(isset($_GET['send'])&&$_GET['send']=='ogicom'){
-			$order1= new OgicomOrder($secondHost, $secondLogin, $secondPassword);
-			$notificationresult = $order1->sendNotification($_GET['notification']);
-			//require $root_dir.'/templates/orders.html';
+			$order= new OgicomOrder($secondHost, $secondLogin, $secondPassword);
+			$notificationresult = $order->sendNotification($_GET['notification']);
 		}elseif(isset($_GET['send'])&&$_GET['send']=='linuxPl'){
-			$order2= new LinuxPlOrder($firstHost, $firstLogin, $secondPassword);
-			$notificationresult = $order2->sendNotification($_GET['notification']);
-			//require $root_dir.'/templates/orders.html';
+			$order= new LinuxPlOrder($firstHost, $firstLogin, $firstPassword);
+			$notificationresult = $order->sendNotification($_GET['notification']);
 		}
 		if($notificationresult==''){
 			$error='W wybranej bazie danych brak zamówienia o podanym numerze!';
@@ -164,8 +143,14 @@ if(isset($_GET['action'])AND(($_GET['action'])=='orderSearch')){
 }else{
 $output = $twig->render('/orderSearch.html');
 }
-
-if(isset($error)){
+if(isset($confirmationMail)){
+	$output = $twig->render('/messageConfirmation.html', array(
+		'title' => $confirmationMail,
+		'result' => 'Poniżej znajduje się treść wysłana do Klienta:',
+		'message' => $message,
+		'confirmation' => $confirmationMail,
+		));
+}elseif(isset($error)){
 	$output = $twig->render('/orderSearch.html', array(
 		'title' => 'Niepowodzenie wykonania operacji',
 		'result' => 'UWAGA! Operacja zakończona niepowodzeniem!',

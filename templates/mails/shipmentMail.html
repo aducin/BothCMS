@@ -4,10 +4,11 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<title>Mail z numerem przesyłki</title>
 </head>
-<body>
+
+
 	<a href="http://emonitoring.poczta-polska.pl/?numer=<?php htmlout($_POST['trackingNumber']);?>@"></a>
 	<?php 
-	$to=/*$_POST['tracking'];*/'ad9bis@gmail.com';
+	$to=/*$_POST['email'];*/'ad9bis@gmail.com';
 $subject= 'Modele-ad9bis - śledzenie przesyłki';
 $message='
 <html>

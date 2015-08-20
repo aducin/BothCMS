@@ -1,0 +1,11 @@
+{% extends "searchTemplate.html" %}
+
+{% block fieldset %}
+<fieldset class="fieldset">
+	{% block title %}
+		<h1 class="finish1">{{ confirmation }}</h1>
+	{% endblock %}
+		<h2 class="finish1">{{ result }}</h2>
+	{{ message }}
+</fieldset>
+{% endblock %}

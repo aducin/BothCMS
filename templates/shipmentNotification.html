@@ -6,13 +6,13 @@ Poinformowanie Klienta o numerze przesyłki
 {% endblock %}
 
 {% block result %}
-<form action="?shipmentNumber" method="post">
+<form method="post">
 <tr>
 <td class="row">
 Mail zostanie wysłany na adres:
 </td>
 <td class="row">
-<input type="text" size="21" name="tracking" value="{{ notDates.email }}">
+<input type="text" size="21" name="email" value="{{ notDates.email }}">
 </td>
 </tr>
 <tr>
@@ -25,11 +25,11 @@ Wpisz numer przesyłki (Poczta Polska):
 </tr>
 <tr>
 <td colspan=2 class="row1">
-<input type="submit" name="idOrder" value="{{ notDates.id_order }}">
-<input type="submit" name="reference" value="{{ notDates.reference }}">
-<input type="submit" name="name" value="{{ notDates.firstname }}">
-<input type="submit" name="surname" value="{{ notDates.lastname }}">
-<input id="searchInput" type="submit" value="Wyślij mail">
+<input type="hidden" name="idOrder" value="{{ notDates.id_order }}">
+<input type="hidden" name="reference" value="{{ notDates.reference }}">
+<input type="hidden" name="name" value="{{ notDates.firstname }}">
+<input type="hidden" name="surname" value="{{ notDates.lastname }}">
+<input type="submit" id="searchInput" name="shipmentNumber" value="Wyślij mail">
 </td>
 </tr>
 </form>
