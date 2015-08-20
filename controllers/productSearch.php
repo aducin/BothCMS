@@ -11,13 +11,19 @@ if(!isset($_SESSION['log'])){
 	$db=new db($firstHost, $firstLogin, $firstPassword);
 	$dbResult= $db->getUserData($userLogin, $userPassword);
 	$resNumb=$dbResult->rowCount();
+
 	if($resNumb>0){
 		$finalResult=$dbResult->fetch(PDO::FETCH_ASSOC);
 		$_SESSION['log']=1;
 		$dbResult->closeCursor();
-	} 
-	unset($db);
+	}
 }
+if($_SESSION['log']==0){
+		header('Location:templates/signIn.html');
+		die();	
+}
+unset($db);
+
 
 try{
 	$helper= new OgicomHelper($secondHost, $secondLogin, $secondPassword);
@@ -46,19 +52,8 @@ foreach ($result as $mod){
 }
 unset($helper);
 unset($product);
-if(isset($mods)){
-	$output = $twig->render('/productSearch.html', array(
-		'authors' => $authors,
-		'categories'=>$categories,
-		'mods'=>$mods,
-		));
-}else{
-	$output = $twig->render('/productSearch.html', array(
-		'authors' => $authors,
-		'categories'=>$categories,
-		));
-}
-echo $output;
+
+
 
 if(isset($_GET['deleterow'])){
 	$helper= new OgicomHelper($secondHost, $secondLogin, $secondPassword);
@@ -231,7 +226,7 @@ if(isset($_GET['deleterow'])){
 	$reduction2= $product2->getReductionData($_GET['id']);
 	require $root_dir.'/templates/completeForm.html.php';
 	exit();
-}elseif(isset($_GET['action'])and $_GET['action']=='idsearch'){
+}elseif(isset($_GET['action'])AND(isset($_GET['idnr']))){
 	$product1= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
 	$newQueryResult = $product1->getProductDetailedData($_GET['idnr']);
 	if($product1->getReductionData($_GET['idnr'])!=''){
@@ -244,7 +239,8 @@ if(isset($_GET['deleterow'])){
 		$oldQueryResult['reduct']=$product2->countRealPrice($oldQueryResult['price'],$product2->getReductionData($_GET['idnr']));
 	}
 	$oldQueryResult['price']=number_format($oldQueryResult['price'], 2,'.','').'zł';
-}elseif(isset($_GET['action'])and $_GET['action']=='search'){
+}
+if(isset($_GET['action'])and $_GET['action']=='search'){
 	if ($_GET['text'] =='' AND $_GET['category'] =='' AND $_GET['author'] ==''){
 		$error='Nie chcesz chyba wypisywać wszystkich produktów z bazy...? Zaznacz chociaż z 1 kryterium wyszukiwania!';
 	}else{
@@ -301,7 +297,19 @@ if(isset($_GET['deleterow'])){
 		}
 	}
 
-	if(isset($error)OR(isset($firstConfirmation)OR(isset($bothEdit))OR(isset($newQueryResult))OR(isset($searchResult)))){
+	if(isset($mods)AND(isset($authors))){
+		$output = $twig->render('/productSearch.html', array(
+			'authors' => $authors,
+			'categories'=>$categories,
+			'mods'=>$mods,
+			));
+	}elseif(isset($authors)AND(!isset($mods))){
+		$output = $twig->render('/productSearch.html', array(
+			'authors' => $authors,
+			'categories'=>$categories,
+			));
+	}
+	if(isset($error)OR(isset($firstConfirmation))OR(isset($bothEdit))OR(isset($newQueryResult))OR(isset($searchResult))){
 		if(isset($error)){
 			$output = $twig->render('/index.html', array(
 				'title' => 'Niepowodzenie wykonania operacji',
@@ -333,5 +341,6 @@ if(isset($_GET['deleterow'])){
 				'phrase'=>$phrase,
 				));
 		}
-		echo $output;
-	}
+	}	
+	echo $output;
+
