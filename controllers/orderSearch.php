@@ -133,7 +133,7 @@ if(isset($_GET['action'])AND(($_GET['action'])=='orderSearch')){
 		$order1= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
 	}
 	$Query = $order1->updateQuantity($_GET['quantity'], $_GET['id']);
-	$firstConfirmation = $order1->confirmation($_GET['id']);
+	$outputOrderOrProduct1 = $order1->confirmation($_GET['id']);
 	$outputOrder1=1;
 }elseif(isset($_GET['mergeQuantities'])){
 	if($_GET['mergeQuantities']== 'Uaktualnij ilości w nowej bazie'){

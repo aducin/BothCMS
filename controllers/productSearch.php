@@ -62,7 +62,7 @@ if(isset($_GET['deleterow'])){
 	}else try{
 		$product1= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
 		$newQuery = $product1->updateBoth($_POST['id'], $_POST['nominalPriceNew'], $_POST['text'], $_POST['quantity']);
-		$firstConfirmation = $product1->confirmation($_POST['id']);
+		$outputOrderOrProduct1 = $product1->confirmation($_POST['id']);
 	}catch (PDOExceptioon $e){
 		$error='Aktualizacja danych nie powiodła się: ' . $e->getMessage();
 	}
@@ -126,7 +126,7 @@ if(isset($_GET['deleterow'])){
 	}
 	if(!isset($error)){
 		try{
-			$firstConfirmation = $product1->confirmation($_POST['id']);
+			$outputOrderOrProduct1 = $product1->confirmation($_POST['id']);
 			$secondConfirmation = $product2->confirmation($_POST['id']);
 		}catch (PDOExceptioon $e){
 			$error='Pobranie uaktualnionych danych nie powiodło się: ' . $e->getMessage();
@@ -304,16 +304,8 @@ if(isset($_GET['deleterow'])){
 		}
 	}
 
-	if(isset($mods)){
-		$output = $twig->render('/productSearch.html', array(
-			'authors' => $authors,
-			'categories'=>$categories,
-			'mods'=>$mods,
-			));
-	}elseif(!isset($mods)){
-		$output = $twig->render('/productSearch.html', array(
-			'authors' => $authors,
-			'categories'=>$categories,
-			));
-	}
+	$output = $twig->render('/productSearch.html', array(
+		'authors' => $authors,
+		'categories'=>$categories,
+		));
 	require_once $root_dir.'/controllers/output.php'; 

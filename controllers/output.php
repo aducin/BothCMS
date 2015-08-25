@@ -21,8 +21,8 @@ if(isset($error)AND(!isset($authors))){
 		'message' => $message,
 		'confirmation' => $outputOrderMail,
 		));
-}elseif(isset($outputOrder1)){
-	$conf=array('Wykonanie aktualizacji produktu ID '.$firstConfirmation["id_product"], 'Obecna ilość produktu w edytowanej bazie wynosi: '.$firstConfirmation["quantity"]);
+}elseif(isset($outputOrderOrProduct1)){
+	$conf=array('Wykonanie aktualizacji produktu ID '.$outputOrderOrProduct1["id_product"], 'Obecna ilość produktu w edytowanej bazie wynosi: '.$outputOrderOrProduct1["quantity"]);
 	if(isset($secondConfirmation)){
 		array_push($conf, 'Obecna ilość produktu w drugiej bazie wynosi: '.$secondConfirmation["quantity"]);
 	}
@@ -85,7 +85,13 @@ if(isset($error)AND(!isset($authors))){
 				'indexArray'=>$indexArray,
 				'condArray'=>$condArray,
 				));
-		}
+		}elseif(isset($mods)){
+		$output = $twig->render('/productSearch.html', array(
+			'authors' => $authors,
+			'categories'=>$categories,
+			'mods'=>$mods,
+			));
+}
 try{
 	echo $output;
 }catch (PDOException $e){
