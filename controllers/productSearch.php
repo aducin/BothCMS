@@ -23,7 +23,6 @@ if($_SESSION['log']==0){
 }
 unset($db);
 
-
 try{
 	$helper= new OgicomHelper($secondHost, $secondLogin, $secondPassword);
 	$result= $helper->selectWholeManufacturer();
@@ -33,7 +32,6 @@ try{
 } catch (PDOException $e){
 	$error='Pobieranie listy producentów nie powiodło się: ' . $e->getMessage();
 }
-
 try{
 	$result= $helper->getCategoryData();
 	foreach ($result as $row){
@@ -42,7 +40,6 @@ try{
 } catch (PDOException $e){
 	$error='Pobieranie listy kategorii nie powiodło się: ' . $e->getMessage();
 }
-
 $result= $helper->getModyfiedData();
 $product= new OgicomProduct($secondHost, $secondLogin, $secondPassword);
 foreach ($result as $mod){
@@ -130,6 +127,7 @@ if(isset($_GET['deleterow'])){
 	if(!isset($error)){
 		try{
 			$firstConfirmation = $product1->confirmation($_POST['id']);
+			$secondConfirmation = $product2->confirmation($_POST['id']);
 		}catch (PDOExceptioon $e){
 			$error='Pobranie uaktualnionych danych nie powiodło się: ' . $e->getMessage();
 		}
@@ -181,6 +179,7 @@ if(isset($_GET['deleterow'])){
 		if($product2->getReductionData($_GET['id'])!=0){
 			$bothEdit['countReduction2']=$product2->countReduction($bothEdit['price2'], $product2->getReductionData($_GET['id']));
 		}
+		$outputProduct1=1;
 	}catch (PODException $e){
 		$error='Błąd przy pobieraniu informacji o produkcie: ' . $e->getMessage();
 	}
@@ -199,8 +198,12 @@ if(isset($_GET['deleterow'])){
 	$reduction1= $product1->getReductionData($_GET['id']);
 	$manufacturer = $product1->selectManufacturer($_GET['id']);
 	$category = $product1->getCategory($_GET['id']);
+	$QueryResult['reduction']=$product1->getReductionData($_GET['id']);
+	$QueryResult['manufacturer'] = $product1->selectManufacturer($_GET['id']);
+	$QueryResult['secondPrice'] = $product2->getPrice($_GET['id']);
+	$QueryResult['reduction2']= $product2->getReductionData($_GET['id']);
 	foreach ($category as $category1){
-		$this[]=array('id'=>$category1['id_category'], 'name'=>$category1['meta_title']);
+		$selCategories[]=array('name'=>$category1['meta_title']);
 		$selectedCats[]=$category1['id_category'];
 	}
 	$result= $product1->getEveryCategory();
@@ -219,10 +222,16 @@ if(isset($_GET['deleterow'])){
 		$tagNames[]=$this4['name']; 
 		$completeTagNames=implode(", ", $tagNames);
 	}
+	$indexArray = array 
+		('1'=>array('indexed'=>'0','activeness'=>'Nieaktywny'),
+		'2'=>array('indexed'=>'1','activeness'=>'Aktywny'));
+	$condArray = array (
+				'1'=>array('condition'=>'new','value'=>'Nowy'),
+				'2'=>array('condition'=>'used','value'=>'Używany'),
+				'3'=>array('condition'=>'refurbished','value'=>'Odnowiony'));
 	$secondPrice = $product2->getPrice($_GET['id']);
 	$reduction2= $product2->getReductionData($_GET['id']);
-	require $root_dir.'/templates/completeForm.html.php';
-	exit();
+	$outputProduct4=1;
 }elseif(isset($_GET['action'])AND(isset($_GET['idnr']))){
 	$product1= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
 	$newQueryResult = $product1->getProductDetailedData($_GET['idnr']);
@@ -236,8 +245,8 @@ if(isset($_GET['deleterow'])){
 		$oldQueryResult['reduct']=$product2->countRealPrice($oldQueryResult['price'],$product2->getReductionData($_GET['idnr']));
 	}
 	$oldQueryResult['price']=number_format($oldQueryResult['price'], 2,'.','').'zł';
-}
-if(isset($_GET['action'])and $_GET['action']=='search'){
+	$outputProduct2=1;
+}elseif(isset($_GET['action'])and $_GET['action']=='search'){
 	if ($_GET['text'] =='' AND $_GET['category'] =='' AND $_GET['author'] ==''){
 		$error='Nie chcesz chyba wypisywać wszystkich produktów z bazy...? Zaznacz chociaż z 1 kryterium wyszukiwania!';
 	}else{
@@ -285,6 +294,7 @@ if(isset($_GET['action'])and $_GET['action']=='search'){
 				}else{
 					$searchResult[]=array('id'=>$newQuery2['id_product'], 'name'=>$newQuery2['name'], 'quantity'=>$newQuery2['quantity'], 'price'=>number_format($newQuery2['price'], 2,'.','').'zł', 'result'=>$queryResult, 'price2'=>number_format($oldQuery2['price'], 2,'.','').'zł');
 				}
+				$outputProduct3=1;
 			}
 			if(!isset($searchResult)){
 				$error='W bazie nie znaleziono produktów spełniających podane kryteria!';
@@ -294,53 +304,16 @@ if(isset($_GET['action'])and $_GET['action']=='search'){
 		}
 	}
 
-	if(isset($mods)AND(isset($authors))){
+	if(isset($mods)){
 		$output = $twig->render('/productSearch.html', array(
 			'authors' => $authors,
 			'categories'=>$categories,
 			'mods'=>$mods,
 			));
-	}elseif(isset($error)AND(isset($authors))){
-		$output = $twig->render('/productSearch.html', array(
-			'authors' => $authors,
-			'categories'=>$categories,
-			'title' => 'Niepowodzenie wykonania operacji',
-			'result' => 'UWAGA! Operacja zakończona niepowodzeniem!',
-			'message' => $error,
-			));
-	}
-	elseif(isset($authors)AND(!isset($mods))){
+	}elseif(!isset($mods)){
 		$output = $twig->render('/productSearch.html', array(
 			'authors' => $authors,
 			'categories'=>$categories,
 			));
 	}
-	if(isset($firstConfirmation)OR(isset($bothEdit))OR(isset($newQueryResult))OR(isset($searchResult))){
-		if(isset($firstConfirmation)){
-			$conf=array('Wykonanie aktualizacji produktu ID '.$firstConfirmation["id_product"], 'Obecna ilość produktu w edytowanej bazie wynosi: '.$firstConfirmation["quantity"]);
-			if(isset($secondConfirmation)){
-				array_push($conf, 'Obecna ilość produktu w drugiej bazie wynosi: '.$secondConfirmation["quantity"]);
-
-			}
-			$output = $twig->render('/confirm.html', array(
-				'title' => 'Potwierdzenie wykonania operacji',
-				'result' => 'Operacja zakończyła się powodzeniem!',
-				'message' => $conf,
-				));
-		}elseif(isset($bothEdit)){
-			$output = $twig->render('/editionShortTemplate.html', array(
-				'result' => $bothEdit,
-				));
-		}elseif(isset($newQueryResult)){
-			$output = $twig->render('/idProductResult.html', array(
-				'result1' => $newQueryResult,
-				'result2' => $oldQueryResult,
-				));
-		}elseif(isset($searchResult)){
-			$output = $twig->render('/phraseResult.html', array(
-				'result' => $searchResult,
-				'phrase'=>$phrase,
-				));
-		}
-	}	
-	echo $output;
+	require_once $root_dir.'/controllers/output.php'; 

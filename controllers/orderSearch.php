@@ -23,7 +23,7 @@ if($_SESSION['log']==0){
 }
 unset($db);
 
-if(isset($_POST['sendVoucherMessage'])OR(isset($_POST['sendDiscountMessage'])OR(isset($_POST['shipmentNumber'])))){
+if(isset($_POST['sendVoucherMessage'])OR(isset($_POST['sendDiscountMessage'])OR(isset($_POST['shipmentNumber'])OR(isset($_POST['sendUndeliveredMessage']))))){
 	require_once $root_dir.'/controllers/mail.php'; 
 }
 if(isset($_GET['action'])AND(($_GET['action'])=='orderSearch')){
@@ -39,6 +39,7 @@ if(isset($_GET['action'])AND(($_GET['action'])=='orderSearch')){
 			$product= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
 			$ordSearch=array('onstock'=>'Na stanie (SP)', 'ordered'=>'Zamówione (SP)', 'button1'=>'Kompletna edycja w SP', 'button2'=>'Wyrównaj ilość w nowej bazie', 'button3'=>'Zmiana obu przez stary panel', 'button4'=>'Uaktualnij ilości w nowej bazie','form'=>'fullEditionO', 'action'=>'BPSQN', 'orderNr'=>$_GET['oldorder']);
 		}
+		$outputOrder5=1;
 		foreach ($query as $sOrder){
 			$otherQuery = $product->getProductQuery($sOrder['product_id']);
 			$otherQuery2 = $otherQuery->fetch();
@@ -72,6 +73,7 @@ if(isset($_GET['action'])AND(($_GET['action'])=='orderSearch')){
 			$customerData['voucherLast']= $order1->getLastVoucherNumber($orderSearch['id_customer']);
 			$customerData['idCustomer']=$totalProducts['idCustomer'];
 			$ordNumb=0;
+			$outputOrder4=1;
 			foreach ($voucherHistory as $custOrder){
 				$ordNumb++;
 				$custOrders[]= array('id'=>$custOrder['id_order'], 'reference'=>$custOrder['reference'], 'total'=>$custOrder['total_products'], 'shipping'=>$custOrder['total_shipping'], 'date'=>$custOrder['date_add'], 'orderNumber'=>((($ordNumb-1) % 6) + 1 ));
@@ -91,11 +93,13 @@ if(isset($_GET['action'])AND(($_GET['action'])=='orderSearch')){
 		if($notificationresult==''){
 			$error='W wybranej bazie danych brak zamówienia o podanym numerze!';
 		}
+		$outputOrder7=1;
 	}elseif (isset($_GET['detailorder'])AND($_GET['detailorder']) !=''){
 		$order1= new OgicomOrder($secondHost, $secondLogin, $secondPassword);
 		$nameDetails = $order1->getQueryLessDetails($_GET['detailorder']);
 		$nameDetails['reducedTotalProduct']=$nameDetails['total_products']*0.85;
 		$nameDetails['orderNumber']=$_GET['detailorder'];
+		$outputOrder2=1;
 		if(!isset($nameDetails['total_paid'])){
 			$error="W starej bazie nie ma zamówienia o podanym numerze!";
 		}else{
@@ -105,6 +109,19 @@ if(isset($_GET['action'])AND(($_GET['action'])=='orderSearch')){
 			$nameDetails['count'] = $detailsCount['COUNT(product_name)'];
 			foreach ($details as $sDetail){
 				$detail2[]=array('id'=>$sDetail['product_id'], 'name'=>$sDetail['name'], 'price'=>number_format($sDetail['product_price'], 2,'.',''), 'reduction'=>number_format($sDetail['reduction_amount'], 2,'.',''), 'reducedPrice'=>($sDetail['product_price']-$sDetail['reduction_amount'])*0.85, 'quantity'=>$sDetail['product_quantity'], 'reducedTotalPrice'=>($sDetail['product_price']-$sDetail['reduction_amount'])*$sDetail['product_quantity']*0.85);
+			}
+		}
+	}elseif (isset($_GET['undeliveredConfirmation'])AND($_GET['undeliveredConfirmation']) !=''){
+		$order= new OgicomOrder($secondHost, $secondLogin, $secondPassword);
+		$confOrderData = $order->getQueryLessDetails($_GET['undeliveredConfirmation']);
+		$confOrderData['ordNumb']=$_GET['undeliveredConfirmation'];
+		$confOrderDetail = $order->getQueryDetails($_GET['undeliveredConfirmation']);
+		$outputOrder3=1;
+		if(!isset($confOrderData['total_paid'])){
+			$error="W starej bazie nie ma zamówienia o podanym numerze!";
+		}else{
+			foreach ($confOrderDetail as $detail){
+				$confOrderDetails[]=array('id'=>$detail['product_id'], 'name'=>$detail['name'], 'price'=>number_format($detail['product_price'], 2,'.',''), 'reduction'=>number_format($detail['reduction_amount'], 2,'.',''), 'quantity'=>$detail['product_quantity']);
 			}
 		}
 	}
@@ -117,6 +134,7 @@ if(isset($_GET['action'])AND(($_GET['action'])=='orderSearch')){
 	}
 	$Query = $order1->updateQuantity($_GET['quantity'], $_GET['id']);
 	$firstConfirmation = $order1->confirmation($_GET['id']);
+	$outputOrder1=1;
 }elseif(isset($_GET['mergeQuantities'])){
 	if($_GET['mergeQuantities']== 'Uaktualnij ilości w nowej bazie'){
 		$include=0;
@@ -129,6 +147,7 @@ if(isset($_GET['action'])AND(($_GET['action'])=='orderSearch')){
 		$product= new OgicomProduct($secondHost, $secondLogin, $secondPassword);
 		$mergeDetails=array('idOrder'=>$_GET['id_number'].' w starym panelu', 'base'=>'Ilość w NP', 'current'=>'Obecna ilość (SP)', 'changed'=>'Ilość po modyfikacji (SP)');
 	}
+	$outputOrder6=1;
 	try{
 		$Query = $order1->selectOrderQuantity($_GET['id_number']);
 		foreach ($Query as $Query2){
@@ -143,56 +162,4 @@ if(isset($_GET['action'])AND(($_GET['action'])=='orderSearch')){
 }else{
 $output = $twig->render('/orderSearch.html');
 }
-if(isset($confirmationMail)){
-	$output = $twig->render('/messageConfirmation.html', array(
-		'title' => $confirmationMail,
-		'result' => 'Poniżej znajduje się treść wysłana do Klienta:',
-		'message' => $message,
-		'confirmation' => $confirmationMail,
-		));
-}elseif(isset($error)){
-	$output = $twig->render('/orderSearch.html', array(
-		'title' => 'Niepowodzenie wykonania operacji',
-		'result' => 'UWAGA! Operacja zakończona niepowodzeniem!',
-		'message' => $error,
-		));
-}elseif(isset($firstConfirmation)){
-	$conf=array('Wykonanie aktualizacji produktu ID '.$firstConfirmation["id_product"], 'Obecna ilość produktu w edytowanej bazie wynosi: '.$firstConfirmation["quantity"]);
-	if(isset($secondConfirmation)){
-		array_push($conf, 'Obecna ilość produktu w drugiej bazie wynosi: '.$secondConfirmation["quantity"]);
-	}
-	$output = $twig->render('/index.html', array(
-		'title' => 'Potwierdzenie wykonania operacji',
-		'result' => 'Operacja zakończyła się powodzeniem!',
-		'message' => $conf,
-		));
-}elseif(isset($nameDetails)){
-	$output = $twig->render('/discountSearchResult.html', array(
-		'result' => $detail2,
-		'customerData'=>$nameDetails,
-		));
-}elseif(isset($custOrders)){
-	$output = $twig->render('/voucherSearchResult.html', array(
-		'result' => $custOrders,
-		'customerData'=>$customerData,
-		));
-}elseif(isset($ordSearch)){
-	$output = $twig->render('/orderSearchResult.html', array(
-		'result' => $this,
-		'variables'=>$ordSearch,
-		));
-}elseif(isset($mergeDetails)){
-	$output = $twig->render('/orderUpdate.html', array(
-		'dates' => $mods,
-		'orderDetails'=>$mergeDetails,
-		));
-}elseif(isset($notificationresult)){
-	$output = $twig->render('/shipmentNotification.html', array(
-		'notDates' => $notificationresult,
-		));	
-}
-try{
-	echo $output;
-}catch (PDOException $e){
-	$error='Nie udało się wyświetlić listy wyszukiwania zamówień: ' . $e->getMessage();
-}	
+require_once $root_dir.'/controllers/output.php'; 

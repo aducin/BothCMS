@@ -301,6 +301,8 @@ abstract class Product
 		ps_product.indexed= :active,
 		ps_product_shop.indexed= :active
 		WHERE ps_product_shop.id_product = :id_product';
+		try{
+		$this->pdo->beginTransaction();
 		$c= $this->pdo->prepare($sql);
 		$c->bindValue(':id_product', $id);
 		$c->bindValue(':price', $nominalPrice);
@@ -314,6 +316,11 @@ abstract class Product
 		$c->bindValue(':cond', $condition);
 		$c->bindValue(':active', $active);
 		$c->execute();
+		$this->pdo->commit();
+		}catch (PDOException $e){
+			$this->pdo->rollBack();
+			$error='Błąd w trakcie wykonywania serii zmian w produkcie';
+		}
 	}
 	
 	public function updateManufacturer($author, $id){

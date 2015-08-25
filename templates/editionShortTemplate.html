@@ -1,12 +1,15 @@
 {% extends "searchTemplate.html" %}
 
+{% block headTitle %}
+<title>Skrócona edycja produktu</title>
+{% endblock %}
 
 {% block body %}
 <body onload="focus('quantityAdd');">
 	{% endblock %}
 
 	{% block title %}
-	Skrócona edycja produktu ID: {{ result.id_product }}
+	Skrócona edycja produktu ID: {{ QueryResult.id_product }}
 		- informacje z nowego panelu.
 	{% endblock %}
 

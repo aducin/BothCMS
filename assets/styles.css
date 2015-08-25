@@ -30,6 +30,9 @@ body{
 .row{
 	background-color: #bb6667;
 }
+.rowCenter{
+	background-color: #bb6667;text-align:center;
+}
 .row1000-2px{
 	background-color: #bb6667;width:499px;
 }
@@ -45,11 +48,23 @@ body{
 .row2{
 	background-color: #bb5447; text-align:right;
 }
+.row3{
+	background-color: #bb5447; text-align:center;width:495px;
+}
+.row4{
+	background-color: #bb5447;
+}
 .selectWidth{
 	width:300px;
 }
 .table{
 	text-align:center;
+}
+.textLeft{
+	text-align:left;background-color: #bb7768;
+}
+.textOnlyLeft{
+	text-align:left
 }
 .textRight{
 	text-align:right;background-color: #bb7767;margin-left:430px;
@@ -109,6 +124,9 @@ body{
 #table{
 	border: 2px ridge #bb7778; background-color: #bb9998;width:1000px;
 }
+#textarea{
+		border: 1px ridge brown;
+	}
 #title{
 	font-size:18pt;font-style:italic;
 }
