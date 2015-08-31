@@ -10,5 +10,7 @@ require_once $root_dir.'/model/Order/OgicomOrder.class.php';
 require_once $root_dir.'/model/Product/AbstractProduct.class.php';
 require_once $root_dir.'/model/Product/OgicomProduct.class.php';
 require_once $root_dir.'/model/Product/LinuxPlProduct.class.php';
-require_once $root_dir.'/model/DataBase/db.class.php';
+require_once $root_dir.'/model/Controller/AbstractController.class.php';
+require_once $root_dir.'/model/Controller/OrderController.class.php';
+require_once $root_dir.'/model/DataBase/dbHandler.php';
 require_once $root_dir.'/config/functions.php';
