@@ -26,6 +26,12 @@ require_once $root_dir.'/config/bootstrap.php';
 ob_start();
 // http://localhost/Ad9bisCMS/
 $controller = isset($_GET['controller']) ? $_GET['controller'] : 'product';
+
+$dbHandlerOgicom= new DBHandler($secondHost, $secondLogin, $secondPassword);
+$ogicomHandler = $dbHandlerOgicom->getDb();
+$dbHandlerLinuxPl= new DBHandler($firstHost, $firstLogin, $firstPassword);
+$linuxPlHandler = $dbHandlerLinuxPl->getDb();
+
 if ($controller == 'product') {
 	// http://localhost/Ad9bisCMS/?controller=product
 	require_once $root_dir.'/controllers/productSearch.php';

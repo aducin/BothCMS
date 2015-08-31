@@ -8,8 +8,8 @@ if(isset($_POST['logout'])){
 if(!isset($_SESSION['log'])){
 	$userLogin=$_POST['login'];
 	$userPassword=$_POST['password'];
-	$db=new db($firstHost, $firstLogin, $firstPassword);
-	$dbResult= $db->getUserData($userLogin, $userPassword);
+	$dbHandlerLinuxPl= new DBHandler($firstHost, $firstLogin, $firstPassword);
+	$dbResult= $dbHandlerLinuxPl->getUserData($userLogin, $userPassword);
 	$resNumb=$dbResult->rowCount();
 
 	if($resNumb>0){
@@ -24,7 +24,8 @@ if($_SESSION['log']==0){
 unset($db);
 
 try{
-	$helper= new OgicomHelper($secondHost, $secondLogin, $secondPassword);
+
+	$helper= new OgicomHelper($ogicomHandler);
 	$result= $helper->selectWholeManufacturer();
 	foreach ($result as $row){
 		$authors[]= array('id'=> $row['id_manufacturer'], 'name'=> $row['name']);
@@ -41,7 +42,7 @@ try{
 	$error='Pobieranie listy kategorii nie powiodło się: ' . $e->getMessage();
 }
 $result= $helper->getModyfiedData();
-$product= new OgicomProduct($secondHost, $secondLogin, $secondPassword);
+$product= new OgicomProduct($ogicomHandler);
 foreach ($result as $mod){
 	$productReduction=$product->getReductionData($mod['id_number']);
 	$mods[]= array('id'=>$mod['id_number'], 'nazwa'=>$mod['name'], 'data'=>$mod['date'], 'cena'=>number_format($mod['price'], 2,'.','').'zł', 'reduction'=>$productReduction);
@@ -50,7 +51,7 @@ unset($helper);
 unset($product);
 
 if(isset($_GET['deleterow'])){
-	$helper= new OgicomHelper($secondHost, $secondLogin, $secondPassword);
+	$helper= new OgicomHelper($ogicomHandler);
 	$result= $helper->deleteModyfied($_GET['idMod']);
 	executeController('product');
 	unset($helper);
@@ -60,27 +61,27 @@ if(isset($_GET['deleterow'])){
 	}elseif ($_POST['quantity']==''){
 		$error='Brak aktualnego wpisu: nowa liczba produktu!';
 	}else try{
-		$product1= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
+		$product1= new LinuxPlProduct($linuxPlHandler);
 		$newQuery = $product1->updateBoth($_POST['id'], $_POST['nominalPriceNew'], $_POST['text'], $_POST['quantity']);
 		$outputOrderOrProduct1 = $product1->confirmation($_POST['id']);
 	}catch (PDOExceptioon $e){
 		$error='Aktualizacja danych nie powiodła się: ' . $e->getMessage();
 	}
 	if(!isset($error)){
-		$product2= new OgicomProduct($secondHost, $secondLogin, $secondPassword);
+		$product2= new OgicomProduct($ogicomHandler);
 		$oldQuery = $product2->updateBoth($_POST['id'], $_POST['nominalPriceOld'], $_POST['text'], $_POST['quantity']);
 		$secondConfirmation = $product2->confirmation($_POST['id']);
 	}
 }elseif(isset($_GET['editcompleteformnew'])OR(isset($_GET['editcompleteformold']))){
 	if(isset($_GET['editcompleteformnew'])){
-		$product1= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
-		$product2= new OgicomProduct($secondHost, $secondLogin, $secondPassword);
+		$product1= new LinuxPlProduct($linuxPlHandler);
+		$product2= new OgicomProduct($ogicomHandler);
 		if (isset($_POST['change'])and $_POST['change']== "nameChange"){
 			$oldQuery = $product2->insertModyfy($_POST['id'], $_POST['text']);
 		}
 	}elseif(isset($_GET['editcompleteformold'])){
-		$product2= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
-		$product1= new OgicomProduct($secondHost, $secondLogin, $secondPassword);
+		$product2= new LinuxPlProduct($linuxPlHandler);
+		$product1= new OgicomProduct($ogicomHandler);
 		$priceNew=($_POST['nominalPriceNew']);
 		$priceOld=($_POST['nominalPriceOld']);
 		$_POST['nominalPriceNew']=$priceOld;
@@ -169,12 +170,12 @@ if(isset($_GET['deleterow'])){
 	}
 }elseif(isset($_GET['shortEdition'])){
 	try{
-		$product1= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
+		$product1= new LinuxPlProduct($linuxPlHandler);
 		$bothEdit = $product1->getProductDetailedData($_GET['id']);
 		if($product1->getReductionData($_GET['id'])!=0){
 			$bothEdit['countReduction']=$product1->countReduction($bothEdit['price'], $product1->getReductionData($_GET['id']));
 		}
-		$product2= new OgicomProduct($secondHost, $secondLogin, $secondPassword);
+		$product2= new OgicomProduct($ogicomHandler);
 		$bothEdit['price2']= $product2->getPrice($_GET['id']);
 		if($product2->getReductionData($_GET['id'])!=0){
 			$bothEdit['countReduction2']=$product2->countReduction($bothEdit['price2'], $product2->getReductionData($_GET['id']));
@@ -185,12 +186,12 @@ if(isset($_GET['deleterow'])){
 	}
 }elseif(isset($_GET['fullEditionN'])OR(isset($_GET['fullEditionO']))){
 	if (isset($_GET['fullEditionN'])){
-		$product1= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
-		$product2= new OgicomProduct($secondHost, $secondLogin, $secondPassword);
+		$product1= new LinuxPlProduct($linuxPlHandler);
+		$product2= new OgicomProduct($ogicomHandler);
 		$editForm='?editcompleteformnew';
 	}elseif(isset($_GET['fullEditionO'])){
-		$product1= new OgicomProduct($secondHost, $secondLogin, $secondPassword);
-		$product2= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
+		$product1= new OgicomProduct($ogicomHandler);
+		$product2= new LinuxPlProduct($linuxPlHandler);
 		$editForm='?editcompleteformold';
 	}
 	$Query = $product1->getWholeDetailsQuery($_GET['id']);
@@ -233,19 +234,25 @@ if(isset($_GET['deleterow'])){
 	$reduction2= $product2->getReductionData($_GET['id']);
 	$outputProduct4=1;
 }elseif(isset($_GET['action'])AND(isset($_GET['idnr']))){
-	$product1= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
+
+	$product1= new LinuxPlProduct($linuxPlHandler);
 	$newQueryResult = $product1->getProductDetailedData($_GET['idnr']);
-	if($product1->getReductionData($_GET['idnr'])!=''){
-		$newQueryResult['reduct']=$product1->countRealPrice($newQueryResult['price'],$product1->getReductionData($_GET['idnr']));
+	if($newQueryResult['name']==''){
+		$error='Brak produktu o podanym ID.';
+	}else{
+		if($product1->getReductionData($_GET['idnr'])!=''){
+			$newQueryResult['reduct']=$product1->countRealPrice($newQueryResult['price'],$product1->getReductionData($_GET['idnr']));
+		}
+		$newQueryResult['price']=number_format($newQueryResult['price'], 2,'.','').'zł';
+		$product2= new OgicomProduct($ogicomHandler);
+		$oldQueryResult = $product2->getProductDetailedData($_GET['idnr']);
+		if($product2->getReductionData($_GET['idnr'])!=''){
+			$oldQueryResult['reduct']=$product2->countRealPrice($oldQueryResult['price'],$product2->getReductionData($_GET['idnr']));
+		}
+		$oldQueryResult['price']=number_format($oldQueryResult['price'], 2,'.','').'zł';
+		$imageNumber= $product2->image($_GET['idnr']);
+		$outputProduct2=1;
 	}
-	$newQueryResult['price']=number_format($newQueryResult['price'], 2,'.','').'zł';
-	$product2= new OgicomProduct($secondHost, $secondLogin, $secondPassword);
-	$oldQueryResult = $product2->getProductDetailedData($_GET['idnr']);
-	if($product2->getReductionData($_GET['idnr'])!=''){
-		$oldQueryResult['reduct']=$product2->countRealPrice($oldQueryResult['price'],$product2->getReductionData($_GET['idnr']));
-	}
-	$oldQueryResult['price']=number_format($oldQueryResult['price'], 2,'.','').'zł';
-	$outputProduct2=1;
 }elseif(isset($_GET['action'])and $_GET['action']=='search'){
 	if ($_GET['text'] =='' AND $_GET['category'] =='' AND $_GET['author'] ==''){
 		$error='Nie chcesz chyba wypisywać wszystkich produktów z bazy...? Zaznacz chociaż z 1 kryterium wyszukiwania!';
@@ -268,10 +275,11 @@ if(isset($_GET['deleterow'])){
 				$prequery[]= " id_manufacturer =".$_GET['author'];
 			}
 			$implodeSelect=' WHERE'.implode(" AND",$prequery).' GROUP BY id_product ORDER BY id_product';
-			$product1= new LinuxPlProduct($firstHost, $firstLogin, $firstPassword);
+			$product1= new LinuxPlProduct($linuxPlHandler);
 			$newQuery = $product1->getProductData($implodeSelect);
-			$product2= new OgicomProduct($secondHost, $secondLogin, $secondPassword);
+			$product2= new OgicomProduct($ogicomHandler);
 			foreach ($newQuery as $newQuery2){
+				$imageNumber= $product2->image($newQuery2['id_product']);
 				$reduction=$product1->getReductionData($newQuery2['id_product']);
 				$oldQuery = $product2->getProductQuery($newQuery2['id_product']);
 				$oldQuery2 = $oldQuery->fetch();
@@ -286,13 +294,13 @@ if(isset($_GET['deleterow'])){
 					$queryResult="Podwójna niezgodność - (SB): ".$oldQuery2['name'].", a ilość to: ".$oldQuery2['quantity'];
 				}
 				if(($reduction!=0)AND($reduction2!=0)){
-					$searchResult[]=array('id'=>$newQuery2['id_product'], 'name'=>$newQuery2['name'], 'quantity'=>$newQuery2['quantity'], 'priceRed'=>($product1->countRealPrice($newQuery2['price'], $reduction)), 'result'=>$queryResult, 'priceRed2'=>($product2->countRealPrice($oldQuery2['price'], $reduction2)), 'priceResult'=>1);
+					$searchResult[]=array('id'=>$newQuery2['id_product'], 'name'=>$newQuery2['name'], 'quantity'=>$newQuery2['quantity'], 'priceRed'=>($product1->countRealPrice($newQuery2['price'], $reduction)), 'result'=>$queryResult, 'priceRed2'=>($product2->countRealPrice($oldQuery2['price'], $reduction2)), 'priceResult'=>1, 'imgNumber'=>$imageNumber);
 				}elseif(($reduction==0)AND($reduction2!=0)){
-					$searchResult[]=array('id'=>$newQuery2['id_product'], 'name'=>$newQuery2['name'], 'quantity'=>$newQuery2['quantity'], 'price'=>number_format($newQuery2['price'], 2,'.','').'zł', 'result'=>$queryResult, 'priceRed2'=>($product2->countRealPrice($oldQuery2['price'], $reduction2)),'priceResult'=>1);
+					$searchResult[]=array('id'=>$newQuery2['id_product'], 'name'=>$newQuery2['name'], 'quantity'=>$newQuery2['quantity'], 'price'=>number_format($newQuery2['price'], 2,'.','').'zł', 'result'=>$queryResult, 'priceRed2'=>($product2->countRealPrice($oldQuery2['price'], $reduction2)),'priceResult'=>1, 'imgNumber'=>$imageNumber);
 				}elseif(($reduction!=0)AND($reduction2==0)){
-					$searchResult[]=array('id'=>$newQuery2['id_product'], 'name'=>$newQuery2['name'], 'quantity'=>$newQuery2['quantity'], 'priceRed'=>($product1->countRealPrice($newQuery2['price'], $reduction)), 'result'=>$queryResult, 'price2'=>number_format($oldQuery2['price'], 2,'.','').'zł', 'priceResult'=>1);
+					$searchResult[]=array('id'=>$newQuery2['id_product'], 'name'=>$newQuery2['name'], 'quantity'=>$newQuery2['quantity'], 'priceRed'=>($product1->countRealPrice($newQuery2['price'], $reduction)), 'result'=>$queryResult, 'price2'=>number_format($oldQuery2['price'], 2,'.','').'zł', 'priceResult'=>1, 'imgNumber'=>$imageNumber);
 				}else{
-					$searchResult[]=array('id'=>$newQuery2['id_product'], 'name'=>$newQuery2['name'], 'quantity'=>$newQuery2['quantity'], 'price'=>number_format($newQuery2['price'], 2,'.','').'zł', 'result'=>$queryResult, 'price2'=>number_format($oldQuery2['price'], 2,'.','').'zł');
+					$searchResult[]=array('id'=>$newQuery2['id_product'], 'name'=>$newQuery2['name'], 'quantity'=>$newQuery2['quantity'], 'price'=>number_format($newQuery2['price'], 2,'.','').'zł', 'result'=>$queryResult, 'price2'=>number_format($oldQuery2['price'], 2,'.','').'zł', 'imgNumber'=>$imageNumber);
 				}
 				$outputProduct3=1;
 			}
@@ -304,8 +312,5 @@ if(isset($_GET['deleterow'])){
 		}
 	}
 
-	$output = $twig->render('/productSearch.html', array(
-		'authors' => $authors,
-		'categories'=>$categories,
-		));
+	$finalOutput='product';
 	require_once $root_dir.'/controllers/output.php'; 

@@ -23,16 +23,12 @@ if($_SESSION['log']==0){
 	header('Location:templates/signIn.html');
 }
 
-$dbHandlerOgicom= new DBHandler($secondHost, $secondLogin, $secondPassword);
-$ogicomHandler = $dbHandlerOgicom->getDb();
-$dbHandlerLinuxPl= new DBHandler($firstHost, $firstLogin, $firstPassword);
-$linuxPlHandler = $dbHandlerLinuxPl->getDb();
-
 if(isset($_POST['sendVoucherMessage'])OR(isset($_POST['sendDiscountMessage'])OR(isset($_POST['shipmentNumber'])OR(isset($_POST['sendUndeliveredMessage']))))){
 	require_once $root_dir.'/controllers/mail.php'; 
 }
+
+$controller = new OrderController($linuxPlHandler, $ogicomHandler);
 if(isset($_GET['action'])AND(($_GET['action'])=='orderSearch')){
-	$controller = new OrderController($linuxPlHandler, $ogicomHandler);
 	if(($_GET['neworder']!='')OR($_GET['oldorder']!='')){
 		if ($_GET['neworder'] !=''){
 			$result=$controller->getOrderInformations(1, $_GET['neworder']);
@@ -87,7 +83,6 @@ if(isset($_GET['action'])AND(($_GET['action'])=='orderSearch')){
 		}
 	}
 }elseif (isset($_GET['BPSQO'])OR(isset($_GET['BPSQN']))){
-	$controller = new OrderController($linuxPlHandler, $ogicomHandler);
 	if (isset($_GET['BPSQO'])){
 		$outputOrderOrProduct1=$controller-> MergeSingleQuantity(1, $_GET['id'], $_GET['quantity']);
 	}elseif (isset($_GET['BPSQN'])){
@@ -96,11 +91,9 @@ if(isset($_GET['action'])AND(($_GET['action'])=='orderSearch')){
 }elseif(isset($_GET['mergeQuantities'])){
 	try{
 		if($_GET['mergeQuantities']== 'Uaktualnij ilości w nowej bazie'){
-			$controller = new OrderController($linuxPlHandler, $ogicomHandler);
 			$mergeDetails=$controller->mergeIntoNewHelper($_GET['id_number']);
 			$mods=$controller->mergeIntoNew($_GET['id_number']);
 		}elseif ($_GET['mergeQuantities']== 'Uaktualnij ilości w starej bazie'){
-			$controller = new OrderController($linuxPlHandler, $ogicomHandler);
 			$mergeDetails=$controller->mergeIntoOldHelper($_GET['id_number']);
 			$mods=$controller->mergeIntoOld($_GET['id_number']);
 		}
@@ -111,4 +104,5 @@ if(isset($_GET['action'])AND(($_GET['action'])=='orderSearch')){
 }else{
 $finalOutput='order';	
 }
+unset($controller);
 require_once $root_dir.'/controllers/output.php'; 
