@@ -15,7 +15,7 @@ abstract class Order
 		INNER JOIN ps_stock_available ON ps_order_detail.product_id=ps_stock_available.id_product';
 	}
 
-	private function getSelectDetails($orderId) {
+	private function getQueryDetailsSubquery($orderId) {
 		$this->idOrder=$orderId;
 		return 'SELECT ps_order_detail.product_id, ps_order_detail.id_order, ps_order_detail.product_price, ps_order_detail.reduction_amount, ps_order_detail.total_price_tax_incl, ps_order_detail.product_quantity, ps_product_lang.name, ps_orders.total_products, ps_orders.total_paid, ps_orders.reference, ps_orders.payment,ps_orders.id_customer, ps_customer.email, ps_customer.firstname, ps_customer.lastname
 		FROM ps_order_detail 
@@ -24,14 +24,14 @@ abstract class Order
 		INNER JOIN ps_customer ON ps_orders.id_customer=ps_customer.id_customer';
 	}
 
-	private function getLessOrderDetails($orderId) {
+	private function getQueryLessDetailsSubquery($orderId) {
 		$this->idOrder=$orderId;
 		return 'SELECT ps_orders.total_products, ps_orders.total_paid, ps_orders.reference, ps_orders.payment,ps_orders.id_customer, ps_customer.email, ps_customer.firstname, ps_customer.lastname
 		FROM ps_orders
 		INNER JOIN ps_customer ON ps_orders.id_customer=ps_customer.id_customer';
 	}
 
-	private function getToSendNotification($orderId) {
+	private function sendNotificationSubquery($orderId) {
 		$this->idOrder=$orderId;
 		return 'SELECT ps_orders.id_order, ps_orders.reference, ps_orders.id_customer, ps_customer.email, ps_customer.firstname, ps_customer.lastname
 		FROM ps_orders
@@ -50,7 +50,7 @@ abstract class Order
 	}
 
 	public function getQueryDetails($orderId) {
-		$sql=$this->getSelectDetails($orderId) . $this->getWhereSubquery();
+		$sql=$this->getQueryDetailsSubquery($orderId) . $this->getWhereSubquery();
 		$c=$this->pdo->prepare($sql);
 		$c->bindValue(':id_number', $orderId);
 		$c->execute();
@@ -58,7 +58,7 @@ abstract class Order
 	}
 	
 	public function getQueryLessDetails($orderId) {
-		$sql=$this->getLessOrderDetails($orderId) . $this->getWhereLessSubquery();
+		$sql=$this->getQueryLessDetailsSubquery($orderId) . $this->getWhereLessSubquery();
 		$c=$this->pdo->prepare($sql);
 		$c->bindValue(':id_number', $orderId);
 		$c->execute();
@@ -67,7 +67,7 @@ abstract class Order
 	}
 
 	public function sendNotification($orderId){
-		$sql=$this->getToSendNotification($orderId);
+		$sql=$this->sendNotificationSubquery($orderId);
 		$c=$this->pdo->prepare($sql);
 		$c->bindValue(':id_number', $orderId);
 		$c->execute();
