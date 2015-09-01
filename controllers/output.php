@@ -16,7 +16,7 @@ if(isset($error)AND(!isset($authors))){
 			));
 }elseif(isset($outputOrderMail)){
 	$output = $twig->render('/messageConfirmation.html', array(
-		'title' => $confirmationMail,
+		//'title' => $confirmationMail,
 		'result' => 'Poniżej znajduje się treść wysłana do Klienta:',
 		'message' => $message,
 		'confirmation' => $outputOrderMail,
@@ -33,7 +33,7 @@ if(isset($error)AND(!isset($authors))){
 		));
 }elseif(isset($outputOrder2)){
 	$output = $twig->render('/discountSearchResult.html', array(
-		'result' => $detail2,
+		'result' => $detail,
 		'customerData'=>$nameDetails,
 		));
 }elseif(isset($outputOrder3)){
@@ -48,7 +48,7 @@ if(isset($error)AND(!isset($authors))){
 		));
 }elseif(isset($outputOrder5)){
 	$output = $twig->render('/orderSearchResult.html', array(
-		'result' => $this,
+		'result' => $result,
 		'variables'=>$ordSearch,
 		));
 }elseif(isset($outputOrder6)){
@@ -68,6 +68,7 @@ if(isset($error)AND(!isset($authors))){
 			$output = $twig->render('/idProductResult.html', array(
 				'result1' => $newQueryResult,
 				'result2' => $oldQueryResult,
+				'imageNumber' => $imageNumber,
 				));
 		}elseif(isset($outputProduct3)){
 			$output = $twig->render('/phraseResult.html', array(
@@ -91,6 +92,15 @@ if(isset($error)AND(!isset($authors))){
 			'categories'=>$categories,
 			'mods'=>$mods,
 			));
+}elseif(isset($finalOutput)){
+	if($finalOutput=='order'){
+		$output = $twig->render('/orderSearch.html');
+	}elseif($finalOutput=='product'){
+		$output = $twig->render('/productSearch.html', array(
+		'authors' => $authors,
+		'categories'=>$categories,
+		));
+	} 
 }
 try{
 	echo $output;

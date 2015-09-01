@@ -31,7 +31,7 @@ if(isset($_POST['sendVoucherMessage'])){
 		'totalWithDiscount' => $_POST['totalWithDiscount'],
 		));
 }elseif(isset($_POST['sendUndeliveredMessage'])){
-	$order= new OgicomOrder($secondHost, $secondLogin, $secondPassword);
+	$order= new OgicomOrder($ogicomHandler);
 	$confOrderData = $order->getQueryLessDetails($_POST['ordNumb']);
 	$confOrderDetail = $order->getQueryDetails($_POST['ordNumb']);
 	foreach ($confOrderDetail as $detail){
@@ -58,7 +58,6 @@ if(isset($_POST['sendVoucherMessage'])){
 			'customerData'=>$confOrderData,
 		));
 	}
-	echo$message; exit();
 }
 elseif(isset($_POST['shipmentNumber'])){
 	$subject='Modele-ad9bis - śledzenie przesyłki';

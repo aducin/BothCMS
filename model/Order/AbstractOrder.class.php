@@ -2,10 +2,9 @@
 
 abstract class Order
 {
-	function __construct($host, $login, $password){
-		$this->pdo=new PDO($host, $login, $password);
-		$this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-		$this->pdo->exec('SET NAMES "utf8"');}
+	public function __construct($DBHandler){
+		$this->pdo=$DBHandler;
+	}
 
 	protected $idOrder;
 
