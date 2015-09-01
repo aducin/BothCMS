@@ -2,10 +2,9 @@
 
 abstract class Product
 {
-	function __construct($host, $login, $password){
-		$this->pdo=new PDO($host, $login, $password);
-		$this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-		$this->pdo->exec('SET NAMES "utf8"');}
+	public function __construct($DBHandler){
+		$this->pdo=$DBHandler;
+	}
 
 	protected $idProduct;
 
@@ -351,5 +350,16 @@ abstract class Product
 		$s->execute();
 		$s2 = $s->fetch();
 		return ($s2);
+	}
+
+	public function image($id){
+		$sql='SELECT id_image FROM ps_image
+		WHERE id_product= :id AND cover=1';
+		$s=$this->pdo->prepare($sql);
+		$s->bindValue(':id', $id);
+		$s->execute();
+		$image=$s->fetch();
+		$coverImage=$id.'-'.$image['id_image'];
+		return ($coverImage);
 	}
 }
