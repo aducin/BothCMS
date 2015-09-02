@@ -61,52 +61,52 @@ if(isset($error)AND(!isset($authors))){
 		'notDates' => $orderTracking,
 		));	
 }elseif(isset($productShortEdition)){//                                   productSearch.php
-			$output = $twig->render('/editionShortTemplate.html', array(
-				'result' => $productShortEdition,
-				));
-		}elseif(isset($productIdSearch)){//                                   productSearch.php
-			$output = $twig->render('/idProductResult.html', array(
-				'result1' => $productIdSearch,
-				'result2' => $oldQueryResult,
-				'imageNumber' => $imageNumber,
-				));
-		}elseif(isset($phraseSearchResult)){//                                   productSearch.php
-			$output = $twig->render('/phraseResult.html', array(
-				'result' => $phraseSearchResult,
-				'phrase'=>$productPhraseSearch,
-				));
-		}elseif(isset($completeQueryResult)){//                                   productSearch.php
-			$indexArray = array 
-				('1'=>array('indexed'=>'0','activeness'=>'Nieaktywny'),
-				'2'=>array('indexed'=>'1','activeness'=>'Aktywny'));
-			$condArray = array (
-				'1'=>array('condition'=>'new','value'=>'Nowy'),
-				'2'=>array('condition'=>'used','value'=>'Używany'),
-				'3'=>array('condition'=>'refurbished','value'=>'Odnowiony'));
-			$output = $twig->render('/completeEditionResult.html', array(
-				'editForm' => $editForm,
-				'QueryResult' => $completeQueryResult,
-				'authors'=> $authors,
-				'completeTagNames'=>$completeTagNames,
-				'completeCatNames'=>$categoryList,
-				'selCategories'=>$selCategories,
-				'indexArray'=>$indexArray,
-				'condArray'=>$condArray,
-				));
-		}elseif(isset($mods)){
-		$output = $twig->render('/productSearch.html', array(
-			'authors' => $authors,
-			'categories'=>$categories,
-			'mods'=>$mods,
-			));
+	$output = $twig->render('/editionShortTemplate.html', array(
+		'result' => $productShortEdition,
+		));
+}elseif(isset($productIdSearch)){//                                   productSearch.php
+	$output = $twig->render('/idProductResult.html', array(
+		'result1' => $productIdSearch,
+		'result2' => $oldQueryResult,
+		'imageNumber' => $imageNumber,
+		));
+}elseif(isset($phraseSearchResult)){//                                   productSearch.php
+	$output = $twig->render('/phraseResult.html', array(
+		'result' => $phraseSearchResult,
+		'phrase'=>$productPhraseSearch,
+		));
+}elseif(isset($completeQueryResult)){//                                   productSearch.php
+	$indexArray = array 
+	('1'=>array('indexed'=>'0','activeness'=>'Nieaktywny'),
+		'2'=>array('indexed'=>'1','activeness'=>'Aktywny'));
+	$condArray = array (
+		'1'=>array('condition'=>'new','value'=>'Nowy'),
+		'2'=>array('condition'=>'used','value'=>'Używany'),
+		'3'=>array('condition'=>'refurbished','value'=>'Odnowiony'));
+	$output = $twig->render('/completeEditionResult.html', array(
+		'editForm' => $editForm,
+		'QueryResult' => $completeQueryResult,
+		'authors'=> $authors,
+		'completeTagNames'=>$completeTagNames,
+		'completeCatNames'=>$categoryList,
+		'selCategories'=>$selCategories,
+		'indexArray'=>$indexArray,
+		'condArray'=>$condArray,
+		));
+}elseif(isset($mods)){
+	$output = $twig->render('/productSearch.html', array(
+		'authors' => $authors,
+		'categories'=>$categories,
+		'mods'=>$mods,
+		));
 }elseif(isset($finalOutput)){
 	if($finalOutput=='order'){
 		$output = $twig->render('/orderSearch.html');
 	}elseif($finalOutput=='product'){
 		$output = $twig->render('/productSearch.html', array(
-		'authors' => $authors,
-		'categories'=>$categories,
-		));
+			'authors' => $authors,
+			'categories'=>$categories,
+			));
 	} 
 }
 try{
