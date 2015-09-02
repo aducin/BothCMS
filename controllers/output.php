@@ -21,67 +21,74 @@ if(isset($error)AND(!isset($authors))){
 		'message' => $message,
 		'confirmation' => $outputOrderMail,
 		));
-}elseif(isset($outputOrderOrProduct1)){
-	$conf=array('Wykonanie aktualizacji produktu ID '.$outputOrderOrProduct1["id_product"], 'Obecna ilość produktu w edytowanej bazie wynosi: '.$outputOrderOrProduct1["quantity"]);
-	if(isset($secondConfirmation)){
-		array_push($conf, 'Obecna ilość produktu w drugiej bazie wynosi: '.$secondConfirmation["quantity"]);
+}elseif(isset($outputOrderOrProduct1)){//                                   orderSearch.php or productSearch.php
+	$conf=array('Wykonanie aktualizacji produktu ID '.$outputOrderOrProduct1['first']['id_product'], 'Obecna ilość produktu w edytowanej bazie wynosi: '.$outputOrderOrProduct1['first']['quantity']);
+	if(isset($outputOrderOrProduct1['second'])){
+		array_push($conf, 'Obecna ilość produktu w drugiej bazie wynosi: '.$outputOrderOrProduct1['second']['quantity']);
 	}
 	$output = $twig->render('/confirm.html', array(
 		'title' => 'Potwierdzenie wykonania operacji',
 		'result' => 'Operacja zakończyła się powodzeniem!',
 		'message' => $conf,
 		));
-}elseif(isset($outputOrder2)){
+}elseif(isset($sixthOrderDiscount)){//                                   orderSearch.php
 	$output = $twig->render('/discountSearchResult.html', array(
 		'result' => $detail,
-		'customerData'=>$nameDetails,
+		'customerData'=>$sixthOrderDiscount,
 		));
-}elseif(isset($outputOrder3)){
+}elseif(isset($undeliveredOrderConf)){//                                   orderSearch.php
 	$output = $twig->render('/undeliveredMailOrder.html', array(
 		'result' => $confOrderDetails,
-		'customerData'=>$confOrderData,
+		'customerData'=>$undeliveredOrderConf,
 		));
-}elseif(isset($outputOrder4)){
+}elseif(isset($voucherNumber)){//                                   orderSearch.php
 	$output = $twig->render('/voucherSearchResult.html', array(
-		'result' => $custOrders,
+		'result' => $voucherNumber,
 		'customerData'=>$customerData,
 		));
-}elseif(isset($outputOrder5)){
+}elseif(isset($ordedSearch)){//                                   orderSearch.php
 	$output = $twig->render('/orderSearchResult.html', array(
 		'result' => $result,
-		'variables'=>$ordSearch,
+		'variables'=>$ordedSearch,
 		));
-}elseif(isset($outputOrder6)){
+}elseif(isset($mergeDetails)){//                                   orderSearch.php
 	$output = $twig->render('/orderUpdate.html', array(
 		'dates' => $mods,
 		'orderDetails'=>$mergeDetails,
 		));
-}elseif(isset($outputOrder7)){
+}elseif(isset($orderTracking)){//                                   orderSearch.php
 	$output = $twig->render('/shipmentNotification.html', array(
-		'notDates' => $notificationresult,
+		'notDates' => $orderTracking,
 		));	
-}elseif(isset($outputProduct1)){
+}elseif(isset($productShortEdition)){//                                   productSearch.php
 			$output = $twig->render('/editionShortTemplate.html', array(
-				'result' => $bothEdit,
+				'result' => $productShortEdition,
 				));
-		}elseif(isset($outputProduct2)){
+		}elseif(isset($productIdSearch)){//                                   productSearch.php
 			$output = $twig->render('/idProductResult.html', array(
-				'result1' => $newQueryResult,
+				'result1' => $productIdSearch,
 				'result2' => $oldQueryResult,
 				'imageNumber' => $imageNumber,
 				));
-		}elseif(isset($outputProduct3)){
+		}elseif(isset($phraseSearchResult)){//                                   productSearch.php
 			$output = $twig->render('/phraseResult.html', array(
-				'result' => $searchResult,
-				'phrase'=>$phrase,
+				'result' => $phraseSearchResult,
+				'phrase'=>$productPhraseSearch,
 				));
-		}elseif(isset($outputProduct4)){
+		}elseif(isset($completeQueryResult)){//                                   productSearch.php
+			$indexArray = array 
+				('1'=>array('indexed'=>'0','activeness'=>'Nieaktywny'),
+				'2'=>array('indexed'=>'1','activeness'=>'Aktywny'));
+			$condArray = array (
+				'1'=>array('condition'=>'new','value'=>'Nowy'),
+				'2'=>array('condition'=>'used','value'=>'Używany'),
+				'3'=>array('condition'=>'refurbished','value'=>'Odnowiony'));
 			$output = $twig->render('/completeEditionResult.html', array(
 				'editForm' => $editForm,
-				'QueryResult' => $QueryResult,
+				'QueryResult' => $completeQueryResult,
 				'authors'=> $authors,
 				'completeTagNames'=>$completeTagNames,
-				'completeCatNames'=>$this2,
+				'completeCatNames'=>$categoryList,
 				'selCategories'=>$selCategories,
 				'indexArray'=>$indexArray,
 				'condArray'=>$condArray,

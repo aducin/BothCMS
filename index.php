@@ -32,6 +32,8 @@ $ogicomHandler = $dbHandlerOgicom->getDb();
 $dbHandlerLinuxPl= new DBHandler($firstHost, $firstLogin, $firstPassword);
 $linuxPlHandler = $dbHandlerLinuxPl->getDb();
 
+require_once $root_dir.'/controllers/login.php';
+
 if ($controller == 'product') {
 	// http://localhost/Ad9bisCMS/?controller=product
 	require_once $root_dir.'/controllers/productSearch.php';
