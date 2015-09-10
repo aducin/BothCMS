@@ -8,15 +8,14 @@ if(isset($error)AND(!isset($authors))){
 		));
 }elseif(isset($error)AND(isset($authors))){
 		$output = $twig->render('/productSearch.html', array(
-			'authors' => $authors,
-			'categories'=>$categories,
+			'authors' => $helper[0],
+			'categories'=>$helper[1],
 			'title' => 'Niepowodzenie wykonania operacji',
 			'result' => 'UWAGA! Operacja zakończona niepowodzeniem!',
 			'message' => $error,
 			));
 }elseif(isset($outputOrderMail)){
 	$output = $twig->render('/messageConfirmation.html', array(
-		//'title' => $confirmationMail,
 		'result' => 'Poniżej znajduje się treść wysłana do Klienta:',
 		'message' => $message,
 		'confirmation' => $outputOrderMail,
@@ -86,28 +85,26 @@ if(isset($error)AND(!isset($authors))){
 	$output = $twig->render('/completeEditionResult.html', array(
 		'editForm' => $editForm,
 		'QueryResult' => $completeQueryResult,
-		'authors'=> $authors,
+		'authors'=> $categoryAndAuthorList[1],
 		'completeTagNames'=>$completeTagNames,
-		'completeCatNames'=>$categoryList,
+		'completeCatNames'=>$categoryAndAuthorList[0],
 		'selCategories'=>$selCategories,
 		'indexArray'=>$indexArray,
 		'condArray'=>$condArray,
 		));
-}elseif(isset($mods)){
+}elseif(isset($helper[2])){
 	$output = $twig->render('/productSearch.html', array(
-		'authors' => $authors,
-		'categories'=>$categories,
-		'mods'=>$mods,
+		'authors' => $helper[0],
+		'categories'=>$helper[1],
+		'mods'=>$helper[2],
 		));
-}elseif(isset($finalOutput)){
-	if($finalOutput=='order'){
-		$output = $twig->render('/orderSearch.html');
-	}elseif($finalOutput=='product'){
+}elseif(isset($helper)){
 		$output = $twig->render('/productSearch.html', array(
-			'authors' => $authors,
-			'categories'=>$categories,
+			'authors' => $helper[0],
+			'categories'=>$helper[1],
 			));
-	} 
+}elseif(isset($order)){
+		$output = $twig->render('/orderSearch.html');
 }
 try{
 	echo $output;

@@ -1,4 +1,5 @@
 <?php
+
 $root_dir = $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS';
 $vendor_dir = $root_dir.'/vendor';
 $cache_dir = $root_dir.'/cache'; // remember to `chmod 777 cache` (make this directory writable)
@@ -32,12 +33,26 @@ $ogicomHandler = $dbHandlerOgicom->getDb();
 $dbHandlerLinuxPl= new DBHandler($firstHost, $firstLogin, $firstPassword);
 $linuxPlHandler = $dbHandlerLinuxPl->getDb();
 
+$linuxPlDbHandler=bothDbHandler::getInstance('linuxPl', $firstHost, $firstLogin, $firstPassword);
+$ogicomDbHandler=bothDbHandler::getInstance('ogicom', $secondHost, $secondLogin, $secondPassword);
+//$linuxPlHandlerNew = $linuxPlDbHandler->getDb();
+//$whatever=new LinuxPlProduct($linuxPlHandlerNew);
+$sth1=new LinuxPlProduct($linuxPlDbHandler);
+$sth2=new LinuxPlProduct($ogicomDbHandler);
+$sth11=$sth1->getPrice(50);
+$sth22=$sth2->getPrice(50);
+//var_dump($linuxPlDbHandler);
+//var_dump($linuxPlHandlerNew);
+//var_dump($whatever);
+var_dump($sth11);
+var_dump($sth22);
+
 require_once $root_dir.'/controllers/login.php';
 
 if ($controller == 'product') {
 	// http://localhost/Ad9bisCMS/?controller=product
 	require_once $root_dir.'/controllers/productSearch.php';
-} elseif ($controller == 'order') {
+} elseif ($controller == 'order'){
 	// http://localhost/Ad9bisCMS/?controller=order
 	require_once $root_dir.'/controllers/orderSearch.php';
 } else {

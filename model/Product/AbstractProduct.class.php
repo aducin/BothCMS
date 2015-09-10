@@ -362,4 +362,23 @@ abstract class Product
 		$coverImage=$id.'-'.$image['id_image'];
 		return ($coverImage);
 	}
+
+	public function getWholeImages($id){
+		$sql='SELECT id_image FROM ps_image
+		WHERE id_product= :id';
+		$image=$this->pdo->prepare($sql);
+		$image->bindValue(':id', $id);
+		$image->execute();
+		return $image;
+	}
+
+	public function getImagesTitles($id){
+		$sql='SELECT legend FROM ps_image_lang 
+		WHERE id_lang=3 AND id_image= :id';
+		$s=$this->pdo->prepare($sql);
+		$s->bindValue(':id', $id);
+		$s->execute();
+		$result=$s->fetch();
+		return $result['legend'];
+	}
 }

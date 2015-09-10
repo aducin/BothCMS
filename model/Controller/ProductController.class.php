@@ -1,57 +1,24 @@
-<?php 
+<?php
 
-abstract class Controller
+class ProductController
 {
-	private $pdo;
-	private $secondPDO;
-	private $existingClient;
+	private $creator;
 
 	public function __construct($firstDBHandler, $secondDBHandler){
-		$this->pdo=$firstDBHandler;
-		$this->secondPDO=$secondDBHandler;
-	}
-
-	public function checkOrderDetail($orderNumber){
-		$order= new OgicomOrder($this->secondPDO);
-		$nameDetails = $order->getQueryLessDetails($orderNumber);
-		$nameDetails['reducedTotalProduct']=$nameDetails['total_products']*0.85;
-		$nameDetails['orderNumber']=$orderNumber;
-		$nameDetails['reducedTotal']=$nameDetails['total_paid']*0.85;
-		$detailsCount=$order->getCount($orderNumber);
-		$nameDetails['count'] = $detailsCount['COUNT(product_name)'];
-		return $nameDetails;
-	}
-
-	public function checkUndeliveredData($orderNumber){
-		$order= new OgicomOrder($this->secondPDO);
-		$confOrderData = $order->getQueryLessDetails($orderNumber);
-		$confOrderData['ordNumb']=$orderNumber;
-		return $confOrderData;
-	}
-
-	public function getCustomerData($customerNumber){
-		$order= new OgicomOrder($this->secondPDO);
-		$customerData= $order->getOrderCustomerData($customerNumber);
-		if($this->existingClient->checkIfClientExists($customerData['email'])==6){
-			$customerData['new'] = $this->existingClient->checkIfClientExists($customerData['email']);
-		}
-		$customerData['voucherLast']= $order->getLastVoucherNumber($customerNumber);
-		$customerData['idCustomer']=$customerNumber;
-		return $customerData;
+		$this->creator= new ProductCreator($firstDBHandler, $secondDBHandler);
 	}
 
 	public function getHelpers(){
-		$helper= new OgicomHelper($this->secondPDO);
-		$result= $helper->selectWholeManufacturer();
+		$result= $this->helper->selectWholeManufacturer();
 		foreach ($result as $row){
 			$authors[]= array('id'=> $row['id_manufacturer'], 'name'=> $row['name']);
 		}
-		$result= $helper->getCategoryData();
+		$result= $this->helper->getCategoryData();
 		foreach ($result as $row){
 			$categories[]= array('id'=>$row['id_category'], 'name'=>$row['meta_title']);
 		}
-		$result= $helper->getModyfiedData();
-		$product= new OgicomProduct($this->secondPDO);
+		$result= $this->helper->getModyfiedData();
+		$product=$this->creator->createProduct('Ogicom');
 		foreach ($result as $mod){
 			$productReduction=$product->getReductionData($mod['id_number']);
 			$mods[]= array('id'=>$mod['id_number'], 'nazwa'=>$mod['name'], 'data'=>$mod['date'], 'cena'=>number_format($mod['price'], 2,'.','').'zł', 'reduction'=>$productReduction);
@@ -60,137 +27,16 @@ abstract class Controller
 	}
 
 	public function getOgicomImage($idNumber){
-		$product= new OgicomProduct($this->secondPDO);
+		$product=$this->creator->createProduct('Ogicom');
 		$imageNumber= $product->image($idNumber);
 		return $imageNumber;
 	}
 
-	public function getOrderDetails($orderNumber){
-		$order= new OgicomOrder($this->secondPDO);
-		$details = $order->getQueryDetails($orderNumber);
-		foreach ($details as $sDetail){
-			$detail2[]=array('id'=>$sDetail['product_id'], 'name'=>$sDetail['name'], 'price'=>number_format($sDetail['product_price'], 2,'.',''), 'reduction'=>number_format($sDetail['reduction_amount'], 2,'.',''), 'reducedPrice'=>($sDetail['product_price']-$sDetail['reduction_amount'])*0.85, 'quantity'=>$sDetail['product_quantity'], 'reducedTotalPrice'=>($sDetail['product_price']-$sDetail['reduction_amount'])*$sDetail['product_quantity']*0.85);
-			}
-		return $detail2;	
-	}
-
-	public function getOrderInformations($option, $orderNumber){
-		if($option==1){
-			$order= new LinuxPlOrder($this->pdo);
-			$query = $order->getQuery($orderNumber);
-			$product= new OgicomProduct($this->secondPDO);
-		}elseif($option==2){
-			$order= new OgicomOrder($this->secondPDO);
-			$query = $order->getQuery($_GET['oldorder']);
-			$product= new LinuxPlProduct($this->pdo);
-			$product2= new OgicomProduct($this->secondPDO);
-		}
-		foreach ($query as $query2){
-			$otherQuery = $product->getProductQuery($query2['product_id']);
-			$otherQuery2 = $otherQuery->fetch();
-			if($option==1){
-				$imageNumber= $product->image($query2['product_id']);
-			}elseif($option==2){
-				$imageNumber= $product2->image($query2['product_id']);
-			}
-			if(($otherQuery2['name']==$query2['name'])AND($otherQuery2['quantity']==$query2['quantity'])){
-				$queryResult="Zgodność ilości i nazw produktu nr ".$otherQuery2['id_product'];
-			}elseif(($otherQuery2['name']==$query2['name'])AND($otherQuery2['quantity']!=$query2['quantity'])){
-				$queryResult="Ilość produktu ".$otherQuery2['id_product']." w drugim panelu to: ".$otherQuery2['quantity'];
-			}elseif(($otherQuery2['name']!=$query2['name'])AND($otherQuery2['quantity']==$query2['quantity'])){
-				$queryResult="Nazwa produktu ".$otherQuery2['id_product']." w drugiej bazie to: ".$otherQuery2['name'];
-			}elseif(($otherQuery2['name']!=$query2['name'])AND($otherQuery2['quantity']!=$query2['quantity'])){
-				$queryResult="Podwójna niezgodność - (SB): ".$otherQuery2['name'].", a ilość to: ".$oldQuery2['quantity'];
-			}
-			$result[]=array('id'=>$query2['product_id'], 'name'=>$query2['name'], 'onStock'=>$query2['product_quantity'], 'quantity'=>$query2['quantity'], 'nameResult'=>$queryResult, 'imgNumber'=>$imageNumber);
-		}
-
-		if (!isset($result[0]['id'])){
-			$result=0;
-		}
-		return $result;
-	}
-
-	public function getUndeliveredData($orderNumber){
-		$order= new OgicomOrder($this->secondPDO);
-		$confOrderDetail = $order->getQueryDetails($orderNumber);
-		foreach ($confOrderDetail as $detail){
-			$confOrderDetails[]=array('id'=>$detail['product_id'], 'name'=>$detail['name'], 'price'=>number_format($detail['product_price'], 2,'.',''), 'reduction'=>number_format($detail['reduction_amount'], 2,'.',''), 'quantity'=>$detail['product_quantity']);
-		}
-		return $confOrderDetails;
-	}
-
-	public function getVoucherHistory($customerNumber){
-		$ordNumb=0;
-		$order= new OgicomOrder($this->secondPDO);
-		$voucherHistory= $order->getVoucherNumber($customerNumber);
-		foreach ($voucherHistory as $custOrder){
-			$ordNumb++;
-			$custOrders[]= array('id'=>$custOrder['id_order'], 'reference'=>$custOrder['reference'], 'total'=>$custOrder['total_products'], 'shipping'=>$custOrder['total_shipping'], 'date'=>$custOrder['date_add'], 'orderNumber'=>((($ordNumb-1) % 6) + 1 ));
-		}
-		return $custOrders;
-	}
-
-	public function mergeIntoNewHelper($productNumber){
-		$mergeDetails=array('idOrder'=>$productNumber.' w nowym panelu', 'base'=>'Ilość w SP', 'current'=>'Obecna ilość (NP)', 'changed'=>'Ilość po modyfikacji (NP)');
-		return $mergeDetails;
-	}
-
-	public function mergeIntoNew($productNumber){
-		$order= new OgicomOrder($this->secondPDO);
-		$product= new LinuxPlProduct($this->pdo);
-		$Query = $order->selectOrderQuantity($productNumber);
-		foreach ($Query as $Query2){
-			$oldQuantity=$product->getQuantity($Query2['product_id']);
-			$quantityUpdate=$product->updateQuantity($Query2['quantity'], $Query2['product_id']);
-			$finalQuantity=$product->getQuantity($Query2['product_id']);
-			$mods[]=array('quantity'=>$Query2['quantity'], 'product_id'=>$Query2['product_id'], 'previousQuantity'=>$oldQuantity, 'finalQuantity'=>$finalQuantity, 'result'=>(string)($finalQuantity-$oldQuantity));
-		}
-		return $mods;
-	}
-
-	public function mergeIntoOldHelper($productNumber){
-		$mergeDetails=array('idOrder'=>$productNumber.' w nowym panelu', 'base'=>'Ilość w SP', 'current'=>'Obecna ilość (NP)', 'changed'=>'Ilość po modyfikacji (NP)');
-		return $mergeDetails;
-	}
-
-	public function mergeIntoOld($productNumber){
-		$order= new LinuxPlOrder($this->pdo);
-		$product= new OgicomProduct($this->secondPDO);
-		$Query = $order->selectOrderQuantity($productNumber);
-		foreach ($Query as $Query2){
-			$oldQuantity=$product->getQuantity($Query2['product_id']);
-			$quantityUpdate=$product->updateQuantity($Query2['quantity'], $Query2['product_id']);
-			$finalQuantity=$product->getQuantity($Query2['product_id']);
-			$mods[]=array('quantity'=>$Query2['quantity'], 'product_id'=>$Query2['product_id'], 'previousQuantity'=>$oldQuantity, 'finalQuantity'=>$finalQuantity, 'result'=>(string)($finalQuantity-$oldQuantity));
-		}
-		return $mods;
-	}
-
-	public function MergeSingleQuantity($dbNumber, $id, $quantity){
-		if($dbNumber==2){
-			$product= new LinuxPlProduct($this->pdo);
-		}elseif($dbNumber==1){
-			$product= new OgicomProduct($this->secondPDO);
-		}
-		$Query = $product->updateQuantity($quantity, $id);
-		$outputOrderOrProduct1 = $product->confirmation($id);
-		return $outputOrderOrProduct1;
-		unset($product);
-	}
-
-	public function orderCheck($orderNumber){
-		$order= new OgicomOrder($this->secondPDO);
-		$orderSearch = $order->checkIfVoucherDue($orderNumber);
-		$totalProducts= array('total'=>$orderSearch['total_products'], 'idCustomer'=>$orderSearch['id_customer']);
-		return $totalProducts;
-	}
-
-	/*public function productCategoryandManufacturerList($fullEdition, $id){
+	public function productCategoryandManufacturerList($fullEdition, $id){
 		if ($fullEdition=="new"){
-			$product1= new LinuxPlProduct($this->pdo);
+			$product1=$this->creator->createProduct('LinuxPl');
 		}elseif($fullEdition=='old'){
-			$product1= new OgicomProduct($this->secondPDO);
+			$product1=$this->creator->createProduct('Ogicom');
 		}
 		$category = $product1->getCategory($id);
 		foreach ($category as $category1){
@@ -200,8 +46,7 @@ abstract class Controller
 		foreach ($result as $result2){
 			$categoryList[]=array('id'=>$result2['id_category'], 'name'=>$result2['meta_title'], 'selected'=> in_array($result2['id_category'], $selectedCats));
 		}
-		$helper= new OgicomHelper($this->secondPDO);
-		$result= $helper->selectWholeManufacturer();
+		$result= $this->helper->selectWholeManufacturer();
 		foreach ($result as $row){
 			$authors[]= array('id'=> $row['id_manufacturer'], 'name'=> $row['name']);
 		}
@@ -210,11 +55,11 @@ abstract class Controller
 
 	public function productCompleteEdition($fullEdition, $id){
 		if ($fullEdition=="new"){
-			$product1= new LinuxPlProduct($this->pdo);
-			$product2= new OgicomProduct($this->secondPDO);
+			$product1=$this->creator->createProduct('LinuxPl');
+			$product2=$this->creator->createProduct('Ogicom');
 		}elseif($fullEdition=='old'){
-			$product1= new OgicomProduct($this->secondPDO);
-			$product2= new LinuxPlProduct($this->pdo);
+			$product1=$this->creator->createProduct('Ogicom');
+			$product2=$this->creator->createProduct('LinuxPl');
 		}
 		$Query = $product1->getWholeDetailsQuery($id);
 		$QueryResult = $Query->fetch();
@@ -228,14 +73,14 @@ abstract class Controller
 	public function productCompleteUpdate($completeUpdate, $id, $newPrice, $oldPrice, $delete, $change, $text, $quantity, $description, $decriptionShort, 
 		$metaTitle, $metaDescription, $link, $condition, $active, $manufacturer, $category, $tags){
 		if($completeUpdate=="LinuxPl"){
-			$product1= new LinuxPlProduct($this->pdo);
-			$product2= new OgicomProduct($this->secondPDO);
+			$product1=$this->creator->createProduct('LinuxPl');
+			$product2=$this->creator->createProduct('Ogicom');
 			if ($change== "nameChange"){
 				$oldQuery = $product2->insertModyfy($id, $text);
 			}
 		}elseif($completeUpdate=="Ogicom"){
-			$product1= new OgicomProduct($this->secondPDO);
-			$product2= new LinuxPlProduct($this->pdo);
+			$product1=$this->creator->createProduct('Ogicom');
+			$product2=$this->creator->createProduct('LinuxPl');
 			$priceNew=$newPrice;
 			$priceOld=$oldPrice;
 			$newPrice=$priceOld;
@@ -276,9 +121,9 @@ abstract class Controller
 	public function productCompleteSecondUpdate($completeUpdate, $id, $newPrice, $oldPrice, $delete, $change, $text, $quantity, $description, $decriptionShort, 
 		$metaTitle, $metaDescription, $link, $condition, $active, $manufacturer, $category, $tags){
 		if($completeUpdate=="LinuxPl"){
-			$product= new OgicomProduct($this->secondPDO);
+			$product=$this->creator->createProduct('Ogicom');
 		}elseif($completeUpdate=="Ogicom"){
-			$product= new LinuxPlProduct($this->pdo);
+			$product=$this->creator->createProduct('LinuxPl');
 			$priceNew=$newPrice;
 			$priceOld=$oldPrice;
 			$newPrice=$priceOld;
@@ -313,17 +158,17 @@ abstract class Controller
 	}
 
 	public function productDoubleUpdate($id, $price, $text, $quantity){
-		$product= new LinuxPlProduct($this->pdo);
+		$product=$this->creator->createProduct('LinuxPl');
 		$newQuery = $product->updateBoth($id, $price, $text, $quantity);
 		$result['first'] = $product->confirmation($_POST['id']);
-		$product2= new OgicomProduct($this->secondPDO);
+		$product2=$this->creator->createProduct('Ogicom');
 		$oldQuery = $product2->updateBoth($id, $price, $text, $quantity);
 		$result['second'] = $product2->confirmation($_POST['id']);
 		return $result;
 	}
 
 	public function productIdSearchLinuxPl($idNumber){
-		$product= new LinuxPlProduct($this->pdo);
+		$product=$this->creator->createProduct('LinuxPl');
 		$newQueryResult = $product->getProductDetailedData($idNumber);
 		$newQueryResult['price']=number_format($newQueryResult['price'], 2,'.','');
 		if($product->getReductionData($idNumber)!=''){
@@ -333,7 +178,7 @@ abstract class Controller
 	}
 
 	public function productIdSearchOgicom($idNumber){
-		$product= new OgicomProduct($this->secondPDO);
+		$product=$this->creator->createProduct('Ogicom');
 		$oldQueryResult = $product->getProductDetailedData($idNumber);
 		$oldQueryResult['price']=number_format($oldQueryResult['price'], 2,'.','');
 		if($product->getReductionData($idNumber)!=''){
@@ -343,8 +188,8 @@ abstract class Controller
 	}
 
 	public function productPhraseSearch($implodeSelect){
-		$product1= new LinuxPlProduct($this->pdo);
-		$product2= new OgicomProduct($this->secondPDO);
+		$product1=$this->creator->createProduct('LinuxPl');
+		$product2=$this->creator->createProduct('Ogicom');
 		$newQuery = $product1->getProductData($implodeSelect);
 		foreach ($newQuery as $newQuery2){
 			$imageNumber= $product2->image($newQuery2['id_product']);
@@ -375,17 +220,15 @@ abstract class Controller
 	}
 
 	public function productSearchRowDeletion($delete){
-		$helper= new OgicomHelper($this->secondPDO);
-		$result= $helper->deleteModyfied($delete);
+		$result= $this->helper->deleteModyfied($delete);
 		executeController('product');
-		unset($helper);
 	}
 
 	public function productSelectedCategories($fullEdition, $id){
 		if ($fullEdition=="new"){
-			$product1= new LinuxPlProduct($this->pdo);
+			$product1=$this->creator->createProduct('LinuxPl');
 		}elseif($fullEdition=='old'){
-			$product1= new OgicomProduct($this->secondPDO);
+			$product1=$this->creator->createProduct('Ogicom');
 		}
 		$category = $product1->getCategory($id);
 		foreach ($category as $category1){
@@ -395,12 +238,12 @@ abstract class Controller
 	}
 
 	public function productShortEdition($idNumber){
-		$product= new LinuxPlProduct($this->pdo);
+		$product=$this->creator->createProduct('LinuxPl');
 		$bothEdit = $product->getProductDetailedData($idNumber);
 		if($product->getReductionData($idNumber)!=0){
 			$bothEdit['countReduction']=$product->countReduction($bothEdit['price'], $product->getReductionData($idNumber));
 		}
-		$product2= new OgicomProduct($this->secondPDO);
+		$product2=$this->creator->createProduct('Ogicom');
 		$bothEdit['price2']= $product2->getPrice($idNumber);
 		if($product2->getReductionData($idNumber)!=0){
 			$bothEdit['countReduction2']=$product2->countReduction($bothEdit['price2'], $product2->getReductionData($idNumber));
@@ -410,9 +253,9 @@ abstract class Controller
 
 	public function productTag($fullEdition, $id){
 		if ($fullEdition=="new"){
-			$product1= new LinuxPlProduct($this->pdo);
+			$product1=$this->creator->createProduct('LinuxPl');
 		}elseif($fullEdition=='old'){
-			$product1= new OgicomProduct($this->secondPDO);
+			$product1=$this->creator->createProduct('Ogicom');
 		}
 		$selectTag = $product1->selectTag($id);
 		foreach ($selectTag as $tag){
@@ -430,19 +273,7 @@ abstract class Controller
 		return $completeTagNames;
 	}
 
-	public function sendNotification($origin, $orderNumber){
-		if($origin=='linuxPl'){
-			$order= new LinuxPlOrder($this->pdo);
-			$notificationresult = $order->sendNotification($orderNumber);
-		}elseif($origin=='ogicom'){
-			$order= new OgicomOrder($this->secondPDO);
-			$notificationresult = $order->sendNotification($orderNumber);
-		}
-		return $notificationresult;
-		unset($order);
-	}*/
-
-	public function setExistingClient($client){
-		$this->existingClient=$client;
+	public function setHelper($helper){
+		$this->helper=$helper;
 	}
 }

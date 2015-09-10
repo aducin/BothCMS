@@ -1,0 +1,235 @@
+<?php 
+session_start(); ?>
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+	<title>Panel Ad9BIS - logowanie</title>
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="/Ad9bisCMS/assets/styles.css" type="text/css">
+	<style>
+	*{
+		margin:0;
+		padding:0;
+	}
+	#field{
+		background-color: #3366CC;
+		width: 801px;height: 253px;text-align:center;
+		border: 2px ridge #bb7778;
+		float:center;
+		margin-left:273px;
+	}
+	#gebruiker{
+	margin: auto;
+	float: center;padding: 0;
+	border: 3px inset; text-align:center; width:400px;height:73px;
+	background-color: #bb9967;font-size: 18px;
+	}
+	#inLoggen{
+		text-align:center;
+		margin-top:-30px;
+	}
+	#legend{
+		font-size:25px;
+		font-style:italic;
+		background-color: #ECECEC;
+		border: 1px groove;
+	}
+	#logIn{
+		font-size:16px;
+		margin-top:5px;
+	}
+	#loginP{
+		background-color: #CCCC99; 
+		width:600px; 
+		border: 3px inset;
+		margin-top: 7px;
+		margin-left: 100px;
+	}
+	#loginPicture{
+		margin-left: 273px;
+		margin-top: 32px;
+		margin-bottom: 3px;
+		float:left;
+		border: 2px inset;
+	}
+	#searchInput{
+	padding-top: 3px;padding-bottom: 3px;margin-bottom:10px;margin-top:30px;
+	padding-left: 10px; font-size:13pt; font-style:italic; padding-right: 12px;
+	border: 3px outset;
+	}
+	#slideshow{
+		width:800px;
+		height:553px;
+		overflow: hidden;
+		margin: auto;
+		border: 3px groove;
+		
+	}
+	#slideshow img{
+		width:100%;
+		height:553px;
+	}
+	#next{
+		height: 120px;
+		width:120px;
+		position: absolute;
+		top:400px;
+		bottom:0;
+		right:0;
+		margin: auto 152px;
+		z-index:1000;
+	}
+	#pager{
+		text-align:center;
+		height: 120px;
+		width:100%;
+		position: absolute;
+		background: rgba(0,0,0,.5);
+		z-index: 1000;
+		opacity: 0;
+	}
+	#pager img{
+		margin: 10px 5px;
+		opacity:0.3;
+		transition:all .3s ease-in-out 0s;
+	}
+	#pager img:hover{
+		opacity:1;
+		transform:scale(1.05);
+		z-index:100;
+	}
+	#pager:hover{
+		opacity:1;
+	}
+	#previous{
+		height: 120px;
+		width: 120px;
+		position: absolute;
+		top:400px;
+		bottom:0;
+		left:0;
+		margin: auto 153px;
+		z-index:1000;
+	}
+	#container{
+		width: 100%;
+		height: 675px;
+		overflow: hidden;
+		background-color: white;
+	}
+	#timer{
+		background-color: #FFCCFF;
+		margin-left: 275px;
+		margin-top:5px;
+		width:260px;
+		border: 3px inset;
+	}
+	#wees{
+		width:800px;
+		height:30px;
+		padding-bottom:9px;
+		border: 2px ridge #bb7778;
+		float:center;
+		margin-left:274px;
+		text-align:center;
+		background-color:black;
+		color: #5d665b;
+	}
+	#width{
+		width:198px;
+	}
+	</style>
+	<script type="text/javascript" src="/Ad9bisCMS/assets/jquery-2.1.4.min.js"></script>
+	<script type="text/javascript" src="/Ad9bisCMS/assets/cycle2.js"></script>
+	<script>
+
+		function countdown(){	
+	var timer = new Date();
+	var day = timer.getDate();
+	var month = timer.getMonth()+1;
+	if(month<10) month="0"+month;
+	var year = timer.getFullYear();
+	var hour = timer.getHours();
+	if(hour<10) hour="0"+hour;
+	var minute = timer.getMinutes();
+	if(minute<10) minute="0"+minute;
+	var second = timer.getSeconds();
+	if(second<10) second="0"+second;
+
+	document.getElementById("timer").innerHTML= day+"."+month+"."+year+" - tijd: "+hour+":"+minute+":"+second;
+	setTimeout("countdown()",1000);
+}
+
+	function wyswietlAlert(){
+	if(document.log.login.value=="" && document.log.password.value==""){
+		alert("Nie wypełniono żadnego pola!");
+	}
+	else if(document.log.login.value==""){
+		alert("Nie wpisano pola \"Login\"!");
+	}
+	else if(document.log.password.value==""){
+		alert("Nie wpisano pola \"Hasło\"!");
+	}
+}
+function focus()
+{
+	var el = document.getElementById("logIn");
+	el.focus();
+}
+	</script>
+	</head>
+	<body onload="countdown();">
+	<fieldset id="wees">
+	<h1>Wees niet zo snel!</h1>
+	</fieldset>
+		<fieldset id="field">
+			<legend id="legend">Welkom op de nieuwe CMS van beide Ad9bis paneel</legend>
+			<b><div id="timer"></div></b>
+			<h2 id="loginP">Je hebt de verkeerde of onvolledige gegevens ingevuld!</h2>
+			<h3>Typ jouw juiste wachtwoord en login in en alleen dan wil ik met nederlands stoppen...</h3>
+			<h3>Anders - donder op!</h3>
+			<form name="log" action="../index.php" method="post" onsubmit="wyswietlAlert()">
+			<div id="gebruiker">
+			<table>
+			<tr>
+			<td id="width">
+			<b>Gebruikersnaam: </b></td>
+			<td id="width"><input type="text" id="logIn" size=15 name="login" onload="focus();">
+			</td></tr><tr><td id="width">
+			<b>Wachtwoord  : </b></td><td id="width"><input type="password" id="logIn" size=15 name="password"><br><br>
+			</td></tr>
+			</table>
+			</div>
+			<div id="inLoggen">
+			<input type="hidden" name="attemp" value="Inloggen">
+			<input type="submit" id="searchInput" value="Inloggen">
+			</div>
+	</fieldset>
+	<div id="container">
+	<div id="slideshow" class="cycle-slideshow" 
+	data-cycle-fx=fade
+	data-cycle-speed= "600"
+	data-cycle-timeout="3000"
+	data-cycle-pager="#pager"
+	data-cycle-pager-template ="<a herf='#''><img src='{{src}}' height=100 width=120 />"
+	data-cycle-next= "#next"
+	data-cycle-prev= "#previous"
+	data-cycle-manual-fx = "scrollHorz"
+	data-cycle-manual-speed = "400"
+	>
+		<img src="/Ad9bisCMS/assets/img0.jpg" border="0" alt="Ad9bis-photos slider -1" />
+		<img src="/Ad9bisCMS/assets/img1.jpg" border="0" alt="Ad9bis-photos slider -2" />
+		<img src="/Ad9bisCMS/assets/img2.jpg" border="0" alt="Ad9bis-photos slider -3" />
+		<img src="/Ad9bisCMS/assets/img3.jpg" border="0" alt="Ad9bis-photos slider -4" />
+		<img src="/Ad9bisCMS/assets/img4.jpg" border="0" alt="Ad9bis-photos slider -5" />
+		<img src="/Ad9bisCMS/assets/img5.jpg" border="0" alt="Ad9bis-photos slider -6" />
+		<img src="/Ad9bisCMS/assets/img6.jpg" border="0" alt="Ad9bis-photos slider -7" />
+		<img src="/Ad9bisCMS/assets/img7.jpg" border="0" alt="Ad9bis-photos slider -8" />
+		</div>
+		<div id="pager"></div>
+		<img id="previous" src="/Ad9bisCMS/assets/previous.jpg"/>
+		<img id="next" src="/Ad9bisCMS/assets/next.jpg"/>
+	</div>
+		<h1 align="center">Ad9bis - INTERNETOWY SKLEP MODELARSTWA KOLEJOWEGO</h1>
+	</body>
+</html>

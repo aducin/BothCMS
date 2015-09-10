@@ -1,35 +1,16 @@
 <?php
 
-try{
-
-	$helper= new OgicomHelper($ogicomHandler);
-	$result= $helper->selectWholeManufacturer();
-	foreach ($result as $row){
-		$authors[]= array('id'=> $row['id_manufacturer'], 'name'=> $row['name']);
-	}
-} catch (PDOException $e){
-	$error='Pobieranie listy producentów nie powiodło się: ' . $e->getMessage();
-}
-try{
-	$result= $helper->getCategoryData();
-	foreach ($result as $row){
-		$categories[]= array('id'=>$row['id_category'], 'name'=>$row['meta_title']);
-	}
-} catch (PDOException $e){
-	$error='Pobieranie listy kategorii nie powiodło się: ' . $e->getMessage();
-}
-$result= $helper->getModyfiedData();
-$product= new OgicomProduct($ogicomHandler);
-foreach ($result as $mod){
-	$productReduction=$product->getReductionData($mod['id_number']);
-	$mods[]= array('id'=>$mod['id_number'], 'nazwa'=>$mod['name'], 'data'=>$mod['date'], 'cena'=>number_format($mod['price'], 2,'.','').'zł', 'reduction'=>$productReduction);
-}
-unset($helper);
-unset($product);
-
 $controller = new ProductController($linuxPlHandler, $ogicomHandler);
+
+try{
+	$controller->setHelper(new OgicomHelper($ogicomHandler));
+	$helper=$controller->getHelpers();
+} catch (PDOException $e){
+	$error='Pobieranie list producentów i kategorii nie powiodło się: ' . $e->getMessage();
+}
+
 if(isset($_GET['deleterow'])){
-	$helper=$controller->productSearchRowDeletion($_GET['idMod']);
+	$modyfiedProduct=$controller->productSearchRowDeletion($_GET['idMod']);
 }elseif(isset($_GET['editformBoth'])){
 	if ($_POST['text']==''){
 		$error='Brak aktualnego wpisu: nazwa produktu!';
@@ -90,7 +71,7 @@ if(isset($_GET['deleterow'])){
 	}
 	$completeQueryResult=$controller->productCompleteEdition($fullEdition, $_GET['id']);
 	$selCategories=$controller->productSelectedCategories($fullEdition, $_GET['id']);
-	$categoryList=$controller->productCategoryList($fullEdition, $_GET['id']);
+	$categoryAndAuthorList=$controller->productCategoryandManufacturerList($fullEdition, $_GET['id']);
 	$completeTagNames=$controller->productTag($fullEdition, $_GET['id']);
 }elseif(isset($_GET['action'])AND(isset($_GET['idnr']))){
 	$productIdSearch=$controller->productIdSearchLinuxPl($_GET['idnr']);
@@ -121,15 +102,14 @@ if(isset($_GET['deleterow'])){
 			}else{
 				$prequery[]= " id_manufacturer =".$_GET['author'];
 			}
-			$implodeSelect=' WHERE'.implode(" AND",$prequery).' GROUP BY id_product ORDER BY id_product';
-			$phraseSearchResult=$controller->productPhraseSearch($implodeSelect);
-			if(!isset($phraseSearchResult)){
-				$error='W bazie nie znaleziono produktów spełniających podane kryteria!';
-			}else{
-				$productPhraseSearch=($_GET['text']);
-			}	
-		}
+		$implodeSelect=' WHERE'.implode(" AND",$prequery).' GROUP BY id_product ORDER BY id_product';
+		$phraseSearchResult=$controller->productPhraseSearch($implodeSelect);
+		if(!isset($phraseSearchResult)){
+			$error='W bazie nie znaleziono produktów spełniających podane kryteria!';
+		}else{
+			$productPhraseSearch=($_GET['text']);
+		}	
 	}
+}
 
-	$finalOutput='product';
-	require_once $root_dir.'/controllers/output.php'; 
+require_once $root_dir.'/controllers/output.php'; 
