@@ -23,8 +23,7 @@ Kompletna edycja produktu ID: {{ QueryResult.id_product }}
 			</label>
 		</td>
 		<td>
-			<textarea id="textarea" name="text" rows="2" cols="93">{{ QueryResult.name }}
-			</textarea>
+			<textarea id="textarea" name="text" rows="2" cols="93">{{ QueryResult.name }}</textarea>
 		</td>
 	</tr>
 	<tr>
@@ -54,7 +53,7 @@ Kompletna edycja produktu ID: {{ QueryResult.id_product }}
 			</label>
 		</td>
 		<td>
-			<textarea id="textarea" name="link" rows="1" cols="93">{{ QueryResult.link_rewrite }}</textarea>
+			<input type="text" id="textarea"  name="link" size="94" value="{{ QueryResult.link_rewrite }}"</>
 		</td>
 	</tr>
 	<tr>
@@ -64,7 +63,7 @@ Kompletna edycja produktu ID: {{ QueryResult.id_product }}
 			</label>
 		</td>
 		<td>
-			<textarea id="textarea" name="meta_title" rows="1" cols="93">{{ QueryResult.meta_title }}</textarea>
+			<input type="text" id="textarea" name="meta_title" size="94" value="{{ QueryResult.meta_title }}"</>
 		</td>
 	</tr>
 	<tr>
@@ -74,7 +73,7 @@ Kompletna edycja produktu ID: {{ QueryResult.id_product }}
 			</label>
 		</td>
 		<td>
-			<textarea id="textarea" name="meta_description" rows="2" cols="93">{{ QueryResult.meta_description }}</textarea>
+			<input type="text" id="textarea" name="meta_description" size="94" value="{{ QueryResult.meta_description }}"</>
 		</td>
 	</tr>
 	<tr>
@@ -94,7 +93,7 @@ Kompletna edycja produktu ID: {{ QueryResult.id_product }}
 			</label>
 		</td>
 		<td class="textOnlyLeft">
-			<input type="text" id="textarea" name="quantity" size="17" value="{{ QueryResult.quantity }}"</>
+			<input type="text" id="orderNumber" name="quantity" size="17" value="{{ QueryResult.quantity }}"</>
 		</td>
 	</tr>
 	<tr>
@@ -160,7 +159,7 @@ Kompletna edycja produktu ID: {{ QueryResult.id_product }}
 			</label>
 		</td>
 		<td class="textOnlyLeft">
-			<input type="text" id="textarea" name="nominalPriceOld" size="17" value="{{ QueryResult.secondPrice|number_format(2, '.', ',') }}"</>zł
+			<input type="text" id="orderNumber" name="nominalPriceOld" size="17" value="{{ QueryResult.secondPrice|number_format(2, '.', ',') }}"</>zł
 			{% if QueryResult.reduction2!=0 %}
 			<b>- UWAGA! Rabat wynosi {{ QueryResult.reduction2|number_format(2, '.', ',') }}zł</b>
 			{% endif %}
@@ -173,7 +172,7 @@ Kompletna edycja produktu ID: {{ QueryResult.id_product }}
 			</label>
 		</td>
 		<td class="textOnlyLeft">
-			<input type="text" id="textarea" name="nominalPriceNew" size="17" value="{{ QueryResult.price|number_format(2, '.', ',') }}"</>zł
+			<input type="text" id="orderNumber" name="nominalPriceNew" size="17" value="{{ QueryResult.price|number_format(2, '.', ',') }}"</>zł
 			{% if QueryResult.reduction!=0 %}
 			<b>- UWAGA! Rabat wynosi {{ (QueryResult.reduction*100)|number_format(2, '.', ',') }}%</b>
 			{% endif %}
@@ -188,7 +187,7 @@ Kompletna edycja produktu ID: {{ QueryResult.id_product }}
 			</label>
 		</td>
 		<td class="textOnlyLeft">
-			<input type="text" id="textarea" name="nominalPriceOld" size="17" value="{{ QueryResult.price|number_format(2, '.', ',') }}"</>zł
+			<input type="text" id="orderNumber" name="nominalPriceOld" size="17" value="{{ QueryResult.price|number_format(2, '.', ',') }}"</>zł
 			{% if QueryResult.reduction!=0 %}
 			<b>UWAGA! Rabat wynosi {{ QueryResult.reduction|number_format(2, '.', ',') }}zł</b>
 			{% endif %}
@@ -201,7 +200,7 @@ Kompletna edycja produktu ID: {{ QueryResult.id_product }}
 			</label>
 		</td>
 		<td class="textOnlyLeft">
-			<input type="text" id="textarea" name="nominalPriceNew" size="17" value="{{ QueryResult.secondPrice|number_format(2, '.', ',') }}"</>zł
+			<input type="text" id="orderNumber" name="nominalPriceNew" size="17" value="{{ QueryResult.secondPrice|number_format(2, '.', ',') }}"</>zł
 			{% if QueryResult.reduction2!=0 %}
 			<b>UWAGA! Rabat wynosi {{ (QueryResult.reduction2*100)|number_format(2, '.', ',') }}%</b>
 			{% endif %}
@@ -221,7 +220,7 @@ Kompletna edycja produktu ID: {{ QueryResult.id_product }}
 				</tr>
 			{% endfor %}
 			</table>
-			<table class="fieldset">
+			<table class="fieldset2">
 			<tr>
 				<td class="row3">
 					<p align="left"><input type="checkbox" name="change" value="nameChange">
@@ -269,5 +268,8 @@ Kompletna edycja produktu ID: {{ QueryResult.id_product }}
 			</tr>
 			{% endfor %}
 			</form>
-
 		{% endblock %}
+		
+		{% block finish %}
+	<p class="finish"><a class="searchInput3"  href="?controller=product">Nowe wyszukiwanie produktów</a></p>
+{% endblock %}
