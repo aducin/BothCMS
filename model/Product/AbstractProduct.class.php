@@ -71,7 +71,6 @@ abstract class Product
 		$c->execute();
 		$c1 = $c->fetch();
 		return($c1["name"]);
-
 	}
 
 	public function getWholeDetailsQuery($productId) {
@@ -332,7 +331,7 @@ abstract class Product
 		$s->execute();
 	}
 
-	public function updateQuantity($quantity, $id){
+	public function updateQuantity($id, $quantity){
 		$sql='UPDATE ps_stock_available SET
 		quantity= :quantity
 		WHERE id_product = :id';

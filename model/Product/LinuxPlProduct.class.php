@@ -33,4 +33,14 @@ class LinuxPlProduct extends Product
 		$result=array('reduction'=>'Rabat: '.$newQueryResult4, 'realPrice'=>'Cena rzeczywista: '.$newQueryResult22.'zł');
 		return$result;
 	}
+
+	public function getEveryName(){
+	$sql='SELECT name, id_product FROM ps_product_lang
+	ORDER BY name';
+	$c= $this->pdo->prepare($sql);
+	$c->bindValue(':id', $productId);
+	$c->execute();
+	return$c;
+	}
+	
 }

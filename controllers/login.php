@@ -1,24 +1,39 @@
 <?php
 
 session_start();
-if(isset($_POST['logout'])){
+if(isset($_GET['logout'])){
 	unset($_SESSION['log']);
-	header('Location:templates/signIn.html');
+	header('Location:/Ad9bisCMS/templates/signIn.html');
+	exit();
 }
 if(!isset($_SESSION['log'])){
-	$userLogin=$_POST['login'];
-	$userPassword=$_POST['password'];
-	$dbHandlerLinuxPl= new DBHandler($firstHost, $firstLogin, $firstPassword);
-	$dbResult= $dbHandlerLinuxPl->getUserData($userLogin, $userPassword);
-	$resNumb=$dbResult->rowCount();
-
-	if($resNumb>0){
-		$finalResult=$dbResult->fetch(PDO::FETCH_ASSOC);
-		$_SESSION['log']=1;
-		$dbResult->closeCursor();
+	if(isset($_POST['login'])AND isset($_POST['password'])){
+		$userLogin=$_POST['login'];
+		$userPassword=$_POST['password'];
+		$dbHandlerLinuxPl= new DBHandler($firstHost, $firstLogin, $firstPassword);
+		$dbResult= $dbHandlerLinuxPl->getUserData($userLogin, $userPassword);
+		$resNumb=$dbResult->rowCount();
+		if($resNumb>0){
+			$finalResult=$dbResult->fetch(PDO::FETCH_ASSOC);
+			$_SESSION['log']=1;
+			$dbResult->closeCursor();
+		}else{
+			header('Location:templates/signin2.html');
+		}
+	}else{
+		$userLogin=$_POST['login'];
+		$userPassword=$_POST['password'];
+		$dbHandlerLinuxPl= new DBHandler($firstHost, $firstLogin, $firstPassword);
+		$dbResult= $dbHandlerLinuxPl->getUserData($userLogin, $userPassword);
+		$resNumb=$dbResult->rowCount();
+		if($resNumb>0){
+			$finalResult=$dbResult->fetch(PDO::FETCH_ASSOC);
+			$_SESSION['log']=1;
+			$dbResult->closeCursor();
+		}else{
+			header('Location:templates/signIn.html');
+		}
 	}
 }
-if($_SESSION['log']==0){
-	header('Location:templates/signIn.html');
-}
+
 unset($dbHandlerLinuxPl);

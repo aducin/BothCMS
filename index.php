@@ -44,8 +44,8 @@ $sth22=$sth2->getPrice(50);
 //var_dump($linuxPlDbHandler);
 //var_dump($linuxPlHandlerNew);
 //var_dump($whatever);
-var_dump($sth11);
-var_dump($sth22);
+//var_dump($sth11);
+//var_dump($sth22);
 
 require_once $root_dir.'/controllers/login.php';
 

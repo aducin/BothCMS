@@ -14,7 +14,7 @@ if(isset($_GET['action'])AND(($_GET['action'])=='orderSearch')){
 			$result=$controller->getOrderInformations(2, $_GET['oldorder']);
 			$ordedSearch=array('onstock'=>'Na stanie (SP)', 'ordered'=>'Zamówione (SP)', 'button1'=>'Kompletna edycja w SP', 'button2'=>'Wyrównaj ilość w nowej bazie', 'button3'=>'Zmiana obu przez stary panel', 'button4'=>'Uaktualnij ilości w nowej bazie','form'=>'fullEditionO', 'action'=>'BPSQN', 'orderNr'=>$_GET['oldorder']);
 		}
-		if(!isset($result)){
+		if($result==0){
 			$error='W bazie danych nie ma zamówienia o podanym numerze!';
 		}
 	}elseif (isset($_GET['orderVoucher'])AND ($_GET['orderVoucher'])!=''){
@@ -26,6 +26,8 @@ if(isset($_GET['action'])AND(($_GET['action'])=='orderSearch')){
 			$error='W bazie nie znaleziono zamówienia nr '.$_GET['orderVoucher'].'.';
 		}
 		if($totalProducts['total']>=50){
+			$controller->setExistingClient(new LinuxPlCustomer($linuxPlHandler));
+			//$controller->existingClient=new LinuxPlCustomer($linuxPlHandler);
 			$customerData=$controller->getCustomerData($totalProducts['idCustomer']);
 			$voucherNumber=$controller->getVoucherHistory($totalProducts['idCustomer']);
 			foreach ($voucherNumber as $custOrder){
@@ -71,7 +73,7 @@ if(isset($_GET['action'])AND(($_GET['action'])=='orderSearch')){
 		$error='Pobranie ilości w zamówieniu nie powiodło się: ' . $e->getMessage();
 	}
 }else{
-$finalOutput='order';	
+$order='1';
 }
 unset($controller);
 require_once $root_dir.'/controllers/output.php'; 
