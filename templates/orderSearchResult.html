@@ -1,12 +1,15 @@
 {% extends "searchTemplate.html" %}
 
 {% block title %}
-	Wyniki wyszukiwania produktu nr ID: {{ result1.id_product }}<br>
+	Wyniki wyszukiwania zamówienia nr : {{ variables.orderNr }}<br>
 - informacje z obu paneli.
 {% endblock %}
 
 {% block result %}
 	<tr class="row1">
+	<th>
+		Miniatura
+	</th>
 	<th>
 		Numer ID
 	</th>
@@ -22,50 +25,53 @@
 	<th>
 		Opcje
 	</th>
-	</tr>
-	{% for results in result %}
-		<tr class="row">
-		<td>
+</tr>
+{% for results in result %}
+<tr class="row">
+	<td class="row5">
+		<div id="margin"><img src="http://modele-ad9bis.pl/img/p/{{ results.imgNumber }}-medium.jpg" /></div>
+	</td>
+	<td>
 		{{ results.id }}
-		</td>
-		<td>
+	</td>
+	<td>
 		{{ results.name }}
 		<br>
 		{{ results.nameResult }} 
-		</td>
-		<td>
+	</td>
+	<td>
 		{{ results.quantity }}
 		<form action="?" method="get">
-		<input type="hidden" name="controller" value="order" />
-		<input type="hidden" name="id" value="{{ results.id }}">
-		<input type="hidden" name="quantity" value="{{ results.quantity }}">
-		<input type="submit" name="{{ variables.action }}" value="{{ variables.button2 }}">
+			<input type="hidden" name="controller" value="order" />
+			<input type="hidden" name="id" value="{{ results.id }}">
+			<input type="hidden" name="quantity" value="{{ results.quantity }}">
+			<input type="submit" class="row1" name="{{ variables.action }}" value="{{ variables.button2 }}">
 		</form>
-		</td>
-		<td>
-		{{ results.onStock }}
-		</td>
-		<td class="row2">
-		<form action="?bothChange" method="get">
-		<input type="hidden" name="controller" value="product" />
-		<input type="hidden" name="id" value="{{ results.id }}">
-		<input type="submit" name="{{ variables.form }}" value="{{ variables.button1 }}">
-		<input type="submit" name="shortEdition" value="{{ variables.button3 }}">
-		</form>
-		</td>
-		</tr>
-	{% endfor %}
-	<tr class="row2">
-	<td colspan=5>
-	<form action="?" method="get">
-	<input type="hidden" name="controller" value="order" />
-	<input type="hidden" name="id_number" value="{{ variables.orderNr }}">
-	<input type="submit" name="mergeQuantities" value="{{ variables.button4 }}">
-	</form>
 	</td>
-	</tr>
+	<td>
+		{{ results.onStock }}
+	</td>
+	<td class="row2">
+		<form action="?bothChange" method="get">
+			<input type="hidden" name="controller" value="product" />
+			<input type="hidden" name="id" value="{{ results.id }}">
+			<input type="submit" class="row1" name="{{ variables.form }}" value="{{ variables.button1 }}">
+			<input type="submit" class="row1" name="shortEdition" value="{{ variables.button3 }}">
+		</form>
+	</td>
+</tr>
+{% endfor %}
+<tr class="row2">
+<td colspan=6>
+		<form action="?" method="get">
+			<input type="hidden" name="controller" value="order" />
+			<input type="hidden" name="id_number" value="{{ variables.orderNr }}">
+			<input type="submit" class="row1" name="mergeQuantities" value="{{ variables.button4 }}">
+		</form>
+	</td>
+</tr>
 {% endblock %}
 
 {% block finish %}
-	<p class="finish"><a href="?controller=order">Nowe wyszukiwanie</a></p>
+<p class="finish"><a class="searchInput3" href="?controller=order">Nowe wyszukiwanie</a></p>
 {% endblock %}

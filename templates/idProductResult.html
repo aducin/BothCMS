@@ -8,6 +8,10 @@
 {% block result %}
 <tr class="row1">
 	<th>
+		Miniatura (SP)
+	</th>
+	<th>
+		Panel
 	</th>
 	<th>
 		Numer ID
@@ -28,27 +32,29 @@
 	</th>
 </tr>
 <tr>
-	<td class="row1">
+	<td class="row-1">
+	</td>
+	<td class="row1-1">
 		<b>
 			Nowy Panel:
 		</b>
 	</td>
-	<td class="row">
+	<td class="row1-2">
 		<center>{{ result1.id_product }}
 		</center>
 	</td>
-	<td class="row">
+	<td class="row1-2">
 		<center>{{ result1.name }}
 		</center>
 	</td>
-	<td class="row">
+	<td class="row1-2">
 		<center>{{ result1.quantity }}
 		</center>
 	</td>
-	<td id="price" class="row">
+	<td id="price" class="row1-2">
 		<center>
 			{% if not result1.reduct %}
-			{{ result1.price }} (bez rabatu)
+			{{ result1.price }}zł (bez rabatu)
 			{% endif %}
 			{% if result1.reduct %}
 			{{ result1.reduct.realPrice }}
@@ -56,37 +62,40 @@
 			{% endif %}
 		</center>
 	</td>
-	<td class="row">
+	<td class="row1-2">
 		<form action="?bothChange" method="get">
 			<div id="option">
 				<input type="hidden" name="id" value="{{ result1.id_product }}">
-				<input type="submit" name="shortEdition" value="Zmiana obu przez nowy panel">
-				<input type="submit" name="fullEditionN" value="Kompletna edycja w NP">
+				<input type="submit" name="shortEdition" class="row1" value="Zmiana obu przez nowy panel">
+				<input type="submit" name="fullEditionN" class="row1" value="Kompletna edycja w NP">
 			</div>
 		</form>
 	</td>
 </tr>
 <tr>
-	<td class="row1">
+	<td class="row-1">
+		<img style="border-style: double; border-width: 3px;" src="http://modele-ad9bis.pl/img/p/{{ imageNumber }}-medium.jpg" />
+	</td>
+	<td class="row1-1">
 		<b>
 			Stary Panel:
 		</b>
 	</td>
-	<td class="row">
+	<td class="row1-2">
 		<center>{{ result2.id_product }}
 		</center>
 	</td>
-	<td class="row">
+	<td class="row1-2">
 		<center>{{ result2.name }}
 		</center>
 	</td>
-	<td class="row">
+	<td class="row1-2">
 		<center>{{ result2.quantity }}
 		</center>
 	</td>
-	<td id="price" class="row">
+	<td id="price" class="row1-2">
 		<center>{% if not result2.reduct %}
-			{{ result2.price }} (bez rabatu)
+			{{ result2.price }}zł (bez rabatu)
 			{% endif %}
 			{% if result2.reduct %}
 			{{ result2.reduct.realPrice }}<br>
@@ -94,11 +103,11 @@
 			{% endif %}
 		</center>
 	</td>
-	<td class="row">
+	<td class="row1-2">
 		<form action="?bothChange" method="get">
-			<div id="option">
+			<div id="option2">
 				<input type="hidden" name="id" value="{{ result2.id_product }}">
-				<input type="submit" name="fullEditionO" value="Kompletna edycja w SP">
+				<input type="submit" class="row1" name="fullEditionO" value="Kompletna edycja w SP">
 			</div>
 		</form>
 	</td>
@@ -107,5 +116,5 @@
 
 
 	{% block finish %}
-			<p class="finish"><a href="?controller=product">Nowe wyszukiwanie produktów</a></p>
+			<p class="finish"><a class="searchInput3"  href="?controller=product">Nowe wyszukiwanie produktów</a></p>
 		{% endblock %}

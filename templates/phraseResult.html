@@ -7,6 +7,9 @@
 {% block result %}
 <tr class="row1">
 	<th>
+		Miniatura (SP)
+	</th>
+	<th>
 		Numer ID
 	</th>
 	<th>
@@ -28,10 +31,13 @@
 <tr>
 	{% for results in result %}
 	<tr class="row">
-		<td>
+		<td class="row-1">
+			<img style="border-style: double; border-width: 3px;" src="http://modele-ad9bis.pl/img/p/{{ results.imgNumber }}-medium.jpg" />
+		</td>
+		<td class="row1-2">
 			{{ results.id }}
 		</td>
-		<td>
+		<td class="row1-2">
 			{{ results.name }}
 			<br>
 			{% if not results.result.coherence %}
@@ -43,10 +49,10 @@
 			{{ results.result.confirmation }}
 			{% endif %}
 		</td>
-		<td>
+		<td class="row1-2">
 			{{ results.quantity }}
 		</td>
-		<td>
+		<td class="row1-2">
 			{% if not results.price %}
 			{{ results.priceRed.realPrice }} 
 			<br>
@@ -58,7 +64,7 @@
 			{{ results.price }}
 			{% endif %}
 		</td>
-		<td>
+		<td class="row1-2">
 			{% if not results.price2 %}
 			{{ results.priceRed2.realPrice }} 
 			<br>
@@ -74,8 +80,8 @@
 			<form action="?" method="get">
 				<div id="option">
 					<input type="hidden" name="id" value="{{ results.id }}">
-					<input type="submit" name="shortEdition" value="Zmiana obu przez nowy panel"><br>
-					<input type="submit" name="fullEditionN" value="Kompletna edycja w NP">
+					<input type="submit" name="shortEdition" class="row1" value="Zmiana obu przez nowy panel"><br>
+					<input type="submit" name="fullEditionN" class="row1" id="margin" value="Kompletna edycja w NP">
 				</div>
 			</form>
 		</td>
@@ -85,5 +91,5 @@
 {% endblock %}
 
 {% block finish %}
-	<p class="finish"><a href="?controller=product">Nowe wyszukiwanie produktów</a></p>
+	<p class="finish"><a class="searchInput3"  href="?controller=product">Nowe wyszukiwanie produktów</a></p>
 {% endblock %}

@@ -6,7 +6,7 @@
 
 	{% block result %}
 		<form action="" method="get">
-			<h2>Wyszukaj konkretny produkt w obu bazach</h2>
+			<div id="jsonDiv"><h2>Wyszukaj konkretny produkt w obu bazach</h2></div><br>
 			<tr>
 				<td class="row1000-3px">
 					<input type="hidden" name="controller" value="product" />
@@ -15,11 +15,15 @@
 					</label>
 				</td>
 				<td class="row1000-3px">
-					<input type="text" name="idnr">
+					<input type="text" id="idValue" class="orderNumber" name="idnr" placeholder="Tutaj wpisz numer ID" onblur="ajax_select_json()">
+				</td>
+				<td class="row1000-3px">
+					<div id="productQuant"></div>
+					<input type='text' id="fastValue" class="orderNumber" placeholder="Szybka zmiana ilości" onblur="ajax_update_json()">
 				</td>
 				<td class="row1000-3px">
 					<input type="hidden" name="action" value="idsearch">
-					<input id="searchInput" type="submit" value="Wyszukaj">
+					<input id="searchInput2" type="submit" value="Wyszukaj">
 				</td>
 			</tr>
 		</form>
@@ -37,7 +41,7 @@
 					</label>
 				</td>
 				<td class="row1000-2px">
-					<select name="author" class="selectWidth">
+					<select name="author" id="orderNumber" class="selectWidth">
 						<option value="">
 							Dowolny producent
 						</option>
@@ -56,7 +60,7 @@
 					</label>
 				</td>
 				<td class="row1000-2px">
-					<select name="category" class="selectWidth">
+					<select name="category" id="orderNumber" class="selectWidth">
 						<option value="">Dowolna kategoria</option>
 						{% for category in categories %}
 						<option value="{{ category.id }}">
@@ -68,18 +72,18 @@
 			</tr>
 			<tr>
 				<td class="row1000-2px">
-					<label for="text">
+					<label for="text" id="autoSuggest-container">
 						Zawierające tekst:
 					</label>
 				</td>
 				<td class="row1000-2px">
-					<input type="text" name="text" class="selectWidth">
+					<input type="text" id="autoSuggest" class="orderNumber" name="text" class="selectWidth2" onkeyup="autoSuggest();">
 				</td>
 			</tr>
 			<tr>
-				<td colspan=2 class="row">
+				<td colspan=2 class="row7">
 					<input type="hidden" name="action" value="search">
-					<input id="searchInput" type="submit" value="Wyszukaj">
+					<input id="searchInput2" type="submit" value="Wyszukaj">
 				</td>
 			</tr>
 	</form>
@@ -92,23 +96,23 @@
 <fieldset class="fieldset">
 	<h2>Produkty podmienione</h2>
 	<table class="border">
-		<tr>
-			<th>Numer ID</th>
-			<th>
+		<tr class="row7">
+			<th class="row7">Numer ID</th>
+			<th class="row7">
 				<b>Nazwa produktu</b>
 			</th>
-			<th>Cena</th>
-			<th>Data wpisu</th>
-			<th>Akcja</th>
+			<th class="row7">Cena</th>
+			<th class="row7">Data wpisu</th>
+			<th class="row7">Akcja</th>
 		</tr>
 		{% for modyfied in mods %}
 		<tr>
-			<td class="row1000-2px">
+			<td class="row1000-2px2">
 				<center>
 					{{ modyfied.id }}
 				</center>
 			</td>
-			<td class="row1000-2px">
+			<td class="row1000-2px2">
 				<b>
 					<a href="http://ad9bis.vot.pl/tory-h0/{{ modyfied.id }}-cysterna-francuska-primagaz-bttb.html" target="_blank">
 						{{ modyfied.nazwa }}
@@ -118,20 +122,20 @@
 				{% endif %}
 				</b>
 			</td>
-			<td class="row1000-8px">
+			<td class="row1000-8px2">
 				<center>
 					{{ modyfied.cena }}
 				</center>
 			</td>
-			<td class="row1000-8px">
+			<td class="row1000-8px2">
 				<center>
 					{{ modyfied.data }}
 				</center>
 			</td>
-			<td class="row1000-8px">
+			<td class="row1000-8px2">
 				<form action="?" method="get">
 					<input type="hidden" name="idMod" value="{{ modyfied.id }}">
-					<input type="submit" name="deleterow" value="Usuń wpis">
+					<input type="submit" name="deleterow" id="deleterows" value="Usuń wpis">
 				</form>
 			</td>
 		</tr>

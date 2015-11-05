@@ -3,7 +3,7 @@
 {% block menu %}
 {% if not message.1 %}
 <hr>
-{% elseif  message.1%}
+{% elseif  message.1 %}
  {{ parent() }}
   {% endif %}
   {% endblock %}
@@ -17,14 +17,14 @@
 <fieldset class="fieldset">
   <h2 class="finish1">{{ result }}</h2>
 {% if message.0 %}
-  <h3 class="row">{{ message.0 }}</h3>
+  <h3 class="row6">{{ message.0 }}</h3>
   {% else %}
-  <h3 class="row">{{ message }}</h3>
+  <h3 class="row6">{{ message }}</h3>
  {% endif %}
-  <h3 class="row1">{{ message.1 }}</h3>
+  <h3 class="row1-3">{{ message.1 }}</h3>
   {% if message.2 %}
-  <h3 class="row1">{{ message.2 }}</h3>
+  <h3 class="row1-3">{{ message.2 }}</h3>
   {% endif %}
 </fieldset>
-<p class="finish"><a href="?controller=product">Nowe wyszukiwanie produktów</a></p>
+<p class="finish"><a class="searchInput3" href="?controller=product">Nowe wyszukiwanie produktów</a></p>
 {% endblock %}
