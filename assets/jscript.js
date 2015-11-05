@@ -16,6 +16,21 @@ function countdown(){
 }
 	var xmlHttp = createXmlHttpRequestObject();
 
+function showAlert(){
+	if(document.form.quantity.value==""){
+		alert("Proszę podać ilość produktu do zapisania!");
+		return false;
+	}else if(document.form.text.value==""){
+		alert("Proszę podać nową nazwę produktu!");
+		return false;
+	}	
+}
+
+function focus(quantityAdd){
+	var el = document.getElementById(quantityAdd);
+	el.focus();		
+}
+
 function createXmlHttpRequestObject(){
 	var xmlHttp;
 
