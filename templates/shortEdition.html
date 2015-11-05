@@ -40,46 +40,29 @@
 	}
 	</style>
 	<script src="/Ad9bisCMS/assets/jquery.js" ></script>
-	<script src="/Ad9bisCMS/assets/jscript.js"></script>
-	<script type="text/javascript" language="javascript">
-	function showAlert(){
-		if(document.form.quantity.value==""){
-			alert("Proszę podać ilość produktu do zapisania!");
-			return false;}
-			else if(document.form.text.value==""){
-				alert("Proszę podać nową nazwę produktu!");
-				return false;}
-			}
-			function focus(quantityAdd)
-			{
-				var el = document.getElementById(quantityAdd);
-				el.focus();
-			}
-			</script>
 </head>
-<body onload="focus('quantityAdd');">
-<fieldset id='fieldset'>
-<h1 id="h1">Edycja produktu ID: {{ result.id_product }}<br>
-- informacje z nowego panelu.</h1>
-<form name="form" action="?editformBoth" method="post" onsubmit="showAlert()">
-<div id="rows"><label for="text">Aktualna nazwa produktu:</label>
-<textarea id="nameText" name="text" rows="1" cols="30">
-	{{ result.name }}</textarea><br>
-	<table>
-		<tr class="height">
-			<td class="height">
-				<label for="quantity">Obecna ilość na sklepie: </td>
-					<td>
-						<div id="quantity">{{ result.quantity }}</div>
-					</td>
-				</tr>
-				<tr class="height">
-					<td class="height">
-						<div id="qChange">Podaj ilość do zmiany: </td>
-							<td>
-							</div>
+<body onload="focus()">
+	<fieldset id='fieldset'>
+		<h1 id="h1">Edycja produktu ID: {{ result.id_product }}<br>- informacje z nowego panelu.</h1>
+		<form name="form" action="?editformBoth" method="post" onsubmit="showAlert()">
+			<div id="rows">
+				<label for="text">Aktualna nazwa produktu:</label>
+				<textarea id="nameText" name="text" rows="1" cols="30">{{ result.name }}</textarea><br>
+				<table>
+					<tr class="height">
+						<td class="height">
+							<label for="quantity">Obecna ilość na sklepie: </label>
+						</td>
+						<td>
+							<div id="quantity">{{ result.quantity }}</div>
+						</td>
+					</tr>
+					<tr class="height">
+						<td class="height">
+							<div id="qChange">Podaj ilość do zmiany: </div>
+						</td>
+						<td>
 							<input type="text" id="quantityAdd" name="quantity">
-							</label>
 						</td>
 					</tr>
 					<tr class="height">
@@ -96,15 +79,15 @@
 						</td>
 						<td>
 							<input type="text" id="priceN" name="nominalPriceNew" size="15" value="{{ result.price }}"</>
-						</div>
-					</td>
-				</tr>
-			</table>
+						</td>
+					</tr>
+				</table>
+			</div>
 			<div id="button"><input type="hidden" name="id" value="{{ result.id_product }}">
 				<input type="submit" value="Aktualizuj produkt w obu bazach">
-				<div>
-					<br>
-				</form>
-			</fieldset>
-		</body>
-		</html>
+			</div>
+			<br>
+		</form>
+	</fieldset>
+</body>
+</html>

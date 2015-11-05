@@ -26,11 +26,6 @@ function showAlert(){
 	}	
 }
 
-function focus(quantityAdd){
-	var el = document.getElementById(quantityAdd);
-	el.focus();		
-}
-
 function createXmlHttpRequestObject(){
 	var xmlHttp;
 
@@ -89,6 +84,21 @@ function wyswietlAlert(){
 	}
 }
 
+function showAlert(){
+	if(document.form.quantity.value==""){
+		alert("Proszę podać ilość produktu do zapisania!");
+		return false;
+	}else if(document.form.text.value==""){
+		alert("Proszę podać nową nazwę produktu!");
+		return false;
+	}
+}	
+
+function focus(){
+	var el = document.getElementById("quantityAdd");
+	el.focus();
+}
+
 function ajax_select_json(){
 	var id = document.getElementById("idValue");
 	var hr = new XMLHttpRequest();
@@ -143,7 +153,7 @@ function ajax_update_json(){
 }
 
 function autoSuggestNew(){
-	var autoSuggestVal = $('#autoSuggestNew').val();
+	var autoSuggestVal = $('#autoSuggest').val();
 	if (autoSuggestVal !=''){
 		$.ajax({
 			url: "http://localhost/Ad9bisCMS/json2.php",
@@ -156,11 +166,11 @@ function autoSuggestNew(){
 				var jsonData = JSON.parse(result);
 				switch(jsonData){
 					case 'tooShort':
-					$('#autoSuggestNew-container').html('Zbyt krótka fraza do wyszukania!');
+					$('#autoSuggest-container').html('Zbyt krótka fraza do wyszukania!');
 					break;
 
 					case 'null':
-					$('#autoSuggestNew-container').html('Nie znaleziono produktu z nazwą: <b>'+autoSuggestVal+'</b>.');
+					$('#autoSuggest-container').html('Nie znaleziono produktu z nazwą: <b>'+autoSuggestVal+'</b>.');
 					break;
 
 					default:
@@ -173,19 +183,13 @@ function autoSuggestNew(){
 					} else {
 						$('#autoSuggest-container').html('Znaleziono '+number + ' produktów z nazwą: '+autoSuggestVal);
 					}
-					$('#autoSuggestNew').autocomplete({
+					$('#autoSuggest').autocomplete({
 						source: arr
 					});
 				}
 			}
 		});
 	}
-}
-
-function focus()
-{
-	var el = document.getElementById('loginLogin');
-	el.focus();
 }
 
 $(document).ready(function(){

@@ -227,7 +227,7 @@ ul.autoSuggest li:hover{
 	font-size: 14px;width:540px;background-color:#DDF;border-radius:10px;margin-top:3px;
 }
 #nameText2{
-	font-size: 14px;width:100px;background-color:#DDF;border-radius:10px;text-align:center;
+	font-size: 14px;width:100px;border-radius:10px;text-align:center;
 }
 #option{
 	padding-top:9px;padding-bottom:9px;
