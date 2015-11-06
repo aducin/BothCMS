@@ -33,19 +33,8 @@ $ogicomHandler = $dbHandlerOgicom->getDb();
 $dbHandlerLinuxPl= new DBHandler($firstHost, $firstLogin, $firstPassword);
 $linuxPlHandler = $dbHandlerLinuxPl->getDb();
 
-$linuxPlDbHandler=bothDbHandler::getInstance('linuxPl', $firstHost, $firstLogin, $firstPassword);
-$ogicomDbHandler=bothDbHandler::getInstance('ogicom', $secondHost, $secondLogin, $secondPassword);
-//$linuxPlHandlerNew = $linuxPlDbHandler->getDb();
-//$whatever=new LinuxPlProduct($linuxPlHandlerNew);
-$sth1=new LinuxPlProduct($linuxPlDbHandler);
-$sth2=new LinuxPlProduct($ogicomDbHandler);
-$sth11=$sth1->getPrice(50);
-$sth22=$sth2->getPrice(50);
-//var_dump($linuxPlDbHandler);
-//var_dump($linuxPlHandlerNew);
-//var_dump($whatever);
-//var_dump($sth11);
-//var_dump($sth22);
+//$linuxPlDbHandler=bothDbHandler::getInstance('linuxPl', $firstHost, $firstLogin, $firstPassword);
+//$ogicomDbHandler=bothDbHandler::getInstance('ogicom', $secondHost, $secondLogin, $secondPassword);
 
 require_once $root_dir.'/controllers/login.php';
 
