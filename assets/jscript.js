@@ -16,16 +16,6 @@ function countdown(){
 }
 	var xmlHttp = createXmlHttpRequestObject();
 
-function showAlert(){
-	if(document.form.quantity.value==""){
-		alert("Proszę podać ilość produktu do zapisania!");
-		return false;
-	}else if(document.form.text.value==""){
-		alert("Proszę podać nową nazwę produktu!");
-		return false;
-	}	
-}
-
 function createXmlHttpRequestObject(){
 	var xmlHttp;
 
@@ -103,7 +93,7 @@ function ajax_select_json(){
 	var id = document.getElementById("idValue");
 	var hr = new XMLHttpRequest();
 
-	hr.open("POST", "json.php", true);
+	hr.open("POST", "/Ad9bisCMS/controllers/jsonController.php", true);
 	hr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	hr.onreadystatechange = function() {
 		if(hr.readyState == 4 && hr.status ==200) {
@@ -135,7 +125,7 @@ function ajax_update_json(){
 	var results = document.getElementById("jsonDiv");
 	var hr = new XMLHttpRequest();
 
-	hr.open("POST", "json.php", true);
+	hr.open("POST", "/Ad9bisCMS/controllers/jsonController.php", true);
 	hr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	hr.onreadystatechange = function() {
 		if(hr.readyState == 4 && hr.status ==200) {
@@ -156,7 +146,7 @@ function autoSuggestNew(){
 	var autoSuggestVal = $('#autoSuggest').val();
 	if (autoSuggestVal !=''){
 		$.ajax({
-			url: "http://localhost/Ad9bisCMS/json2.php",
+			url: "/Ad9bisCMS/controllers/jsonController.php",
 			type: "get",
 			data: {
 				"productQuery": autoSuggestVal,
@@ -174,7 +164,7 @@ function autoSuggestNew(){
 					break;
 
 					default:
-					var arr = jsonData.map(function(object){ return object.name });
+					var arr = jsonData.map(function(object){ return 'ID: '+object.id+' ->'+object.name });
 					var number = $(jsonData).length;
 					if(number==1){
 						$('#autoSuggest-container').html('Znaleziono 1 produkt z nazwą: "'+autoSuggestVal+'"');
@@ -184,7 +174,10 @@ function autoSuggestNew(){
 						$('#autoSuggest-container').html('Znaleziono '+number + ' produktów z nazwą: '+autoSuggestVal);
 					}
 					$('#autoSuggest').autocomplete({
-						source: arr
+						source: arr,
+						select: function (event, ui) {
+							ui.item.value=ui.item.value.split("->")[1];
+						}
 					});
 				}
 			}
