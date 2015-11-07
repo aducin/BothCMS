@@ -33,8 +33,10 @@ $ogicomHandler = $dbHandlerOgicom->getDb();
 $dbHandlerLinuxPl= new DBHandler($firstHost, $firstLogin, $firstPassword);
 $linuxPlHandler = $dbHandlerLinuxPl->getDb();
 
-//$linuxPlDbHandler=bothDbHandler::getInstance('linuxPl', $firstHost, $firstLogin, $firstPassword);
-//$ogicomDbHandler=bothDbHandler::getInstance('ogicom', $secondHost, $secondLogin, $secondPassword);
+/* using Singleton
+$linuxPlDbHandler=bothDbHandler::getInstance('linuxPl', $firstHost, $firstLogin, $firstPassword);
+$ogicomDbHandler=bothDbHandler::getInstance('ogicom', $secondHost, $secondLogin, $secondPassword);
+*/
 
 require_once $root_dir.'/controllers/login.php';
 
