@@ -9,26 +9,22 @@ class SitemapFacadeOgicom{
         $this->objects[1] = new OgicomProduct($ogicomHandler);
     }
 
-	//public function __construct($DBHandler){
-	//	$this->pdo=$DBHandler;
-	//}
-
-	public function method1() {
+	public function getProductsData() {
         $result=$this->objects[0]->getProductsDateAndLink();
         return $result;
     }
 
-    public function method2() {
+    public function getCategoryData() {
        $result=$this->objects[0]->getCategoryDateAndLink();
        return $result;
     }
 
-    public function method3($id) {
+    public function getProductImage($id) {
         $result=$this->objects[1]->getWholeImages($id);
         return $result;
     }
 
-    public function method4($image) {
+    public function getImageTitle($image) {
         $result=$this->objects[1]->getImagesTitles($image);
         return $result;
     }

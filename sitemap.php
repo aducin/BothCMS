@@ -16,13 +16,13 @@ $dbHandlerOgicom= new DBHandler($secondHost, $secondLogin, $secondPassword);
 $ogicomHandler = $dbHandlerOgicom->getDb();
 
 $siteMap= new SitemapFacadeOgicom($ogicomHandler);
-$siteMapData=$siteMap->method1();
+$siteMapData=$siteMap->getProductsData();
 
 foreach($siteMapData as $siteCreator){
 	$siteCreator['date_upd']=(explode(" ", $siteCreator['date_upd']));
 	$site[]=array('www'=>$siteCreator['link'].'/'.$siteCreator['id_product'].'-', "link"=>$siteCreator['link_rewrite'], "date_upd"=>$siteCreator['date_upd'][0], 'id'=>$siteCreator['id_product']);
 }
-$siteMapCategories=$siteMap->method2();
+$siteMapCategories=$siteMap->getCategoryData();
 foreach($siteMapCategories as $siteCreator){
 	$siteCreator['date_upd']=(explode(" ", $siteCreator['date_upd']));
 	$siteCategory[]=array('catAdress'=>'http://modele-ad9bis.pl/'.$siteCreator['id_category'].'-'.$siteCreator['link_rewrite'], "date_upd"=>$siteCreator['date_upd'][0]);
@@ -38,11 +38,11 @@ $xml.='</lastmod><changefreq>weekly</changefreq></url>';
 
 foreach($site as $newSite){
 	$xml.='<url><loc>http://modele-ad9bis.pl/'.$newSite['www'].$newSite['link'].'</loc><priority>0.5</priority><lastmod>'.$newSite['date_upd'].'</lastmod><changefreq>weekly</changefreq>';
-	$image=$siteMap->method3($newSite['id']);
+	$image=$siteMap->getProductImage($newSite['id']);
 	foreach($image as $singIm){
 		$xml.= '<image:image><image:loc>';
 		$xml.='modele-ad9bis.pl/'.$newSite['id'].'-'.$singIm['id_image'].'/'.$newSite['link'].'.jpg';
-		$title=$siteMap->method4($singIm['id_image']);
+		$title=$siteMap->getImageTitle($singIm['id_image']);
 		if($title!=null){
 			$xml.='</image:loc><image:caption>'.$title.'</image:caption><image:title>'.$title.'</image:title></image:image>';
 		}else{
