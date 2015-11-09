@@ -18,9 +18,9 @@ class DBHandler{
 	}
 
 	public function getDb() {
-       if ($this->pdo instanceof PDO) {
-            return $this->pdo;
-       }
+        if ($this->pdo instanceof PDO) {
+    		return $this->pdo;
+        }
     }
 
 	public function __destruct()
