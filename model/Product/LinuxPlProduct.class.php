@@ -35,12 +35,12 @@ class LinuxPlProduct extends Product
 	}
 
 	public function getEveryName(){
-	$sql='SELECT name, id_product FROM ps_product_lang
-	ORDER BY name';
-	$c= $this->pdo->prepare($sql);
-	$c->bindValue(':id', $productId);
-	$c->execute();
-	return$c;
+		$sql='SELECT name, id_product FROM ps_product_lang
+		ORDER BY name';
+		$c= $this->pdo->prepare($sql);
+		$c->bindValue(':id', $productId);
+		$c->execute();
+		return$c;
 	}
 	
 }
