@@ -31,6 +31,7 @@ class DBHandler{
 	}
 
 	function getUserData($login, $password){
+		$password=base64_encode($password);
 		$sql='SELECT * FROM ps_db_user WHERE login=:login AND password=:password';
 		$s=$this->pdo->prepare($sql);
 		$s->bindValue(':login', $login);
