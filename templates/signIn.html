@@ -7,65 +7,65 @@ session_start(); ?>
 	<meta charset="utf-8">
 	<link rel="stylesheet" href="/Ad9bisCMS/assets/styles.css" type="text/css">
 	<style>
-	body{
-	background-color:white;	
-	}
-	
-	#field{
-		background-color: #626262;
-		width: 772px;text-align:center;
-		border-radius: 6px;
-		float:center;
-		margin:auto;
-	}
-	#field2{
-		width:500px;
-		margin:auto;
-		margin-top:6px;
-		float:center;
-		text-align:center;
-		background-color:#999966;
-		border-radius: 16px;
-	}
-	#userInput{
-		border-radius:25px;text-align:center;border-color: purple;
-		padding-top:3px;padding-bottom:3px;font-size:14px;
-		margin-top:6px;margin-left:5px; 
-	}
-	.searchINPUT{
-		color: #fff;
-  		background-color: #4E2F2F;
-  		border-color: #6B4226;
-  		padding: 10px 16px;
-  		font-size: 18px;
-  		line-height: 1.3333333;
-  		border-radius: 6px;
-  		float:center;
-  		margin-top:-10px;
-		margin-bottom:5px;
-	}
+		body{
+		background-color:white;	
+		}
+		
+		#field{
+			background-color: #626262;
+			width: 772px;text-align:center;
+			border-radius: 6px;
+			float:center;
+			margin:auto;
+		}
+		#field2{
+			width:500px;
+			margin:auto;
+			margin-top:6px;
+			float:center;
+			text-align:center;
+			background-color:#999966;
+			border-radius: 16px;
+		}
+		#userInput{
+			border-radius:25px;text-align:center;border-color: purple;
+			padding-top:3px;padding-bottom:3px;font-size:14px;
+			margin-top:6px;margin-left:5px; 
+		}
+		.searchINPUT{
+			color: #fff;
+	  		background-color: #4E2F2F;
+	  		border-color: #6B4226;
+	  		padding: 10px 16px;
+	  		font-size: 18px;
+	  		line-height: 1.3333333;
+	  		border-radius: 6px;
+	  		float:center;
+	  		margin-top:-10px;
+			margin-bottom:5px;
+		}
 	</style>
 	<script type="text/javascript" src="/Ad9bisCMS/assets/jquery-2.1.4.min.js"></script>
 	<script type="text/javascript" src="/Ad9bisCMS/assets/cycle2.js"></script>
 	<script type="text/javascript" src="/Ad9bisCMS/assets/jscript.js"></script>
-	</head>
-	<body onload="process(), countdown();">
-		<br>
-		<fieldset id="field">
-			<legend style="margin-left:20%" id="legend">Witamy w systemie CMS obu paneli!</legend>
-			<b><div id="timer"></div></b>
-			<h2 id="loginP">Proszę o podanie danych do logowania!</h2>
-			<form name="log" action="../index.php" method="post" onsubmit="wyswietlAlert()">
-				<fieldset id="field2">
-					<span class="label-DEFAULT">Login: </span>
-					<input type="text" id="userInput" size=20 name="login" onload="focus();"><br>
-					<span class="label-DEFAULT">Hasło: </span>
-					<input type="password" id="passLog" size=20 name="password"><br>
-					<div id="underInput"></div>
-				</fieldset>
+</head>
+<body onload="process(), countdown();">
+	<br>
+	<fieldset id="field">
+		<legend style="margin-left:20%" id="legend">Witamy w systemie CMS obu paneli!</legend>
+		<b><div id="timer"></div></b>
+		<h2 id="loginP">Proszę o podanie danych do logowania!</h2>
+		<form name="log" action="../index.php" method="post" onsubmit="wyswietlAlert()">				
+			<fieldset id="field2">
+				<span class="label-DEFAULT">Login: </span>
+				<input type="text" id="userInput" size=20 name="login" onload="focus();"><br>			
+				<span class="label-DEFAULT">Hasło: </span>
+				<input type="password" id="passLog" size=20 name="password"><br>
+				<div id="underInput"></div>
+			</fieldset>
 			<input type="submit" id="passLog1" value="Zaloguj się"><br>
-			</form>
-		</fieldset>
+		</form>
+	</fieldset>
 	<div id="container">
 	<div id="slideshow" class="cycle-slideshow" 
 		data-cycle-fx=fade
@@ -91,6 +91,6 @@ session_start(); ?>
 		<img id="previous" src="/Ad9bisCMS/assets/previous.jpg"/>
 		<img id="next" src="/Ad9bisCMS/assets/next.jpg"/>
 	</div>
-		<h1 align="center">Ad9bis - INTERNETOWY SKLEP MODELARSTWA KOLEJOWEGO</h1>
-	</body>
+	<h1 align="center">Ad9bis - INTERNETOWY SKLEP MODELARSTWA KOLEJOWEGO</h1>
+</body>
 </html>
