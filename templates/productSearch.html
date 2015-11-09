@@ -50,9 +50,9 @@
 							Dowolny producent
 						</option>
 						{% for manufactorer in authors %}
-						<option value="{{ manufactorer.id }}">
-							{{ manufactorer.name }}
-						</option>
+							<option value="{{ manufactorer.id }}">
+								{{ manufactorer.name }}
+							</option>
 						{% endfor %}
 					</select>
 				</td>
@@ -67,9 +67,9 @@
 					<select name="category" id="orderNumber" class="selectWidth">
 						<option value="">Dowolna kategoria</option>
 						{% for category in categories %}
-						<option value="{{ category.id }}">
-							{{ category.name }}
-						</option>
+							<option value="{{ category.id }}">
+								{{ category.name }}
+							</option>
 						{% endfor %}
 					</select>
 				</td>
@@ -94,59 +94,57 @@
 	</form>
 {% endblock %}
 
-
 {% block finish %}
-{% if mods %}
-<fieldset class="fieldset">
-	<h2>Produkty podmienione</h2>
-	<table class="border">
-		<tr class="row7">
-			<th class="row7">Numer ID</th>
-			<th class="row7">
-				<b>Nazwa produktu</b>
-			</th>
-			<th class="row7">Cena</th>
-			<th class="row7">Data wpisu</th>
-			<th class="row7">Akcja</th>
-		</tr>
-		{% for modyfied in mods %}
-		<tr>
-			<td class="row1000-2px2">
-				<center>
-					{{ modyfied.id }}
-				</center>
-			</td>
-			<td class="row1000-2px2">
-				<b>
-					<a href="http://ad9bis.vot.pl/tory-h0/{{ modyfied.id }}-cysterna-francuska-primagaz-bttb.html" target="_blank">
-						{{ modyfied.nazwa }}
-					</a>
-					{% if modyfied.reduction %}
-				<h6>Uwaga - sprawdź rabaty produktu!</h6>
-				{% endif %}
-				</b>
-			</td>
-			<td class="row1000-8px2">
-				<center>
-					{{ modyfied.cena }}
-				</center>
-			</td>
-			<td class="row1000-8px2">
-				<center>
-					{{ modyfied.data }}
-				</center>
-			</td>
-			<td class="row1000-8px2">
-				<form action="?" method="get">
-					<input type="hidden" name="idMod" value="{{ modyfied.id }}">
-					<input type="submit" name="deleterow" id="deleterows" value="Usuń wpis">
-				</form>
-			</td>
-		</tr>
-		{% endfor %}
-	</table>
-</fieldset>
-{% elseif message %}
-{% include 'confirm.html' %}
-{% endif %}
+	{% if mods %}
+		<fieldset class="fieldset">
+			<h2>Produkty podmienione</h2>
+			<table class="border">
+				<tr class="row7">
+					<th class="row7">Numer ID</th>
+					<th class="row7">
+						<b>Nazwa produktu</b>
+					</th>
+					<th class="row7">Cena</th>
+					<th class="row7">Data wpisu</th>
+					<th class="row7">Akcja</th>
+				</tr>
+				{% for modyfied in mods %}
+					<tr>
+						<td class="row1000-2px2">
+							<center>
+								{{ modyfied.id }}
+							</center>
+						</td>
+						<td class="row1000-2px2">
+							<b>
+							<a href="http://ad9bis.vot.pl/tory-h0/{{ modyfied.id }}-cysterna-francuska-primagaz-bttb.html" target="_blank">
+							{{ modyfied.nazwa }}</a>
+							{% if modyfied.reduction %}
+								<h6>Uwaga - sprawdź rabaty produktu!</h6>
+							{% endif %}
+							</b>
+						</td>
+						<td class="row1000-8px2">
+							<center>
+								{{ modyfied.cena }}
+							</center>
+						</td>
+						<td class="row1000-8px2">
+							<center>
+								{{ modyfied.data }}
+							</center>
+						</td>
+						<td class="row1000-8px2">
+							<form action="?" method="get">
+								<input type="hidden" name="idMod" value="{{ modyfied.id }}">
+								<input type="submit" name="deleterow" id="deleterows" value="Usuń wpis">
+							</form>
+						</td>
+					</tr>
+				{% endfor %}
+			</table>
+		</fieldset>
+	{% elseif message %}
+		{% include 'confirm.html' %}
+	{% endif %}
 {% endblock %}
