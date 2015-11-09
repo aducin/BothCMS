@@ -1,275 +1,275 @@
 {% extends "searchTemplate.html" %}
 
 {% block headTitle %}
-<title>Kompletna edycja produktu</title>
+	<title>Kompletna edycja produktu</title>
 {% endblock %}
 
 {% block title %}
-Kompletna edycja produktu ID: {{ QueryResult.id_product }}
-{% if editForm=='?editcompleteformnew' %}
-- informacje z nowego panelu.
-{% elseif editForm=='?editcompleteformold' %}
-- informacje ze starego panelu.
-{% else %}
-{% endif %}
+	Kompletna edycja produktu ID: {{ QueryResult.id_product }}
+	{% if editForm=='?editcompleteformnew' %}
+		- informacje z nowego panelu.
+	{% elseif editForm=='?editcompleteformold' %}
+		- informacje ze starego panelu.
+	{% endif %}
 {% endblock %}
 
 {% block result %}
-<form name="form" action="{{ editForm }}" method="post" onsubmit="wyswietlAlert()">
-	<tr>
-		<td class="row1">
-			<label for="text">
-				Aktualna nazwa produktu:
-			</label>
-		</td>
-		<td>
-			<textarea id="textarea" name="text" rows="2" cols="93">{{ QueryResult.name }}</textarea>
-		</td>
-	</tr>
-	<tr>
-		<td class="row1">
-			<label for="description_short">
-				Krótki opis produktu:
-			</label>
-		</td>
-		<td>
-			<textarea id="textarea" name="description_short" rows="2" cols="93">{{ QueryResult.description_short }}</textarea>
-		</td>
-	</tr>
-	<tr>
-		<td class="row1">
-			<label for="description">
-				Pełny opis produktu
-			</label>
-		</td>
-		<td>
-			<textarea id="textarea" name="description" rows="7" cols="93">{{ QueryResult.description }}</textarea>
-		</td>
-	</tr>
-	<tr>
-		<td class="row1">
-			<label for="link">
-				Aktualny link do produktu:
-			</label>
-		</td>
-		<td>
-			<input type="text" id="textarea"  name="link" size="94" value="{{ QueryResult.link_rewrite }}"</>
-		</td>
-	</tr>
-	<tr>
-		<td class="row1">
-			<label for="meta_title">
-				Aktualny Meta-tytuł:
-			</label>
-		</td>
-		<td>
-			<input type="text" id="textarea" name="meta_title" size="94" value="{{ QueryResult.meta_title }}"</>
-		</td>
-	</tr>
-	<tr>
-		<td class="row1">
-			<label for="meta_description">
-				Aktualny Meta-opis:
-			</label>
-		</td>
-		<td>
-			<input type="text" id="textarea" name="meta_description" size="94" value="{{ QueryResult.meta_description }}"</>
-		</td>
-	</tr>
-	<tr>
-		<td class="row1">
-			<label for="tags">
-				Aktualne tagi produktu:
-			</label>
-		</td>
-		<td>
-			<input type="text" id="textarea" method="post" name="tagsText" size="94" value="{{ completeTagNames }}"</>
+	<form name="form" action="{{ editForm }}" method="post" onsubmit="wyswietlAlert()">
+		<tr>
+			<td class="row1">
+				<label for="text">
+					Aktualna nazwa produktu:
+				</label>
 			</td>
-			</tr>
-	<tr>
-		<td class="row1">
-			<label for="quantity">
-				Aktualna ilość produktu:
-			</label>
-		</td>
-		<td class="textOnlyLeft">
-			<input type="text" id="orderNumber" name="quantity" size="17" value="{{ QueryResult.quantity }}"</>
-		</td>
-	</tr>
-	<tr>
-		<td class="row1">
-			<label for="author">
-				Producent:
-			</label>
-		</td>
-		<td class="textOnlyLeft">
-			<select name="author">
-				<option value="">Wybierz producenta</option>
-				{% for author in authors %}
-				<option id="textarea" value="{{ author.id }}"
-				{% if author.name==QueryResult.manufacturer %}
-				selected="selected"
-				{% endif %}
-				>{{ author.name }}</option>
-				{% endfor %}
-			</select>
-		</td>
-	</tr>
-	<tr>
-		<td class="row1">
-			<label for="indexP">
-				Aktywność produktu na sklepie:
-			</label>
-		</td> 
-		<td class="textOnlyLeft">
-			<select name="active">
-				{% for index in indexArray %}
-				<option id="textarea" value="{{ index.indexed }}"
-				{% if index.indexed==QueryResult.indexed %}
-				selected="selected"
-				{% endif %}
-				>{{ index.activeness }}</option>
-				{% endfor %}
-			</select>
-		</td>
-	</tr>
-	<tr>
-		<td class="row1">
-			<label for="condition">
-				Aktualny stan produktu:
-			</label>
-		</td>
-		<td class="textOnlyLeft">
-			<select name="condition">
-				{% for index2 in condArray %}
-				<option id="textarea" value="{{ index2.condition }}"
-				{% if index2.condition==QueryResult.condition %}
-				selected="selected"
-				{% endif %}
-				>{{ index2.value }}</option>
-				{% endfor %}
-			</select>
-		</td>
-	</tr>
-	{% if editForm=='?editcompleteformnew' %}
-	<tr>
-		<td class="row1">
-			<label for="priceOld">
-				Nominalna cena produktu (SP):
-			</label>
-		</td>
-		<td class="textOnlyLeft">
-			<input type="text" id="orderNumber" name="nominalPriceOld" size="17" value="{{ QueryResult.secondPrice|number_format(2, '.', ',') }}"</>zł
-			{% if QueryResult.reduction2!=0 %}
-			<b>- UWAGA! Rabat wynosi {{ QueryResult.reduction2|number_format(2, '.', ',') }}zł</b>
-			{% endif %}
-		</td>
-	</tr>
-	<tr>
-		<td class="row1">
-			<label for="priceNew">
-				Nominalna cena produktu (NP):
-			</label>
-		</td>
-		<td class="textOnlyLeft">
-			<input type="text" id="orderNumber" name="nominalPriceNew" size="17" value="{{ QueryResult.price|number_format(2, '.', ',') }}"</>zł
-			{% if QueryResult.reduction!=0 %}
-			<b>- UWAGA! Rabat wynosi {{ (QueryResult.reduction*100)|number_format(2, '.', ',') }}%</b>
-			{% endif %}
-		</td>
-	</tr>
-	{% endif %}
-	{% if editForm=='?editcompleteformold' %}
-	<tr>
-		<td class="row1">
-			<label for="priceOld">
-				Nominalna cena produktu (SP):
-			</label>
-		</td>
-		<td class="textOnlyLeft">
-			<input type="text" id="orderNumber" name="nominalPriceOld" size="17" value="{{ QueryResult.price|number_format(2, '.', ',') }}"</>zł
-			{% if QueryResult.reduction!=0 %}
-			<b>UWAGA! Rabat wynosi {{ QueryResult.reduction|number_format(2, '.', ',') }}zł</b>
-			{% endif %}
-		</td>
-	</tr>
-	<tr>
-		<td class="row1">
-			<label for="priceNew">
-				Nominalna cena produktu (NP):
-			</label>
-		</td>
-		<td class="textOnlyLeft">
-			<input type="text" id="orderNumber" name="nominalPriceNew" size="17" value="{{ QueryResult.secondPrice|number_format(2, '.', ',') }}"</>zł
-			{% if QueryResult.reduction2!=0 %}
-			<b>UWAGA! Rabat wynosi {{ (QueryResult.reduction2*100)|number_format(2, '.', ',') }}%</b>
-			{% endif %}
-		</td>
-	</tr>
-	{% endif %}
+			<td>
+				<textarea id="textarea" name="text" rows="2" cols="93">{{ QueryResult.name }}</textarea>
+			</td>
+		</tr>
+		<tr>
+			<td class="row1">
+				<label for="description_short">
+					Krótki opis produktu:
+				</label>
+			</td>
+			<td>
+				<textarea id="textarea" name="description_short" rows="2" cols="93">{{ QueryResult.description_short }}</textarea>
+			</td>
+		</tr>
+		<tr>
+			<td class="row1">
+				<label for="description">
+					Pełny opis produktu
+				</label>
+			</td>
+			<td>
+				<textarea id="textarea" name="description" rows="7" cols="93">{{ QueryResult.description }}</textarea>
+			</td>
+		</tr>
+		<tr>
+			<td class="row1">
+				<label for="link">
+					Aktualny link do produktu:
+				</label>
+			</td>
+			<td>
+				<input type="text" id="textarea"  name="link" size="94" value="{{ QueryResult.link_rewrite }}"</>
+			</td>
+		</tr>
+		<tr>
+			<td class="row1">
+				<label for="meta_title">
+					Aktualny Meta-tytuł:
+				</label>
+			</td>
+			<td>
+				<input type="text" id="textarea" name="meta_title" size="94" value="{{ QueryResult.meta_title }}"</>
+			</td>
+		</tr>
+		<tr>
+			<td class="row1">
+				<label for="meta_description">
+					Aktualny Meta-opis:
+				</label>
+			</td>
+			<td>
+				<input type="text" id="textarea" name="meta_description" size="94" value="{{ QueryResult.meta_description }}"</>
+			</td>
+		</tr>
+		<tr>
+			<td class="row1">
+				<label for="tags">
+					Aktualne tagi produktu:
+				</label>
+			</td>
+			<td>
+				<input type="text" id="textarea" method="post" name="tagsText" size="94" value="{{ completeTagNames }}"</>
+				</td>
+				</tr>
+		<tr>
+			<td class="row1">
+				<label for="quantity">
+					Aktualna ilość produktu:
+				</label>
+			</td>
+			<td class="textOnlyLeft">
+				<input type="text" id="orderNumber" name="quantity" size="17" value="{{ QueryResult.quantity }}"</>
+			</td>
+		</tr>
+		<tr>
+			<td class="row1">
+				<label for="author">
+					Producent:
+				</label>
+			</td>
+			<td class="textOnlyLeft">
+				<select name="author">
+					<option value="">Wybierz producenta</option>
+					{% for author in authors %}
+					<option id="textarea" value="{{ author.id }}"
+					{% if author.name==QueryResult.manufacturer %}
+					selected="selected"
+					{% endif %}
+					>{{ author.name }}</option>
+					{% endfor %}
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td class="row1">
+				<label for="indexP">
+					Aktywność produktu na sklepie:
+				</label>
+			</td> 
+			<td class="textOnlyLeft">
+				<select name="active">
+					{% for index in indexArray %}
+					<option id="textarea" value="{{ index.indexed }}"
+					{% if index.indexed==QueryResult.indexed %}
+					selected="selected"
+					{% endif %}
+					>{{ index.activeness }}</option>
+					{% endfor %}
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td class="row1">
+				<label for="condition">
+					Aktualny stan produktu:
+				</label>
+			</td>
+			<td class="textOnlyLeft">
+				<select name="condition">
+					{% for index2 in condArray %}
+					<option id="textarea" value="{{ index2.condition }}"
+					{% if index2.condition==QueryResult.condition %}
+					selected="selected"
+					{% endif %}
+					>{{ index2.value }}</option>
+					{% endfor %}
+				</select>
+			</td>
+		</tr>
+		{% if editForm=='?editcompleteformnew' %}
 			<tr>
-				<td colspan=2 class="row3">
-					<b>Kategorie aktywne dla tego produktu:</b>
+				<td class="row1">
+					<label for="priceOld">
+						Nominalna cena produktu (SP):
+					</label>
+				</td>
+				<td class="textOnlyLeft">
+					<input type="text" id="orderNumber" name="nominalPriceOld" size="17" value="{{ QueryResult.secondPrice|number_format(2, '.', ',') }}"</>zł
+					{% if QueryResult.reduction2!=0 %}
+					<b>- UWAGA! Rabat wynosi {{ QueryResult.reduction2|number_format(2, '.', ',') }}zł</b>
+					{% endif %}
 				</td>
 			</tr>
-			{% for cats in selCategories %}
+			<tr>
+				<td class="row1">
+					<label for="priceNew">
+						Nominalna cena produktu (NP):
+					</label>
+				</td>
+				<td class="textOnlyLeft">
+					<input type="text" id="orderNumber" name="nominalPriceNew" size="17" value="{{ QueryResult.price|number_format(2, '.', ',') }}"</>zł
+					{% if QueryResult.reduction!=0 %}
+					<b>- UWAGA! Rabat wynosi {{ (QueryResult.reduction*100)|number_format(2, '.', ',') }}%</b>
+					{% endif %}
+				</td>
+			</tr>
+		{% endif %}
+		{% if editForm=='?editcompleteformold' %}
+			<tr>
+				<td class="row1">
+					<label for="priceOld">
+						Nominalna cena produktu (SP):
+					</label>
+				</td>
+				<td class="textOnlyLeft">
+					<input type="text" id="orderNumber" name="nominalPriceOld" size="17" value="{{ QueryResult.price|number_format(2, '.', ',') }}"</>zł
+					{% if QueryResult.reduction!=0 %}
+					<b>UWAGA! Rabat wynosi {{ QueryResult.reduction|number_format(2, '.', ',') }}zł</b>
+				</td>
+			</tr>
+		{% endif %}
+		<tr>
+			<td class="row1">
+				<label for="priceNew">
+					Nominalna cena produktu (NP):
+				</label>
+			</td>
+			<td class="textOnlyLeft">
+				<input type="text" id="orderNumber" name="nominalPriceNew" size="17" value="{{ QueryResult.secondPrice|number_format(2, '.', ',') }}"</>zł
+				{% if QueryResult.reduction2!=0 %}
+					<b>UWAGA! Rabat wynosi {{ (QueryResult.reduction2*100)|number_format(2, '.', ',') }}%</b>
+				{% endif %}
+			</td>
+		</tr>
+		<tr>
+			<td colspan=2 class="row3">
+				<b>Kategorie aktywne dla tego produktu:</b>
+			</td>
+		</tr>
+		{% for cats in selCategories %}
 			<tr>
 				<td colspan=2 class="rowCenter">
 					<b>- {{ cats.name }}</b>
 				</td>
-				</tr>
-			{% endfor %}
-			</table>
-			<table class="fieldset2">
-			<tr>
-				<td class="row3">
-					<p align="left"><input type="checkbox" name="change" value="nameChange">
-					Zapisz produkt jako podmieniony</p>
-				</td>
-				<td class="row3">
-					<p align="left"><input type="checkbox" name="delete" value="deleteImages">
-					Usuń obecne zdjęcia produktu</p>
-				</td>
 			</tr>
-			<tr>
-				<td class="row3">
-					<p align="left"><input type="radio" name="howManyBases" value="both" checked="checked">
-					Zapisz zmiany w obu bazach</input></p>
-				</td>
-				<td class="row3">
-					<p align="left"><input type="radio" name="howManyBases" value="first" >
-					Tylko w aktualnej bazie</input></p>
-				</td>
-			</tr>
-			<tr>
+		{% endfor %}
+	</table>
+	<table class="fieldset2">
+		<tr>
+			<td class="row3">
+				<p align="left"><input type="checkbox" name="change" value="nameChange">
+				Zapisz produkt jako podmieniony</p>
+			</td>
+			<td class="row3">
+				<p align="left"><input type="checkbox" name="delete" value="deleteImages">
+				Usuń obecne zdjęcia produktu</p>
+			</td>
+		</tr>
+		<tr>
+			<td class="row3">
+				<p align="left"><input type="radio" name="howManyBases" value="both" checked="checked">
+				Zapisz zmiany w obu bazach</input></p>
+			</td>
+			<td class="row3">
+				<p align="left"><input type="radio" name="howManyBases" value="first" >
+				Tylko w aktualnej bazie</input></p>
+			</td>
+		</tr>
+		<tr>
 			<td colspan=2 class="row3">
-			<input type="hidden" name="id" value="{{ QueryResult.id_product }}">
-			<input type="hidden" name="index.php"/>
-			{% if editForm=='?editcompleteformold' %}
-			<input id="searchInput" type="submit" value="Uaktualnij produkt (SB)">
-			{% elseif editForm=='?editcompleteformnew' %}
-			<input id="searchInput" type="submit" value="Uaktualnij produkt (NB)">
-			{% endif %}
+				<input type="hidden" name="id" value="{{ QueryResult.id_product }}">
+				<input type="hidden" name="index.php"/>
+				{% if editForm=='?editcompleteformold' %}
+					<input id="searchInput" type="submit" value="Uaktualnij produkt (SB)">
+				{% elseif editForm=='?editcompleteformnew' %}
+					<input id="searchInput" type="submit" value="Uaktualnij produkt (NB)">
+				{% endif %}
 			</td>
-			</tr>
-			</table>
-			<table class="fieldset">
-			<th id="table">
+		</tr>
+	</table>
+	<table class="fieldset">
+		<th id="table">
 			<h2>Kategorie aktywne dla tego produktu:</h2>
-			</th>
-			{% for allCats in completeCatNames %}
+		</th>
+		{% for allCats in completeCatNames %}
 			<tr>
-			<td class="row1">
-			<label for="category{{ allCats.id }}">
-			<input type="checkbox" name="categories[]" value="{{ allCats.id }}"
-			{% if allCats.selected %}
-			 checked{% endif %}>{{ allCats.name }}</label>
-			</td>
+				<td class="row1">
+					<label for="category{{ allCats.id }}">
+					<input type="checkbox" name="categories[]" value="{{ allCats.id }}"
+					{% if allCats.selected %}
+						 checked
+					{% endif %}>{{ allCats.name }}</label>
+				</td>
 			</tr>
-			{% endfor %}
-			</form>
-		{% endblock %}
+		{% endfor %}
+	</table>
+	</form>
+{% endblock %}
 		
-		{% block finish %}
+{% block finish %}
 	<p class="finish"><a class="searchInput3"  href="?controller=product">Nowe wyszukiwanie produktów</a></p>
 {% endblock %}
