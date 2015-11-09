@@ -1,38 +1,38 @@
 {% extends "searchTemplate.html" %}
 
 {% block title %}
-Poinformowanie Klienta o numerze przesyłki
-<h2 class="finish1">- zamówienie nr {{ notDates.id_order }} ({{ notDates.firstname }} {{ notDates.lastname }})</h2>
+	Poinformowanie Klienta o numerze przesyłki
+	<h2 class="finish1">- zamówienie nr {{ notDates.id_order }} ({{ notDates.firstname }} {{ notDates.lastname }})</h2>
 {% endblock %}
 
 {% block result %}
-<form method="post">
-	<tr>
-		<td class="row">
-			Mail zostanie wysłany na adres:
-		</td>
-		<td class="row">
-			<input type="text" size="21" name="email" value="{{ notDates.email }}">
-		</td>
-	</tr>
-	<tr>
-		<td class="row">
-			Wpisz numer przesyłki (Poczta Polska):
-		</td>
-		<td class="row">
-			<input type="text" size="21" name="trackingNumber" value="(00)">
-		</td>
-	</tr>
-	<tr>
-		<td colspan=2 class="row1">
-			<input type="hidden" name="idOrder" value="{{ notDates.id_order }}">
-			<input type="hidden" name="reference" value="{{ notDates.reference }}">
-			<input type="hidden" name="name" value="{{ notDates.firstname }}">
-			<input type="hidden" name="surname" value="{{ notDates.lastname }}">
-			<input type="submit" id="searchInput" name="shipmentNumber" value="Wyślij mail">
-		</td>
-	</tr>
-</form>
+	<form method="post">
+		<tr>
+			<td class="row">
+				Mail zostanie wysłany na adres:
+			</td>
+			<td class="row">
+				<input type="text" size="21" name="email" value="{{ notDates.email }}">
+			</td>
+		</tr>
+		<tr>
+			<td class="row">
+				Wpisz numer przesyłki (Poczta Polska):
+			</td>
+			<td class="row">
+				<input type="text" size="21" name="trackingNumber" value="(00)">
+			</td>
+		</tr>
+		<tr>
+			<td colspan=2 class="row1">
+				<input type="hidden" name="idOrder" value="{{ notDates.id_order }}">
+				<input type="hidden" name="reference" value="{{ notDates.reference }}">
+				<input type="hidden" name="name" value="{{ notDates.firstname }}">
+				<input type="hidden" name="surname" value="{{ notDates.lastname }}">
+				<input type="submit" id="searchInput" name="shipmentNumber" value="Wyślij mail">
+			</td>
+		</tr>
+	</form>
 {% endblock %}
 
 {% block finish %}
