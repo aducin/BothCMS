@@ -18,10 +18,10 @@ class DBHandler{
 	}
 
 	public function getDb() {
-        if ($this->pdo instanceof PDO) {
+    	if ($this->pdo instanceof PDO) {
     		return $this->pdo;
         }
-    }
+	}
 
 	public function __destruct()
     {
