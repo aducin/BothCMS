@@ -74,6 +74,16 @@ function wyswietlAlert(){
 	}
 }
 
+function opacityUp(){
+	document.getElementById("next").style.opacity = "1";
+	document.getElementById("previous").style.opacity = "1";
+}
+
+function opacityDown(){
+	document.getElementById("next").style.opacity = "0.5";
+	document.getElementById("previous").style.opacity = "0.5";
+}
+
 function showAlert(){
 	if(document.form.quantity.value==""){
 		alert("Proszę podać ilość produktu do zapisania!");
