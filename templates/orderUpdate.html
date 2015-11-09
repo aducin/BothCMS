@@ -23,33 +23,31 @@
 			Uwagi
 		</th>
 	</tr>
-{% for results in dates %}
-	<tr class="row">
-		<td>
-			{{ results.product_id }}
-		</td>
-		<td>
-			{{ results.quantity }}
-		</td>
-		<td>
-			{{ results.previousQuantity }}
-		</td>
-		<td>
-			{{ results.finalQuantity }}
-		</td>
-	</tr>
-{% if results.previousQuantity is sameas(results.finalQuantity) %}
-	<div class="normal">
-		(równe)
-	</div>
-{% else %}
-	<div class="fieldChanged">
-		Zmodyfikowano ilość
-	</div>
-{% endif %}
-
-{% endfor %}
-
+	{% for results in dates %}
+		<tr class="row">
+			<td>
+				{{ results.product_id }}
+			</td>
+			<td>
+				{{ results.quantity }}
+			</td>
+			<td>
+				{{ results.previousQuantity }}
+			</td>
+			<td>
+				{{ results.finalQuantity }}
+			</td>
+		</tr>
+		{% if results.previousQuantity is sameas(results.finalQuantity) %}
+			<div class="normal">
+				(równe)
+			</div>
+		{% else %}
+			<div class="fieldChanged">
+				Zmodyfikowano ilość
+			</div>
+		{% endif %}
+	{% endfor %}
 {% endblock %}
 
 {% block finish %}
