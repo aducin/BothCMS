@@ -59,18 +59,6 @@ session_start(); ?>
 		padding-left: 10px; font-size:13pt; font-style:italic; padding-right: 12px;
 		border: 3px outset;
 	}
-	#slideshow{
-		width:800px;
-		height:553px;
-		overflow: hidden;
-		margin: auto;
-		border: 3px groove;
-		
-	}
-	#slideshow img{
-		width:100%;
-		height:553px;
-	}
 	#next{
 		height: 120px;
 		width:120px;
@@ -82,28 +70,6 @@ session_start(); ?>
 		z-index:1000;
 		opacity:0.5;
 	}
-	#pager{
-		text-align:center;
-		height: 120px;
-		width:100%;
-		position: absolute;
-		background: rgba(0,0,0,.5);
-		z-index: 1000;
-		opacity: 0;
-	}
-	#pager img{
-		margin: 10px 5px;
-		opacity:0.3;
-		transition:all .3s ease-in-out 0s;
-	}
-	#pager img:hover{
-		opacity:1;
-		transform:scale(1.05);
-		z-index:100;
-	}
-	#pager:hover{
-		opacity:1;
-	}
 	#previous{
 		height: 120px;
 		width: 120px;
@@ -113,19 +79,6 @@ session_start(); ?>
 		margin: auto 153px;
 		z-index:1000;
 		opacity:0.5;
-	}
-	#container{
-		width: 100%;
-		height: 675px;
-		overflow: hidden;
-		background-color: white;
-	}
-	#timer{
-		background-color: #FFCCFF;
-		margin-left: 275px;
-		margin-top:5px;
-		width:260px;
-		border: 3px inset;
 	}
 	#wees{
 		width:800px;
@@ -138,53 +91,10 @@ session_start(); ?>
 		background-color:black;
 		color: #5d665b;
 	}
-	#width{
-		width:198px;
-	}
 	</style>
 	<script type="text/javascript" src="/Ad9bisCMS/assets/jquery-2.1.4.min.js"></script>
 	<script type="text/javascript" src="/Ad9bisCMS/assets/cycle2.js"></script>
-		<script>
-
-		function countdown(){	
-			var timer = new Date();
-			var day = timer.getDate();
-			var month = timer.getMonth()+1;
-			if(month<10) month="0"+month;
-			var year = timer.getFullYear();
-			var hour = timer.getHours();
-			if(hour<10) hour="0"+hour;
-			var minute = timer.getMinutes();
-			if(minute<10) minute="0"+minute;
-			var second = timer.getSeconds();
-			if(second<10) second="0"+second;
-
-			document.getElementById("timer").innerHTML= day+"."+month+"."+year+" - tijd: "+hour+":"+minute+":"+second;
-			setTimeout("countdown()",1000);
-		}
-
-		function wyswietlAlert(){
-			if(document.log.login.value=="" && document.log.password.value==""){
-				alert("Nie wypełniono żadnego pola!");
-			}else if(document.log.login.value==""){
-				alert("Nie wpisano pola \"Login\"!");
-			}else if(document.log.password.value==""){
-				alert("Nie wpisano pola \"Hasło\"!");
-			}
-		}
-		function focus(){
-			var el = document.getElementById("logIn");
-			el.focus();
-		}
-		function opacityUp(){
-			document.getElementById("next").style.opacity = "1";
-			document.getElementById("previous").style.opacity = "1";
-		}
-		function opacityDown(){
-			document.getElementById("next").style.opacity = "0.5";
-			document.getElementById("previous").style.opacity = "0.5";
-		}
-	</script>
+	<script type="text/javascript" src="/Ad9bisCMS/assets/jscript.js"></script>
 </head>
 <body onload="countdown();">
 	<fieldset id="wees">
