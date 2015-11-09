@@ -1,87 +1,87 @@
 {% extends "searchTemplate.html" %}
 
 {% block headTitle %}
-<title>Skrócona edycja produktu</title>
+	<title>Skrócona edycja produktu</title>
 {% endblock %}
 
 {% block body %}
-<body onload="focus('quantityAdd');">
-	{% endblock %}
+	<body onload="focus('quantityAdd');">
+{% endblock %}
 
-	{% block title %}
+{% block title %}
 	Skrócona edycja produktu ID: {{ QueryResult.id_product }}
 		- informacje z nowego panelu.
-	{% endblock %}
+{% endblock %}
 
-	{% block result %}
-		<form class="row1" name="form" action="?editformBoth" method="post" onsubmit="showAlert()">
-			<tr>
+{% block result %}
+	<form class="row1" name="form" action="?editformBoth" method="post" onsubmit="showAlert()">
+		<tr>
 			<td class="row1-1">
 				<label for="text">
 					Aktualna nazwa produktu:
 				</label>
-				</td>
-				<td class="row1-2">
+			</td>
+			<td class="row1-2">
 				<textarea id="nameText" name="text" rows="1" cols="30">{{ result.name }}</textarea>
-				</td>
-				</tr>
-					<tr>
-						<td class="row1-1">
-							<label for="quantity">
-								Obecna ilość na sklepie: 
-							</label>
-						</td>
-						<td class="row1-2">
-							<div id="quantity">
-								{{ result.quantity }}
-							</div>
-						</td>
-					</tr>
-					<tr>
-						<td class="row1-1">
-							<label for="quantity">
-								Podaj ilość do zmiany: 
-							</label>
-						</td>
-						<td class="row1-2">
-							<input type="text" id="quantityAdd" name="quantity">
-						</td>
-					</tr>
-					<tr>
-						<td class="row1-1">
-							<labelfor="priceOld">
-								Cena produktu (SP): 
-							</label>
-						</td>
-						<td class="row1-2">
-							{% if result.countReduction2 %}
-									<div id="nameText2">{{ result.countReduction2 }}</div>
-							{% endif %}
-									<input type="text" id="nameText2" name="nominalPriceOld" size="15" value="{{ result.price2 }}">
-						</td>
-					</tr>
-					<tr>
-						<td class="row1-1">
-							<labelfor="priceNew">
-								Cena produktu (NP): 
-							</label>
-						</td>
-						<td class="row1-2">
-							{% if result.countReduction2 %}
-									<div id="nameText2">{{ result.countReduction }}</div>
-							{% endif %}
-									<input type="text" id="nameText2" name="nominalPriceNew" size="15" value="{{ result.price }}">
-						</td>
-					</tr>
-				<tr>
-				<td colspan=2 class="background-color">
+			</td>
+		</tr>
+		<tr>
+			<td class="row1-1">
+				<label for="quantity">
+					Obecna ilość na sklepie: 
+				</label>
+			</td>
+			<td class="row1-2">
+				<div id="quantity">
+					{{ result.quantity }}
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td class="row1-1">
+				<label for="quantity">
+					Podaj ilość do zmiany: 
+				</label>
+			</td>
+			<td class="row1-2">
+				<input type="text" id="quantityAdd" name="quantity">
+			</td>
+		</tr>
+		<tr>
+			<td class="row1-1">
+				<labelfor="priceOld">
+					Cena produktu (SP): 
+				</label>
+			</td>
+			<td class="row1-2">
+				{% if result.countReduction2 %}
+					<div id="nameText2">{{ result.countReduction2 }}</div>
+				{% endif %}
+				<input type="text" id="nameText2" name="nominalPriceOld" size="15" value="{{ result.price2 }}">
+			</td>
+		</tr>
+		<tr>
+			<td class="row1-1">
+				<labelfor="priceNew">
+					Cena produktu (NP): 
+				</label>
+			</td>
+			<td class="row1-2">
+				{% if result.countReduction2 %}
+					<div id="nameText2">{{ result.countReduction }}</div>
+				{% endif %}
+				<input type="text" id="nameText2" name="nominalPriceNew" size="15" value="{{ result.price }}">
+			</td>
+		</tr>
+		<tr>
+			<td colspan=2 class="background-color">
 				<input type="hidden" name="id" value="{{ result.id_product }}">
 				<input type="submit" id="searchInput" value="Aktualizuj produkt w obu bazach">
 			</td>
-			</tr>
-		</form>
-		{% endblock %}
+		</tr>
+	</form>
+{% endblock %}
 
-		{% block finish %}
-			<p class="finish"><a class="searchInput3"  href="?controller=product">Nowe wyszukiwanie produktów</a></p>
-		{% endblock %}
+{% block finish %}
+	<p class="finish"><a class="searchInput3"  href="?controller=product">Nowe wyszukiwanie produktów</a></p>
+{% endblock %}
