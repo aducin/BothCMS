@@ -31,11 +31,10 @@ class DBHandler{
 	}
 
 	function getUserData($login, $password){
-		$password=base64_encode($password);
 		$sql='SELECT * FROM ps_db_user WHERE login=:login AND password=:password';
 		$s=$this->pdo->prepare($sql);
 		$s->bindValue(':login', $login);
-		$s->bindValue(':password', $password);
+		$s->bindValue(':password', base64_encode($password));
 		$s->execute();
 		return $s;
 	}
