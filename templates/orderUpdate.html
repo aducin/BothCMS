@@ -6,48 +6,47 @@
 {% endblock %}
 
 {% block result %}
-<tr class="row1">
-<th>
-Numer ID
-</th>
-<th>
-{{ orderDetails.base }}
-</th>
-<th>
-{{ orderDetails.current }}
-</th>
-<th>
-{{ orderDetails.changed }}
-</th>
-<th>
-Uwagi
-</th>
-</tr>
+	<tr class="row1">
+		<th>
+			Numer ID
+		</th>
+		<th>
+			{{ orderDetails.base }}
+		</th>
+		<th>
+			{{ orderDetails.current }}
+		</th>
+		<th>
+			{{ orderDetails.changed }}
+		</th>
+		<th>
+			Uwagi
+		</th>
+	</tr>
 {% for results in dates %}
-<tr class="row">
-<td>
-{{ results.product_id }}
-</td>
-<td>
-{{ results.quantity }}
-</td>
-<td>
-{{ results.previousQuantity }}
-</td>
-<td>
-{{ results.finalQuantity }}
-</td>
-<td>
+	<tr class="row">
+		<td>
+			{{ results.product_id }}
+		</td>
+		<td>
+			{{ results.quantity }}
+		</td>
+		<td>
+			{{ results.previousQuantity }}
+		</td>
+		<td>
+			{{ results.finalQuantity }}
+		</td>
+	</tr>
 {% if results.previousQuantity is sameas(results.finalQuantity) %}
-<div class="normal">
-(równe)
-</div>
+	<div class="normal">
+		(równe)
+	</div>
 {% else %}
-<div class="fieldChanged">
-Zmodyfikowano ilość
-</div>
+	<div class="fieldChanged">
+		Zmodyfikowano ilość
+	</div>
 {% endif %}
-</td>
 
 {% endfor %}
 
