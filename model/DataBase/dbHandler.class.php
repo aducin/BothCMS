@@ -34,7 +34,7 @@ class DBHandler{
 		$sql='SELECT * FROM ps_db_user WHERE login=:login AND password=:password';
 		$s=$this->pdo->prepare($sql);
 		$s->bindValue(':login', $login);
-		$s->bindValue(':password', base64_encode($password));
+		$s->bindValue(':password', md5($password));
 		$s->execute();
 		return $s;
 	}
