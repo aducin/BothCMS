@@ -3,7 +3,7 @@
 class JsonController extends Controller
 {
 	private $product1;
-	private $product2;
+	public $product2;
 
 	public function __construct($firstDBHandler, $secondDBHandler){
 		$this->pdo=$firstDBHandler;
@@ -12,7 +12,7 @@ class JsonController extends Controller
 		$this->product2=new OgicomProduct($this->secondPDO);
 	}
 
-	public function seachNames($id){
+	public function searchNames($id){
 		$Name=$this->product1->getName($id);
 		$Quantity1=$this->product1->getQuantity($id);
 		$Quantity2=$this->product2->getQuantity($id);
@@ -49,8 +49,8 @@ class JsonController extends Controller
 				}
 			}
 			$implodeSelect=" WHERE id_lang=3".implode(" AND",$prequery)." GROUP BY ps_product_lang.id_product ORDER BY ps_product_lang.id_product";
-			$json=new Json($this->pdo, $this->secondPDO);
-			$names= $json->getTypedProductsQuery($implodeSelect);
+			//$json=new Json($this->pdo, $this->secondPDO);
+			$names= $this->product2->getTypedProductsQuery($implodeSelect);
 			$total = $names->rowCount();
 			if($total>0){
 				foreach ($names as $result){

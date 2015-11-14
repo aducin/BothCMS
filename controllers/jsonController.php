@@ -7,7 +7,7 @@ $json=new jsonController($linuxPlHandler, $ogicomHandler);
 if(isset($_POST["jsonId"])){
 	if(!isset($_POST["jsonQuantity"]))
 	{
-		$data=$json->seachNames($_POST["jsonId"]);
+		$data=$json->searchNames($_POST["jsonId"]);
 	}
 	if(isset($_POST["jsonQuantity"]))
 	{
