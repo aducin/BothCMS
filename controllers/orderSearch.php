@@ -27,7 +27,6 @@ if(isset($_GET['action'])AND(($_GET['action'])=='orderSearch')){
 		}
 		if($totalProducts['total']>=50){
 			$controller->setExistingClient(new LinuxPlCustomer($linuxPlHandler));
-			//$controller->existingClient=new LinuxPlCustomer($linuxPlHandler);
 			$customerData=$controller->getCustomerData($totalProducts['idCustomer']);
 			$voucherNumber=$controller->getVoucherHistory($totalProducts['idCustomer']);
 			foreach ($voucherNumber as $custOrder){
@@ -35,9 +34,10 @@ if(isset($_GET['action'])AND(($_GET['action'])=='orderSearch')){
 			}
 		}	
 	}elseif (isset($_GET['notification'])AND($_GET['notification']) !=''){
-		$orderTracking=$controller-> sendNotification($_GET['send'], $_GET['notification']);
+		$orderTracking=$controller->sendNotification($_GET['send'],$_GET['notification']);
 		if($orderTracking==''){
 			$error='W wybranej bazie danych brak zamówienia o podanym numerze!';
+		var_dump($orderTracking);exit();
 		}
 	}elseif (isset($_GET['detailorder'])AND($_GET['detailorder']) !=''){
 		$sixthOrderDiscount=$controller-> checkOrderDetail($_GET['detailorder']);

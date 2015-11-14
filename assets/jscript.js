@@ -154,12 +154,22 @@ function ajax_update_json(){
 
 function autoSuggestNew(){
 	var autoSuggestVal = $('#autoSuggest').val();
+	var autoSuggestManufacturer = $('#orderNumber').val();
+	var autoSuggestCategory = $('#categoryNumber').val();
+	if (autoSuggestManufacturer ==''){
+		autoSuggestManufacturer = 'notSelected';
+	}
+	if (autoSuggestCategory ==''){
+		autoSuggestCategory = 'notSelected';
+	}
 	if (autoSuggestVal !=''){
 		$.ajax({
 			url: "/Ad9bisCMS/controllers/jsonController.php",
 			type: "get",
 			data: {
 				"productQuery": autoSuggestVal,
+				"manufacturer": autoSuggestManufacturer,
+				"category": autoSuggestCategory,
 			},
 			success: function(result)
 			{
@@ -174,7 +184,7 @@ function autoSuggestNew(){
 					break;
 
 					default:
-					var arr = jsonData.map(function(object){ return 'ID: '+object.id+' ->'+object.name });
+					var arr = jsonData.map(function(object){ return 'ID: '+object.id+' ->'+object.name + '-> ilość: ' +object.quantity});
 					var number = $(jsonData).length;
 					if(number==1){
 						$('#autoSuggest-container').html('Znaleziono 1 produkt z nazwą: "'+autoSuggestVal+'"');

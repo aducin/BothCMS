@@ -2,8 +2,8 @@
 
 abstract class Controller
 {
-	private $pdo;
-	private $secondPDO;
+	public $pdo;
+	public $secondPDO;
 	private $existingClient;
 
 	public function __construct($firstDBHandler, $secondDBHandler){
@@ -29,17 +29,6 @@ abstract class Controller
 		return $confOrderData;
 	}
 
-	public function getCustomerData($customerNumber){
-		$order= new OgicomOrder($this->secondPDO);
-		$customerData= $order->getOrderCustomerData($customerNumber);
-		if($this->existingClient->checkIfClientExists($customerData['email'])==6){
-			$customerData['new'] = $this->existingClient->checkIfClientExists($customerData['email']);
-		}
-		$customerData['voucherLast']= $order->getLastVoucherNumber($customerNumber);
-		$customerData['idCustomer']=$customerNumber;
-		return $customerData;
-	}
-
 	public function getHelpers(){
 		$helper= new OgicomHelper($this->secondPDO);
 		$result= $helper->selectWholeManufacturer();
@@ -63,15 +52,6 @@ abstract class Controller
 		$product= new OgicomProduct($this->secondPDO);
 		$imageNumber= $product->image($idNumber);
 		return $imageNumber;
-	}
-
-	public function getOrderDetails($orderNumber){
-		$order= new OgicomOrder($this->secondPDO);
-		$details = $order->getQueryDetails($orderNumber);
-		foreach ($details as $sDetail){
-			$detail2[]=array('id'=>$sDetail['product_id'], 'name'=>$sDetail['name'], 'price'=>number_format($sDetail['product_price'], 2,'.',''), 'reduction'=>number_format($sDetail['reduction_amount'], 2,'.',''), 'reducedPrice'=>($sDetail['product_price']-$sDetail['reduction_amount'])*0.85, 'quantity'=>$sDetail['product_quantity'], 'reducedTotalPrice'=>($sDetail['product_price']-$sDetail['reduction_amount'])*$sDetail['product_quantity']*0.85);
-			}
-		return $detail2;	
 	}
 
 	public function getOrderInformations($option, $orderNumber){
@@ -179,14 +159,18 @@ abstract class Controller
 		unset($product);
 	}
 
-	public function orderCheck($orderNumber){
-		$order= new OgicomOrder($this->secondPDO);
-		$orderSearch = $order->checkIfVoucherDue($orderNumber);
-		$totalProducts= array('total'=>$orderSearch['total_products'], 'idCustomer'=>$orderSearch['id_customer']);
-		return $totalProducts;
-	}
-
 	public function setExistingClient($client){
 		$this->existingClient=$client;
+	}
+
+	public function getCustomerData($customerNumber){
+		$order= new OgicomOrder($this->secondPDO);
+		$customerData= $order->getOrderCustomerData($customerNumber);
+		if($this->existingClient->checkIfClientExists($customerData['email'])==6){
+			$customerData['new'] = $this->existingClient->checkIfClientExists($customerData['email']);
+		}
+		$customerData['voucherLast']= $order->getLastVoucherNumber($customerNumber);
+		$customerData['idCustomer']=$customerNumber;
+		return $customerData;
 	}
 }

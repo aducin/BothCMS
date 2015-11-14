@@ -42,13 +42,4 @@ class OgicomProduct extends Product
 		}
 		return $results;
 	}
-	
-	public function getTypedName($typed){
-		$sql='SELECT name, id_product, link_rewrite FROM ps_product_lang
-		WHERE id_lang=3 AND name LIKE "%'.$typed.'%"
-		ORDER BY id_product';
-		$c= $this->pdo->prepare($sql);
-		$c->execute();
-		return $c;
-	}
 }
