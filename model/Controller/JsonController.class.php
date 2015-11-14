@@ -3,7 +3,7 @@
 class JsonController extends Controller
 {
 	private $product1;
-	public $product2;
+	private $product2;
 
 	public function __construct($firstDBHandler, $secondDBHandler){
 		$this->pdo=$firstDBHandler;
