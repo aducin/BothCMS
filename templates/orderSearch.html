@@ -7,6 +7,7 @@
 {% block result %}
 	<form action="?" method="get">
 		<input type="hidden" name="controller" value="order" />
+		<input type="hidden" name="action" value="orderSearch" />
 		<h2>Wyświetl zamówienie spełniające następujące kryteria:</h2>
 		<tr>
 			<td class="row1000-2px">
@@ -68,7 +69,6 @@
 		</tr>
 		<tr>
 			<td colspan=2 class="row">
-				<input type="hidden" name="action" value="orderSearch">
 				<input id="searchInput" type="submit" value="Wyszukaj">
 			</td>
 		</tr>

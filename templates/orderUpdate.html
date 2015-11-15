@@ -37,12 +37,14 @@
 			<td>
 				{{ results.finalQuantity }}
 			</td>
+			<td>	
+			{% if results.previousQuantity is sameas(results.finalQuantity) %}
+				<div class="normal">
+					(równe)
+				</div>
+			{% else %}
+			</td>
 		</tr>
-		{% if results.previousQuantity is sameas(results.finalQuantity) %}
-			<div class="normal">
-				(równe)
-			</div>
-		{% else %}
 			<div class="fieldChanged">
 				Zmodyfikowano ilość
 			</div>

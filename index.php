@@ -24,10 +24,8 @@ require_once $root_dir.'/controllers/login.php';
 
 if ($controller == 'product') {
 	$controller=new ProductsController($linuxPlHandler, $ogicomHandler);
-	//require_once $root_dir.'/controllers/productSearch.php';
 } elseif ($controller == 'order'){
-	// http://localhost/Ad9bisCMS/?controller=order
-	require_once $root_dir.'/controllers/orderSearch.php';
+	$order=new OrdersController($linuxPlHandler, $ogicomHandler);
 } else {
 	throw new Exception("Invalid controller name");
 }

@@ -8,15 +8,13 @@ class ProductsController extends Controller
 
 	public function __construct($firstDBHandler, $secondDBHandler) {
         
-        $this->pdo=$firstDBHandler;
-		$this->secondPDO=$secondDBHandler;
-		$this->creator= new ProductCreator($this->pdo, $this->secondPDO);
-		$this->helper= new OgicomHelper($this->secondPDO);
+		$this->creator= new ProductCreator($firstDBHandler, $secondDBHandler);
+		$this->helper= new OgicomHelper($secondDBHandler);
 		$this->root_dir = $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/controllers/output.php';
-        if (method_exists($this, $_GET['action']))
-            $this-> $_GET['action'] ();
-        else
+        if (!isset($_GET['action']))
             $this->getHelpers();
+        else
+            $this-> $_GET['action'] ();
     }
 
     public function getHelpers(){

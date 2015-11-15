@@ -39,9 +39,9 @@
 	</td>
 	<td class="row1">
 		{% if results.reduction !='0.00' %}
-		<div class="fieldChanged">{{ results.reduction }}zł</div>
+			<div class="fieldChanged">{{ results.reduction }}zł</div>
 		{% else %}
-		- -
+			- -
 		{% endif %}
 	</td>
 	<td class="row1">
@@ -53,36 +53,37 @@
 	{% endfor %}
 	</table>
 <table class="fieldChangedCentered">
-<tr>
-<td>
-Suma wszystkich produktów:
-</td>
-<td>
-{{ customerData.total_products }}zł
-</td>
-</tr>
-<tr>
-<td>
-Suma produktów z wysyłką:
-</td>
-<td>
-{{ customerData.total_paid }}zł
-</td>
-</tr>
+	<tr>
+		<td>
+			Suma wszystkich produktów:
+		</td>
+		<td>
+			{{ customerData.total_products }}zł
+		</td>
+	</tr>
+	<tr>
+		<td>
+			Suma produktów z wysyłką:
+		</td>
+		<td>
+			{{ customerData.total_paid }}zł
+		</td>
+	</tr>
 </table>
 <table class="fieldset">
 	<tr>
-	<td>
-	<form method="post">
-	<input type="hidden" name="email" value="{{ customerData.email }}">
-	<input type="hidden" name="ordNumb" value="{{ customerData.ordNumb }}">
-	<input type="hidden" name="paymentOption" value="{{ customerData.payment }}">
-	<input type="submit" id="emailAdress" name="sendUndeliveredMessage" value="Prześlij ponowną wiadomość do Klienta">
-	</td>
-	<td>
-	Wiadomość email zostanie wysłana na adres: {{ customerData.email }}
-</form>
-</td>
-</tr>
+		<td>
+			<form method="post">
+				<input type="hidden" name="action" value="undelivered">
+				<input type="hidden" name="email" value="{{ customerData.email }}">
+				<input type="hidden" name="ordNumb" value="{{ customerData.ordNumb }}">
+				<input type="hidden" name="paymentOption" value="{{ customerData.payment }}">
+				<input type="submit" id="emailAdress" name="sendUndeliveredMessage" value="Prześlij ponowną wiadomość do Klienta">
+			</form>
+		</td>
+		<td>
+			Wiadomość email zostanie wysłana na adres: {{ customerData.email }}
+		</td>
+	</tr>
 </table>
 {% endblock %}

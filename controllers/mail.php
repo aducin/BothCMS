@@ -1,5 +1,24 @@
 <?php 
 
+$root_dir = $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS';
+$vendor_dir = $root_dir.'/vendor';
+$cache_dir = $root_dir.'/cache'; // remember to `chmod 777 cache` (make this directory writable)
+$templates_dir = $root_dir.'/templates';
+$mail_dir = $templates_dir.'/mails';
+
+$twig_lib = $vendor_dir.'/Twig/lib/Twig';
+require_once $twig_lib . '/Autoloader.php';
+Twig_Autoloader::register();
+$loader = new Twig_Loader_Filesystem($templates_dir);
+$twig = new Twig_Environment($loader, array(
+	'cache' => $cache_dir,
+));
+$DBHandler=parse_ini_file($root_dir.'/config/database.ini',true);
+$secondHost=$DBHandler["secondDB"]["host"];
+$secondLogin=$DBHandler["secondDB"]["login"];
+$secondPassword=$DBHandler["secondDB"]["password"];
+$ogicomDbHandler=bothDbHandler::getInstance('ogicom', $secondHost, $secondLogin, $secondPassword);
+
 $to=$_POST['email'];
 if(isset($_POST['sendVoucherMessage'])){
 	if($_POST['changedVoucherNumber']!=''){
@@ -31,7 +50,7 @@ if(isset($_POST['sendVoucherMessage'])){
 		'totalWithDiscount' => $_POST['totalWithDiscount'],
 		));
 }elseif(isset($_POST['sendUndeliveredMessage'])){
-	$order= new OgicomOrder($ogicomHandler);
+	$order= new OgicomOrder($ogicomDbHandler);
 	$confOrderData = $order->getQueryLessDetails($_POST['ordNumb']);
 	$confOrderDetail = $order->getQueryDetails($_POST['ordNumb']);
 	foreach ($confOrderDetail as $detail){
@@ -71,8 +90,10 @@ elseif(isset($_POST['shipmentNumber'])){
 $headers  = 'MIME-Version: 1.0' . "\r\n";
 $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
 $headers .= 'From: ad9bis@gmail.com' . "\r\n";
+
 if(mail($to, $subject, $message, $headers)){
  	$outputOrderMail= 'Wiadomość została wysłana na adres: '.($_POST['email']).'.';
+ 	require_once $root_dir.'/controllers/output.php'; 
 }else{
   	$error= 'Nie udało się wysłać wiadomości e-mail';
 }

@@ -102,6 +102,7 @@
 	<tr>
 		<form method="post">
 			<td>
+				<input type="hidden" name="action" value="discount">
 				<input type="hidden" name="totalBeforeDiscount" value="{{ customerData.total_paid }}">
 				<input type="hidden" name="totalWithDiscount" value="{{ customerData.reducedTotal|number_format(2, '.', ',') }}">
 				<input type="hidden" name="email" value="{{ customerData.email }}">

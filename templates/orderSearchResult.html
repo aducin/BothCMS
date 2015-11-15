@@ -46,6 +46,7 @@
 				{{ results.quantity }}
 				<form action="?" method="get">
 					<input type="hidden" name="controller" value="order" />
+					<input type="hidden" name="action" value="singleMerge" />
 					<input type="hidden" name="id" value="{{ results.id }}">
 					<input type="hidden" name="quantity" value="{{ results.quantity }}">
 					<input type="submit" class="row1" name="{{ variables.action }}" value="{{ variables.button2 }}">
@@ -57,9 +58,14 @@
 			<td class="row2">
 				<form action="?bothChange" method="get">
 					<input type="hidden" name="controller" value="product" />
+					<input type="hidden" name="action" value="completeEdition">
 					<input type="hidden" name="id" value="{{ results.id }}">
 					<input type="submit" class="row1" name="{{ variables.form }}" value="{{ variables.button1 }}">
-					<input type="submit" class="row1" name="shortEdition" value="{{ variables.button3 }}">
+				</form>
+				<form action="?bothChange" method="get">
+					<input type="hidden" name="action" value="shortEdition">
+					<input type="hidden" name="id" value="{{ results.id }}">
+					<input type="submit" class="row1" value="{{ variables.button3 }}">
 				</form>
 			</td>
 		</tr>
@@ -68,6 +74,7 @@
 		<td colspan=6>
 			<form action="?" method="get">
 				<input type="hidden" name="controller" value="order" />
+				<input type="hidden" name="action" value="orderMerge" />
 				<input type="hidden" name="id_number" value="{{ variables.orderNr }}">
 				<input type="submit" class="row1" name="mergeQuantities" value="{{ variables.button4 }}">
 			</form>
