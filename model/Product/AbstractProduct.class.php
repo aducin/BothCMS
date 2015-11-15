@@ -2,11 +2,12 @@
 
 abstract class Product
 {
+	protected $pdo;
+	protected $idProduct;
+	
 	public function __construct($DBHandler){
 		$this->pdo=$DBHandler;
 	}
-
-	protected $idProduct;
 
 	private function getSelectProductSubquery() {
 		return 'SELECT ps_product_lang.id_product, ps_product_lang.name, ps_stock_available.quantity, ps_product.price, ps_product.id_manufacturer, ps_category_product.id_category

@@ -40,7 +40,6 @@ if(isset($_GET['action'])AND(($_GET['action'])=='orderSearch')){
 		$orderTracking=$controller->sendNotification($_GET['send'],$_GET['notification']);
 		if($orderTracking==''){
 			$error='W wybranej bazie danych brak zamówienia o podanym numerze!';
-		var_dump($orderTracking);exit();
 		}
 	}elseif (isset($_GET['detailorder'])AND($_GET['detailorder']) !=''){
 		$sixthOrderDiscount=$controller-> checkOrderDetail($_GET['detailorder']);
