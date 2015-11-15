@@ -5,6 +5,9 @@ if(isset($_POST['sendVoucherMessage'])OR(isset($_POST['sendDiscountMessage'])OR(
 }
 
 $controller = new OrderController($linuxPlHandler, $ogicomHandler);
+$controller->setLinuxPlOrder();
+$controller->setOgicomOrder();
+
 if(isset($_GET['action'])AND(($_GET['action'])=='orderSearch')){
 	if(($_GET['neworder']!='')OR($_GET['oldorder']!='')){
 		if ($_GET['neworder'] !=''){

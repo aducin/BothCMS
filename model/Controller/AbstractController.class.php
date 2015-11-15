@@ -2,8 +2,8 @@
 
 abstract class Controller
 {
-	public $pdo;
-	public $secondPDO;
+	protected $pdo;
+	protected $secondPDO;
 	private $existingClient;
 
 	public function __construct($firstDBHandler, $secondDBHandler){
@@ -11,22 +11,8 @@ abstract class Controller
 		$this->secondPDO=$secondDBHandler;
 	}
 
-	public function checkOrderDetail($orderNumber){
-		$order= new OgicomOrder($this->secondPDO);
-		$nameDetails = $order->getQueryLessDetails($orderNumber);
-		$nameDetails['reducedTotalProduct']=$nameDetails['total_products']*0.85;
-		$nameDetails['orderNumber']=$orderNumber;
-		$nameDetails['reducedTotal']=$nameDetails['total_paid']*0.85;
-		$detailsCount=$order->getCount($orderNumber);
-		$nameDetails['count'] = $detailsCount['COUNT(product_name)'];
-		return $nameDetails;
-	}
-
-	public function checkUndeliveredData($orderNumber){
-		$order= new OgicomOrder($this->secondPDO);
-		$confOrderData = $order->getQueryLessDetails($orderNumber);
-		$confOrderData['ordNumb']=$orderNumber;
-		return $confOrderData;
+	public function setExistingClient($client){
+		$this->existingClient=$client;
 	}
 
 	public function getHelpers(){
@@ -52,43 +38,6 @@ abstract class Controller
 		$product= new OgicomProduct($this->secondPDO);
 		$imageNumber= $product->image($idNumber);
 		return $imageNumber;
-	}
-
-	public function getOrderInformations($option, $orderNumber){
-		if($option==1){
-			$order= new LinuxPlOrder($this->pdo);
-			$query = $order->getQuery($orderNumber);
-			$product= new OgicomProduct($this->secondPDO);
-		}elseif($option==2){
-			$order= new OgicomOrder($this->secondPDO);
-			$query = $order->getQuery($_GET['oldorder']);
-			$product= new LinuxPlProduct($this->pdo);
-			$product2= new OgicomProduct($this->secondPDO);
-		}
-		foreach ($query as $query2){
-			$otherQuery = $product->getProductQuery($query2['product_id']);
-			$otherQuery2 = $otherQuery->fetch();
-			if($option==1){
-				$imageNumber= $product->image($query2['product_id']);
-			}elseif($option==2){
-				$imageNumber= $product2->image($query2['product_id']);
-			}
-			if(($otherQuery2['name']==$query2['name'])AND($otherQuery2['quantity']==$query2['quantity'])){
-				$queryResult="Zgodność ilości i nazw produktu nr ".$otherQuery2['id_product'];
-			}elseif(($otherQuery2['name']==$query2['name'])AND($otherQuery2['quantity']!=$query2['quantity'])){
-				$queryResult="Ilość produktu ".$otherQuery2['id_product']." w drugim panelu to: ".$otherQuery2['quantity'];
-			}elseif(($otherQuery2['name']!=$query2['name'])AND($otherQuery2['quantity']==$query2['quantity'])){
-				$queryResult="Nazwa produktu ".$otherQuery2['id_product']." w drugiej bazie to: ".$otherQuery2['name'];
-			}elseif(($otherQuery2['name']!=$query2['name'])AND($otherQuery2['quantity']!=$query2['quantity'])){
-				$queryResult="Podwójna niezgodność - (SB): ".$otherQuery2['name'].", a ilość to: ".$oldQuery2['quantity'];
-			}
-			$result[]=array('id'=>$query2['product_id'], 'name'=>$query2['name'], 'onStock'=>$query2['product_quantity'], 'quantity'=>$query2['quantity'], 'nameResult'=>$queryResult, 'imgNumber'=>$imageNumber);
-		}
-
-		if (!isset($result[0]['id'])){
-			$result=0;
-		}
-		return $result;
 	}
 
 	public function getUndeliveredData($orderNumber){
@@ -157,10 +106,6 @@ abstract class Controller
 		$outputOrderOrProduct1 = $product->confirmation($id);
 		return $outputOrderOrProduct1;
 		unset($product);
-	}
-
-	public function setExistingClient($client){
-		$this->existingClient=$client;
 	}
 
 	public function getCustomerData($customerNumber){
