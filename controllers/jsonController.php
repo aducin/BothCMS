@@ -2,7 +2,6 @@
 
 $root_dir = $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS';
 require_once $root_dir.'/config/dbHandlers.php';
-$json=new jsonController($linuxPlHandler, $ogicomHandler);
 $linux=new LinuxPlProduct($linuxPlHandler);
 $ogicom=new OgicomProduct($ogicomHandler); 
 

@@ -1,6 +1,6 @@
 <?php
 
-class ProductsController extends Controller
+class ProductsController
 {
 	private $creator;
 	private $helper;
