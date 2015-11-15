@@ -11,7 +11,7 @@ if(isset($_POST["jsonId"])){
 		$linuxName=$linux->getName($_POST["jsonId"]);
 		$Quantity1=$linux->getQuantity($_POST["jsonId"]);
 		$Quantity2=$ogicom->getQuantity($_POST["jsonId"]);
-		$data='{ "nameLinux":"'.$linuxName.'", "quantityLinux":"'.$Quantity1.'", "quantityOgicom":"'.$Quantity2.'" }';
+		$data = array('nameLinux'=>$linuxName, 'quantityLinux' => $Quantity1, 'quantityOgicom' => $Quantity2);
 	}
 	if(isset($_POST["jsonQuantity"]))
 	{
@@ -20,9 +20,9 @@ if(isset($_POST["jsonId"])){
 		$linux->updateQuantity($_POST["jsonId"], $_POST["jsonQuantity"]);
 		$ogicom->updateQuantity($_POST["jsonId"], $_POST["jsonQuantity"]);
 		$newQuantity=$linux->getQuantity($_POST["jsonId"]);
-		$data='{"obj1":{ "propertyA":"'.$_POST["jsonId"].'", "propertyB":"'.$newQuantity.'", "propertyC":"'.$previousQuantity.'"} }';
+		$data = array('productId'=>$_POST["jsonId"], 'linuxQuantity' => $newQuantity, 'ogicomQuantity' => $previousQuantity);
 	}
-	echo $data;
+	echo json_encode($data);
 }
 
 if(isset($_GET['productQuery'])){
@@ -57,5 +57,4 @@ if(isset($_GET['productQuery'])){
 	}
 	echo json_encode($data);
 }
-	//$autoComplete=$json->autoComplete($jsonArray);
 ?>

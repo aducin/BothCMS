@@ -99,6 +99,10 @@ function focus(){
 	el.focus();
 }
 
+  $(function() {
+    $( document ).tooltip();
+  });
+
 function ajax_select_json(){
 	var id = document.getElementById("idValue");
 	var hr = new XMLHttpRequest();
@@ -140,12 +144,10 @@ function ajax_update_json(){
 	hr.onreadystatechange = function() {
 		if(hr.readyState == 4 && hr.status ==200) {
 			var data = JSON.parse(hr.responseText);
-			for(var obj in data){
-				jsonDiv.innerHTML = "Operacja zakończona powodzeniem!" + "<br />"; 
-				jsonDiv.innerHTML += "ID: <b>" + data[obj].propertyA ; 
-				jsonDiv.innerHTML += " - poprzednia ilość: " + data[obj].propertyC; 
-				jsonDiv.innerHTML += "</b> ; nowa ilość: <b>" + data[obj].propertyB + "</b>.<hr />"; 
-			}
+				jsonDiv.innerHTML = "Operacja zakończona powodzeniem!<br>";
+				jsonDiv.innerHTML += "ID: <b>" + data.productId ; 
+				jsonDiv.innerHTML += " - poprzednia ilość: " + data.ogicomQuantity; 
+				jsonDiv.innerHTML += "</b> ; nowa ilość: <b>" + data.linuxQuantity + "</b>.<hr />"; 
 		}
 	}
 	hr.send("jsonId=" + id.value + "&jsonQuantity=" + quantity.value);
