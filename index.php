@@ -23,8 +23,8 @@ $controller = isset($_GET['controller']) ? $_GET['controller'] : 'product';
 require_once $root_dir.'/controllers/login.php';
 
 if ($controller == 'product') {
-	// http://localhost/Ad9bisCMS/?controller=product
-	require_once $root_dir.'/controllers/productSearch.php';
+	$controller=new ProductsController($linuxPlHandler, $ogicomHandler);
+	//require_once $root_dir.'/controllers/productSearch.php';
 } elseif ($controller == 'order'){
 	// http://localhost/Ad9bisCMS/?controller=order
 	require_once $root_dir.'/controllers/orderSearch.php';

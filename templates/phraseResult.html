@@ -77,13 +77,18 @@
 					{% endif %}
 				</td>
 				<td>
-					<form action="?" method="get">
-						<div id="option">
+					<div id="option">
+						<form action="" method="get">
 							<input type="hidden" name="id" value="{{ results.id }}">
-							<input type="submit" name="shortEdition" class="row1" value="Zmiana obu przez nowy panel"><br>
+							<input type="hidden" name="action" value="shortEdition">
+							<input type="submit" class="row1" value="Zmiana obu przez nowy panel"><br>
+						</form>
+						<form action="" method="get">
+							<input type="hidden" name="id" value="{{ results.id }}">
+							<input type="hidden" name="action" value="completeEdition">
 							<input type="submit" name="fullEditionN" class="row1" id="margin" value="Kompletna edycja w NP">
-						</div>
-					</form>
+						</form>
+					</div>
 				</td>
 			</tr>
 		{% endfor %}

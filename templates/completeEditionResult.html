@@ -6,15 +6,15 @@
 
 {% block title %}
 	Kompletna edycja produktu ID: {{ QueryResult.id_product }}
-	{% if editForm=='?editcompleteformnew' %}
+	{% if editForm=='editcompleteformnew' %}
 		- informacje z nowego panelu.
-	{% elseif editForm=='?editcompleteformold' %}
+	{% elseif editForm=='editcompleteformold' %}
 		- informacje ze starego panelu.
 	{% endif %}
 {% endblock %}
 
 {% block result %}
-	<form name="form" action="{{ editForm }}" method="post" onsubmit="wyswietlAlert()">
+	<form name="form" action="?action={{ editForm }}" method="post" onsubmit="wyswietlAlert()">
 		<tr>
 			<td class="row1">
 				<label for="text">
@@ -150,7 +150,7 @@
 				</select>
 			</td>
 		</tr>
-		{% if editForm=='?editcompleteformnew' %}
+		{% if editForm=='editcompleteformnew' %}
 			<tr>
 				<td class="row1">
 					<label for="priceOld">
@@ -178,7 +178,7 @@
 				</td>
 			</tr>
 		{% endif %}
-		{% if editForm=='?editcompleteformold' %}
+		{% if editForm=='editcompleteformold' %}
 			<tr>
 				<td class="row1">
 					<label for="priceOld">
@@ -188,35 +188,36 @@
 				<td class="textOnlyLeft">
 					<input type="text" id="orderNumber" name="nominalPriceOld" size="17" value="{{ QueryResult.price|number_format(2, '.', ',') }}"</>zł
 					{% if QueryResult.reduction!=0 %}
-					<b>UWAGA! Rabat wynosi {{ QueryResult.reduction|number_format(2, '.', ',') }}zł</b>
+						<b>UWAGA! Rabat wynosi {{ QueryResult.reduction|number_format(2, '.', ',') }}zł</b>
+					{% endif %}
+				</td>
+			</tr>
+			<tr>
+				<td class="row1">
+					<label for="priceNew">
+						Nominalna cena produktu (NP):
+					</label>
+				</td>
+				<td class="textOnlyLeft">
+					<input type="text" id="orderNumber" name="nominalPriceNew" size="17" value="{{ QueryResult.secondPrice|number_format(2, '.', ',') }}"</>zł
+					{% if QueryResult.reduction2!=0 %}
+						<b>UWAGA! Rabat wynosi {{ (QueryResult.reduction2*100)|number_format(2, '.', ',') }}%</b>
+					{% endif %}
 				</td>
 			</tr>
 		{% endif %}
-		<tr>
-			<td class="row1">
-				<label for="priceNew">
-					Nominalna cena produktu (NP):
-				</label>
-			</td>
-			<td class="textOnlyLeft">
-				<input type="text" id="orderNumber" name="nominalPriceNew" size="17" value="{{ QueryResult.secondPrice|number_format(2, '.', ',') }}"</>zł
-				{% if QueryResult.reduction2!=0 %}
-					<b>UWAGA! Rabat wynosi {{ (QueryResult.reduction2*100)|number_format(2, '.', ',') }}%</b>
-				{% endif %}
-			</td>
-		</tr>
-		<tr>
-			<td colspan=2 class="row3">
-				<b>Kategorie aktywne dla tego produktu:</b>
-			</td>
-		</tr>
-		{% for cats in selCategories %}
 			<tr>
-				<td colspan=2 class="rowCenter">
-					<b>- {{ cats.name }}</b>
+				<td colspan=2 class="row3">
+					<b>Kategorie aktywne dla tego produktu:</b>
 				</td>
 			</tr>
-		{% endfor %}
+			{% for cats in selCategories %}
+				<tr>
+					<td colspan=2 class="rowCenter">
+						<b>- {{ cats.name }}</b>
+					</td>
+				</tr>
+			{% endfor %}
 	</table>
 	<table class="fieldset2">
 		<tr>
@@ -243,9 +244,9 @@
 			<td colspan=2 class="row3">
 				<input type="hidden" name="id" value="{{ QueryResult.id_product }}">
 				<input type="hidden" name="index.php"/>
-				{% if editForm=='?editcompleteformold' %}
+				{% if editForm=='editcompleteformold' %}
 					<input id="searchInput" type="submit" value="Uaktualnij produkt (SB)">
-				{% elseif editForm=='?editcompleteformnew' %}
+				{% elseif editForm=='editcompleteformnew' %}
 					<input id="searchInput" type="submit" value="Uaktualnij produkt (NB)">
 				{% endif %}
 			</td>

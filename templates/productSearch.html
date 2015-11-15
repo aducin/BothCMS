@@ -18,12 +18,12 @@
 		    	</label>
 			</td>
 			<td class="row1000-3px">
-				<input type="text" id="idValue" class="orderNumber" name="idnr" placeholder="Tutaj wpisz numer ID" onblur="ajax_select_json()">
+				<input type="text" id="idValue" class="orderNumber" name="idnr" placeholder="Tutaj wpisz numer ID" title="Szybka zmiana - wpisz nr i odkliknij!" onblur="ajax_select_json()">
 			</td>
 			<td class="row1000-3px">
 				<div id="productQuant">
-					<input type='text' id="fastValue" class="orderNumber" placeholder="Szybka zmiana ilości" onblur="ajax_update_json()">
 				</div>
+				<input type='text' id="fastValue" class="orderNumber" placeholder="Szybka zmiana ilości" title="Wypełnij wcześniej pole 'Numer ID'!" onblur="ajax_update_json()">
 			</td>
 			<td class="row1000-3px">
 				<input type="hidden" name="action" value="idsearch">
@@ -64,7 +64,7 @@
 					</label>
 				</td>
 				<td class="row1000-2px">
-					<select name="category" id="orderNumber" class="selectWidth">
+					<select name="category" id="categoryNumber" class="selectWidth">
 						<option value="">Dowolna kategoria</option>
 						{% for category in categories %}
 							<option value="{{ category.id }}">
@@ -81,7 +81,7 @@
 					</label>
 				</td>
 				<td class="row1000-2px">
-					<input type="text" id="autoSuggest" class="orderNumber" name="text" class="selectWidth2" placeholder="Tutaj wpisz frazę do wyszukania" onkeyup="autoSuggestNew();">
+					<input type="text" id="autoSuggest" class="orderNumber" name="text" class="selectWidth2" placeholder="Tutaj wpisz frazę do wyszukania" title="Możesz dodać: producent, kategoria"onkeyup="autoSuggestNew();">
 				</td>
 			</tr>
 			<tr>
@@ -135,9 +135,9 @@
 							</center>
 						</td>
 						<td class="row1000-8px2">
-							<form action="?" method="get">
+							<form action="?action=deleteRow" method="post">
 								<input type="hidden" name="idMod" value="{{ modyfied.id }}">
-								<input type="submit" name="deleterow" id="deleterows" value="Usuń wpis">
+								<input type="submit" id="deleterows" value="Usuń wpis">
 							</form>
 						</td>
 					</tr>

@@ -14,7 +14,7 @@
 {% endblock %}
 
 {% block result %}
-	<form class="row1" name="form" action="?editformBoth" method="post" onsubmit="showAlert()">
+	<form class="row1" action="?action=updateShort" method="post" onsubmit="showAlert()">
 		<tr>
 			<td class="row1-1">
 				<label for="text">
@@ -75,6 +75,7 @@
 		</tr>
 		<tr>
 			<td colspan=2 class="background-color">
+				<input type="hidden" name="action" value="updateShort">
 				<input type="hidden" name="id" value="{{ result.id_product }}">
 				<input type="submit" id="searchInput" value="Aktualizuj produkt w obu bazach">
 			</td>

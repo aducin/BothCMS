@@ -8,19 +8,19 @@
 {% block result %}
 	<form method="post">
 		<tr>
-			<td class="row">
+			<td class="rowHeigth">
 				Mail zostanie wysłany na adres:
 			</td>
-			<td class="row">
-				<input type="text" size="21" name="email" value="{{ notDates.email }}">
+			<td class="rowHeigth">
+				<input type="text" size="21" class="orderNumber" name="email" value="{{ notDates.email }}">
 			</td>
 		</tr>
 		<tr>
-			<td class="row">
+			<td class="rowHeigth">
 				Wpisz numer przesyłki (Poczta Polska):
 			</td>
-			<td class="row">
-				<input type="text" size="21" name="trackingNumber" value="(00)">
+			<td class="rowHeigth">
+				<input type="text" size="21" class="orderNumber" name="trackingNumber" style="text-align:left" value="(00)">
 			</td>
 		</tr>
 		<tr>

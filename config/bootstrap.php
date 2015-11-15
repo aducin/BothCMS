@@ -2,8 +2,8 @@
 
 require_once $root_dir.'/model/Controller/AbstractController.class.php';
 require_once $root_dir.'/model/Controller/OrderController.class.php';
-require_once $root_dir.'/model/Controller/ProductController.class.php';
 require_once $root_dir.'/model/Controller/JsonController.class.php';
+require_once $root_dir.'/controllers/ProductsController.class.php';
 require_once $root_dir.'/model/Creator/Creator.class.php';
 require_once $root_dir.'/model/Customer/Customer.class.php';
 require_once $root_dir.'/model/Helper/AbstractHelper.class.php';
