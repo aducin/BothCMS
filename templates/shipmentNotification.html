@@ -2,7 +2,7 @@
 
 {% block title %}
 	Poinformowanie Klienta o numerze przesyłki
-	<h2 class="finish1">- zamówienie nr {{ notDates.id_order }} ({{ notDates.firstname }} {{ notDates.lastname }})</h2>
+	<h2 class="finish1">- zamówienie nr {{ result.id_order }} ({{ result.firstname }} {{ result.lastname }})</h2>
 {% endblock %}
 
 {% block result %}
@@ -12,7 +12,7 @@
 				Mail zostanie wysłany na adres:
 			</td>
 			<td class="rowHeigth">
-				<input type="text" size="21" class="orderNumber" name="email" value="{{ notDates.email }}">
+				<input type="text" size="21" class="orderNumber" name="email" value="{{ result.email }}">
 			</td>
 		</tr>
 		<tr>
@@ -26,10 +26,10 @@
 		<tr>
 			<td colspan=2 class="row1">
 				<input type="hidden" name="action" value="shipment">
-				<input type="hidden" name="idOrder" value="{{ notDates.id_order }}">
-				<input type="hidden" name="reference" value="{{ notDates.reference }}">
-				<input type="hidden" name="name" value="{{ notDates.firstname }}">
-				<input type="hidden" name="surname" value="{{ notDates.lastname }}">
+				<input type="hidden" name="idOrder" value="{{ result.id_order }}">
+				<input type="hidden" name="reference" value="{{ result.reference }}">
+				<input type="hidden" name="name" value="{{ result.firstname }}">
+				<input type="hidden" name="surname" value="{{ result.lastname }}">
 				<input type="submit" id="searchInput" name="shipmentNumber" value="Wyślij mail">
 			</td>
 		</tr>

@@ -6,6 +6,7 @@ class OrdersController
 	private $LinuxPlOrder;
 	private $LinuxPlHandler;
 	private $OgicomOrder;
+    private $output;
 	private $existingClient;
 	private $root_dir;
 
@@ -15,14 +16,14 @@ class OrdersController
         $this->LinuxPlHandler=$firstDBHandler;
 		$this->LinuxPlOrder= new LinuxPlOrder($firstDBHandler);
 		$this->OgicomOrder= new OgicomOrder($secondDBHandler);
+        $this->output= new OutputController();
 		$this->root_dir = $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/controllers/output.php';
         if(isset($_POST['action'])){
         	require_once $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/controllers/mail.php';
         }elseif (isset($_GET['action'])){
             $this-> $_GET['action'] ();
         }else{
-            $order='1';
-        	require_once $this->root_dir; 
+            $this->output->renderView('orderSearch');
         }
     }
 
@@ -100,7 +101,7 @@ class OrdersController
 				$customerData['voucher']=$custOrder['orderNumber'];
 			}
     	}
-    	require_once $this->root_dir; 
+        $this->output->renderView('voucherSearchResult', $voucherNumber, $customerData);
     }
 
     public function detailorder(){
@@ -118,7 +119,7 @@ class OrdersController
     			$detail[]=array('id'=>$sDetail['product_id'], 'name'=>$sDetail['name'], 'price'=>number_format($sDetail['product_price'], 2,'.',''), 'reduction'=>number_format($sDetail['reduction_amount'], 2,'.',''), 'reducedPrice'=>($sDetail['product_price']-$sDetail['reduction_amount'])*0.85, 'quantity'=>$sDetail['product_quantity'], 'reducedTotalPrice'=>($sDetail['product_price']-$sDetail['reduction_amount'])*$sDetail['product_quantity']*0.85);
     		}
     	}
-    	require_once $this->root_dir; 
+        $this->output->renderView('discountSearchResult', $detail, $sixthOrderDiscount);
     }
 
     public function undeliveredConfirmation(){
@@ -132,7 +133,7 @@ class OrdersController
     			$confOrderDetails[]=array('id'=>$detail['product_id'], 'name'=>$detail['name'], 'price'=>number_format($detail['product_price'], 2,'.',''), 'reduction'=>number_format($detail['reduction_amount'], 2,'.',''), 'quantity'=>$detail['product_quantity']);
     		}
     	}
-    	require_once $this->root_dir;
+        $this->output->renderView('undeliveredMailOrder', $confOrderDetails, $undeliveredOrderConf);
     }
 
     public function notification(){
@@ -145,7 +146,7 @@ class OrdersController
 		if($orderTracking==''){
 			$error='W wybranej bazie danych brak zamówienia o podanym numerze!';
 		}
-    	require_once $this->root_dir;
+        $this->output->renderView('shipmentNotification', $orderTracking);
     }
 
     public function singleMerge(){

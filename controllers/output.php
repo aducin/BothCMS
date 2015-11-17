@@ -1,5 +1,7 @@
 <?php
 
+// the file has to replaced by OutputController.class.php - asap
+
 $root_dir = $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS';
 $vendor_dir = $root_dir.'/vendor';
 $cache_dir = $root_dir.'/cache'; // remember to `chmod 777 cache` (make this directory writable)
@@ -44,21 +46,6 @@ if(isset($error)AND(!isset($authors))){
 		'result' => 'Operacja zakończyła się powodzeniem!',
 		'message' => $conf,
 		));
-}elseif(isset($sixthOrderDiscount)){//                                   orderSearch.php
-	$output = $twig->render('/discountSearchResult.html', array(
-		'result' => $detail,
-		'customerData'=>$sixthOrderDiscount,
-		));
-}elseif(isset($undeliveredOrderConf)){//                                   orderSearch.php
-	$output = $twig->render('/undeliveredMailOrder.html', array(
-		'result' => $confOrderDetails,
-		'customerData'=>$undeliveredOrderConf,
-		));
-}elseif(isset($voucherNumber)){//                                   orderSearch.php
-	$output = $twig->render('/voucherSearchResult.html', array(
-		'result' => $voucherNumber,
-		'customerData'=>$customerData,
-		));
 }elseif(isset($ordedSearch)){//                                   orderSearch.php
 	$output = $twig->render('/orderSearchResult.html', array(
 		'result' => $result,
@@ -68,14 +55,6 @@ if(isset($error)AND(!isset($authors))){
 	$output = $twig->render('/orderUpdate.html', array(
 		'dates' => $mods,
 		'orderDetails'=>$mergeDetails,
-		));
-}elseif(isset($orderTracking)){//                                   orderSearch.php
-	$output = $twig->render('/shipmentNotification.html', array(
-		'notDates' => $orderTracking,
-		));	
-}elseif(isset($productShortEdition)){//                                   productSearch.php
-	$output = $twig->render('/editionShortTemplate.html', array(
-		'result' => $productShortEdition,
 		));
 }elseif(isset($productIdSearch)){//                                   productSearch.php
 	$output = $twig->render('/idProductResult.html', array(
@@ -117,8 +96,6 @@ if(isset($error)AND(!isset($authors))){
 			'authors' => $helper[0],
 			'categories'=>$helper[1],
 			));
-}elseif(isset($order)){
-		$output = $twig->render('/orderSearch.html');
 }
 try{
 	echo $output;
