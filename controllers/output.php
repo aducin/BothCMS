@@ -16,13 +16,7 @@ $twig = new Twig_Environment($loader, array(
 	'cache' => $cache_dir,
 ));
 
-if(isset($error)AND(!isset($authors))){
-	$output = $twig->render('/orderSearch.html', array(
-		'title' => 'Niepowodzenie wykonania operacji',
-		'result' => 'UWAGA! Operacja zakończona niepowodzeniem!',
-		'message' => $error,
-		));
-}elseif(isset($error)AND(isset($authors))){
+if(isset($error)AND(isset($authors))){
 		$output = $twig->render('/productSearch.html', array(
 			'authors' => $helper[0],
 			'categories'=>$helper[1],
@@ -35,26 +29,6 @@ if(isset($error)AND(!isset($authors))){
 		'result' => 'Poniżej znajduje się treść wysłana do Klienta:',
 		'message' => $message,
 		'confirmation' => $outputOrderMail,
-		));
-}elseif(isset($outputOrderOrProduct1)){//                                   orderSearch.php or productSearch.php
-	$conf=array('Wykonanie aktualizacji produktu ID '.$outputOrderOrProduct1['first']['id_product'], 'Obecna ilość produktu w edytowanej bazie wynosi: '.$outputOrderOrProduct1['first']['quantity']);
-	if(isset($outputOrderOrProduct1['second'])){
-		array_push($conf, 'Obecna ilość produktu w drugiej bazie wynosi: '.$outputOrderOrProduct1['second']['quantity']);
-	}
-	$output = $twig->render('/confirm.html', array(
-		'title' => 'Potwierdzenie wykonania operacji',
-		'result' => 'Operacja zakończyła się powodzeniem!',
-		'message' => $conf,
-		));
-}elseif(isset($ordedSearch)){//                                   orderSearch.php
-	$output = $twig->render('/orderSearchResult.html', array(
-		'result' => $result,
-		'variables'=>$ordedSearch,
-		));
-}elseif(isset($mergeDetails)){//                                   orderSearch.php
-	$output = $twig->render('/orderUpdate.html', array(
-		'dates' => $mods,
-		'orderDetails'=>$mergeDetails,
 		));
 }elseif(isset($productIdSearch)){//                                   productSearch.php
 	$output = $twig->render('/idProductResult.html', array(

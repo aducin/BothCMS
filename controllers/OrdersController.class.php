@@ -23,7 +23,7 @@ class OrdersController
         }elseif (isset($_GET['action'])){
             $this-> $_GET['action'] ();
         }else{
-            $this->output->renderView('orderSearch');
+            $this->output->renderStandardView();
         }
     }
 
@@ -58,10 +58,12 @@ class OrdersController
     	$imageSource= $this->creator->createProduct('Ogicom');
     	$result=$this->finalOrderQuery($query, $product, $imageSource);
     	$ordedSearch=array('onstock'=>'Na stanie (NP)', 'ordered'=>'Zamówione (NP)', 'button1'=>'Kompletna edycja w NP', 'button2'=>'Wyrównaj ilość w starej bazie', 'button3'=>'Zmiana obu przez nowy panel', 'button4'=>'Uaktualnij ilości w starej bazie', 'form'=>'linuxPl', 'action'=>'BPSQO', 'orderNr'=>$_GET['neworder']);
-    	if($result==0){
-			$error='W bazie danych nie ma zamówienia o podanym numerze!';
-		}
-    	require_once $this->root_dir; 
+    	if( $result==0 ){
+			$error = 'W bazie danych nie ma zamówienia o podanym numerze!';
+            $this->output->renderErrorInOrder( $error );
+		} else {
+            $this->output->renderOrderSearch($result, $ordedSearch);
+        }
     }
 
     public function oldOrder(){
@@ -70,10 +72,12 @@ class OrdersController
     	$imageSource= $this->creator->createProduct('Ogicom');
     	$result=$this->finalOrderQuery($query, $product, $imageSource);
     	$ordedSearch=array('onstock'=>'Na stanie (SP)', 'ordered'=>'Zamówione (SP)', 'button1'=>'Kompletna edycja w SP', 'button2'=>'Wyrównaj ilość w nowej bazie', 'button3'=>'Zmiana obu przez stary panel', 'button4'=>'Uaktualnij ilości w nowej bazie','form'=>'ogicom', 'action'=>'BPSQN', 'orderNr'=>$_GET['oldorder']);
-    	if($result==0){
-			$error='W bazie danych nie ma zamówienia o podanym numerze!';
-		}
-    	require_once $this->root_dir; 
+    	if( $result==0 ){
+			$error = 'W bazie danych nie ma zamówienia o podanym numerze!';
+            $this->output->renderErrorInOrder( $error );
+		} else {
+            $this->output->renderOrderSearch($result, $ordedSearch);
+        }
     }
 
     public function orderVoucher(){
@@ -101,25 +105,35 @@ class OrdersController
 				$customerData['voucher']=$custOrder['orderNumber'];
 			}
     	}
-        $this->output->renderView('voucherSearchResult', $voucherNumber, $customerData);
+        !isset($error) ? ($this->output->renderOrderExtraDetails('voucherSearchResult', $voucherNumber, $customerData)) :
+        ($this->output->renderErrorInOrder( $error ));
     }
 
     public function detailorder(){
     	$sixthOrderDiscount = $this->OgicomOrder->getQueryLessDetails($_GET['detailorder']);
     	$sixthOrderDiscount['reducedTotalProduct']=$sixthOrderDiscount['total_products']*0.85;
     	$sixthOrderDiscount['orderNumber']=$_GET['detailorder'];
-    	$sixthOrderDiscount['reducedTotal']=$sixthOrderDiscount['total_paid']*0.85;
     	$detailsCount=$this->OgicomOrder->getCount($_GET['detailorder']);
     	$sixthOrderDiscount['count'] = $detailsCount['COUNT(product_name)'];
-    	if(!isset($sixthOrderDiscount['total_paid'])){
+    	if ( !isset($sixthOrderDiscount['total_paid']) ){
     		$error="W starej bazie nie ma zamówienia o podanym numerze!";
-    	}else{
+            $this->output->renderErrorInOrder( $error );
+    	} else {
+            $sixthOrderDiscount['reducedTotal']=$sixthOrderDiscount['total_paid']*0.85;
     		$details = $this->OgicomOrder->getQueryDetails($_GET['detailorder']);
-    		foreach ($details as $sDetail){
-    			$detail[]=array('id'=>$sDetail['product_id'], 'name'=>$sDetail['name'], 'price'=>number_format($sDetail['product_price'], 2,'.',''), 'reduction'=>number_format($sDetail['reduction_amount'], 2,'.',''), 'reducedPrice'=>($sDetail['product_price']-$sDetail['reduction_amount'])*0.85, 'quantity'=>$sDetail['product_quantity'], 'reducedTotalPrice'=>($sDetail['product_price']-$sDetail['reduction_amount'])*$sDetail['product_quantity']*0.85);
+    		foreach ( $details as $sDetail ){
+    			$detail[]=array(
+                    'id'=>$sDetail['product_id'], 
+                    'name'=>$sDetail['name'], 
+                    'price'=>number_format($sDetail['product_price'], 2,'.',''), 
+                    'reduction'=>number_format($sDetail['reduction_amount'], 2,'.',''), 
+                    'reducedPrice'=>($sDetail['product_price']-$sDetail['reduction_amount'])*0.85, 
+                    'quantity'=>$sDetail['product_quantity'], 
+                    'reducedTotalPrice'=>($sDetail['product_price']-$sDetail['reduction_amount'])*$sDetail['product_quantity']*0.85
+                );
     		}
+            $this->output->renderOrderExtraDetails( 'discountSearchResult', $detail, $sixthOrderDiscount );
     	}
-        $this->output->renderView('discountSearchResult', $detail, $sixthOrderDiscount);
     }
 
     public function undeliveredConfirmation(){
@@ -133,7 +147,8 @@ class OrdersController
     			$confOrderDetails[]=array('id'=>$detail['product_id'], 'name'=>$detail['name'], 'price'=>number_format($detail['product_price'], 2,'.',''), 'reduction'=>number_format($detail['reduction_amount'], 2,'.',''), 'quantity'=>$detail['product_quantity']);
     		}
     	}
-        $this->output->renderView('undeliveredMailOrder', $confOrderDetails, $undeliveredOrderConf);
+        !isset($error) ? $this->output->renderOrderExtraDetails('undeliveredMailOrder', $confOrderDetails, $undeliveredOrderConf) :
+        ($this->output->renderErrorInOrder( $error ));
     }
 
     public function notification(){
@@ -146,28 +161,44 @@ class OrdersController
 		if($orderTracking==''){
 			$error='W wybranej bazie danych brak zamówienia o podanym numerze!';
 		}
-        $this->output->renderView('shipmentNotification', $orderTracking);
+        !isset($error) ? $this->output->renderOrderExtraDetails('shipmentNotification', $orderTracking) :
+        ($this->output->renderErrorInOrder( $error ));
     }
 
     public function singleMerge(){
-    	if (isset($_GET['BPSQO'])){
-    		$product= $this->creator->createProduct('Ogicom');
-		}elseif (isset($_GET['BPSQN'])){
-			$product= $this->creator->createProduct('LinuxPl');
-		}
-		$Query = $product->updateQuantity($_GET['quantity'], $_GET['id']);
-		$outputOrderOrProduct1['first'] = $product->confirmation($_GET['id']);
-    	require_once $this->root_dir;
+        try {
+            if (isset($_GET['BPSQO'])){
+                $product= $this->creator->createProduct('Ogicom');
+            } elseif (isset($_GET['BPSQN'])){
+                $product= $this->creator->createProduct('LinuxPl');
+            }
+            $Query = $product->updateQuantity($_GET['quantity'], $_GET['id']);
+            $outputSingleOrder['first'] = $product->confirmation($_GET['id']);
+            $this->output->renderSingleUpdate($outputSingleOrder);
+        } catch (Exception $e) {
+            $error='Nie udało się uaktualnić pojedynczego produktu!';
+            $this->output->renderErrorInOrder( $error );
+        }
     }
 
     public function orderMerge(){
     	try{
 			if($_GET['mergeQuantities']== 'Uaktualnij ilości w nowej bazie'){
-				$mergeDetails=array('idOrder'=>$_GET['id_number'].' w nowym panelu', 'base'=>'Ilość w SP', 'current'=>'Obecna ilość (NP)', 'changed'=>'Ilość po modyfikacji (NP)');
+				$mergeDetails=array(
+                    'idOrder'=>$_GET['id_number'].' w nowym panelu', 
+                    'base'=>'Ilość w SP', 
+                    'current'=>'Obecna ilość (NP)', 
+                    'changed'=>'Ilość po modyfikacji (NP)'
+                );
 				$product= $this->creator->createProduct('LinuxPl');
 				$Queries = $this->OgicomOrder->selectOrderQuantity($_GET['id_number']);
 			}elseif ($_GET['mergeQuantities']== 'Uaktualnij ilości w starej bazie'){
-				$mergeDetails=array('idOrder'=>$_GET['id_number'].' w nowym panelu', 'base'=>'Ilość w SP', 'current'=>'Obecna ilość (NP)', 'changed'=>'Ilość po modyfikacji (NP)');
+				$mergeDetails=array(
+                    'idOrder'=>$_GET['id_number'].' w nowym panelu', 
+                    'base'=>'Ilość w SP', 
+                    'current'=>'Obecna ilość (NP)', 
+                    'changed'=>'Ilość po modyfikacji (NP)'
+                );
 				$product= $this->creator->createProduct('Ogicom');
 				$Queries = $this->LinuxPlOrder->selectOrderQuantity($_GET['id_number']);
 			}	
@@ -175,12 +206,19 @@ class OrdersController
 				$oldQuantity=$product->getQuantity($Query['product_id']);
 				$quantityUpdate=$product->updateQuantity($Query['quantity'], $Query['product_id']);
 				$finalQuantity=$product->getQuantity($Query['product_id']);
-				$mods[]=array('quantity'=>$Query['quantity'], 'product_id'=>$Query['product_id'], 'previousQuantity'=>$oldQuantity, 'finalQuantity'=>$finalQuantity, 'result'=>(string)($finalQuantity-$oldQuantity));
-			}	
+				$mods[]=array(
+                    'quantity'=>$Query['quantity'], 
+                    'product_id'=>$Query['product_id'], 
+                    'previousQuantity'=>$oldQuantity, 
+                    'finalQuantity'=>$finalQuantity, 
+                    'result'=>(string)($finalQuantity-$oldQuantity
+                ));
+            }
+            $this->output->renderMultipleProductMerge( $mergeDetails, $mods );	
 		}catch (PDOExceptioon $e){
 			$error='Pobranie ilości w zamówieniu nie powiodło się: ' . $e->getMessage();
+            $this->output->renderErrorInOrder( $error );
 		}
-    	require_once $this->root_dir;
     }
 
     private function orderSearch(){
