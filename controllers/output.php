@@ -1,6 +1,6 @@
 <?php
 
-// the file has to replaced by OutputController.class.php - asap
+// the file has to replaced by Output.class.php - asap
 
 $root_dir = $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS';
 $vendor_dir = $root_dir.'/vendor';

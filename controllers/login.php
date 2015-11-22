@@ -8,8 +8,8 @@ if(isset($_GET['logout'])){
 }
 if(!isset($_SESSION['log'])){
 	if(isset($_POST['login'])AND isset($_POST['password'])){
-		$userLogin=$_POST['login'];
-		$userPassword=$_POST['password'];
+		$userLogin=trim(htmlspecialchars($_POST['login']));
+		$userPassword=trim(htmlspecialchars($_POST['password']));
 		$dbHandlerLinuxPl= new DBHandler($firstHost, $firstLogin, $firstPassword);
 		$dbResult= $dbHandlerLinuxPl->getUserData($userLogin, $userPassword);
 		$resNumb=$dbResult->rowCount();
