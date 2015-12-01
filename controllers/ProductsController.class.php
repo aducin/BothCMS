@@ -5,14 +5,12 @@ class ProductsController
 	private $creator;
 	private $helper;
 	private $output;
-	private $root_dir;
 
 	public function __construct($firstDBHandler, $secondDBHandler) {
         
 		$this->creator = new ProductCreator($firstDBHandler, $secondDBHandler);
 		$this->helper = new OgicomHelper($secondDBHandler);
 		$this->output = new ProductOutput();
-		$this->root_dir = $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/controllers/output.php';
         if (!isset($_GET['action']))
             $this->getHelpers();
         else

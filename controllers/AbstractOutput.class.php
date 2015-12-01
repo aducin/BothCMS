@@ -21,7 +21,8 @@ abstract class OutputController{
 	public function renderSingleUpdate( $updateDetails ){
 		$conf=array(
 			'Wykonanie aktualizacji produktu ID '.$updateDetails['first']['id_product'], 
-			'Obecna ilość produktu w edytowanej bazie wynosi: '.$updateDetails['first']['quantity']
+			'Obecna ilość produktu w edytowanej bazie wynosi: '.$updateDetails['first']['quantity'],
+			'controller' => 'order',
 		);
 		if(isset($updateDetails['second'])){
 			array_push($conf, 'Obecna ilość produktu w drugiej bazie wynosi: '.$updateDetails['second']['quantity']);
@@ -30,6 +31,7 @@ abstract class OutputController{
 			'title' => 'Potwierdzenie wykonania operacji',
 			'result' => 'Operacja zakończyła się powodzeniem!',
 			'message' => $conf,
+			'controller' => 'order',
 		));
 		echo $output;
 	}

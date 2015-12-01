@@ -95,6 +95,9 @@
 {% endblock %}
 
 {% block finish %}
+	{% if message %}
+		{% include 'confirm.html' %}
+	{% endif %}
 	{% if mods %}
 		<fieldset class="fieldset">
 			<h2>Produkty podmienione</h2>

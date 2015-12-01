@@ -8,7 +8,6 @@ class OrdersController
 	private $OgicomOrder;
     private $output;
 	private $existingClient;
-	private $root_dir;
 
 	public function __construct($firstDBHandler, $secondDBHandler) {
         
@@ -17,7 +16,6 @@ class OrdersController
 		$this->LinuxPlOrder= new LinuxPlOrder($firstDBHandler);
 		$this->OgicomOrder= new OgicomOrder($secondDBHandler);
         $this->output= new OrderOutput();
-		$this->root_dir = $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/controllers/output.php';
         if(isset($_POST['action'])){
         	require_once $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/controllers/mail.php';
         }elseif (isset($_GET['action'])){

@@ -75,3 +75,8 @@
 	</form>
 {% endblock %}
 
+{% block finish %}
+	{% if message %}
+		{% include 'confirm.html' %}
+	{% endif %}
+{% endblock %}
