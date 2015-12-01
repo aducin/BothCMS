@@ -11,7 +11,7 @@ class ProductsController
         
 		$this->creator = new ProductCreator($firstDBHandler, $secondDBHandler);
 		$this->helper = new OgicomHelper($secondDBHandler);
-		$this->output = new OutputController();
+		$this->output = new ProductOutput();
 		$this->root_dir = $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/controllers/output.php';
         if (!isset($_GET['action']))
             $this->getHelpers();
@@ -41,7 +41,7 @@ class ProductsController
 			);
 		}
 		$helper=array($authors, $categories, $mods);
-		require_once $this->root_dir; 
+		$this->output->renderProductStandardView( $helper );
 	}
 	function idSearch(){
 		$product=$this->creator->createProduct('LinuxPl');
@@ -52,6 +52,7 @@ class ProductsController
 		}
 		if($productIdSearch['name']==''){
 			$error='Brak produktu o podanym ID.';
+			$this ->output->renderProductError( $error );
 		}else{
 			$product=$this->creator->createProduct('Ogicom');
 			$oldQueryResult = $product->getProductDetailedData($_GET['idnr']);
@@ -59,14 +60,15 @@ class ProductsController
 			if($product->getReductionData($_GET['idnr'])!=''){
 				$oldQueryResult['reduct']=$product->countRealPrice($oldQueryResult['price'],$product->getReductionData($_GET['idnr']));
 			}
-		}
 		$imageNumber= $product->image($_GET['idnr']);
-		require_once $this->root_dir; 
+		$this->output->productIdSearch( $productIdSearch, $oldQueryResult, $imageNumber );
+		}
 	}
 
 	public function search(){
 		if ($_GET['text'] =='' AND $_GET['category'] =='' AND $_GET['author'] ==''){
 			$error='Nie chcesz chyba wypisywać wszystkich produktów z bazy...? Zaznacz chociaż z 1 kryterium wyszukiwania!';
+			$this ->output->renderProductError( $error );
 		}else{
 			$params[]=array(
 				'text'=>$_GET['text'],
@@ -155,12 +157,13 @@ class ProductsController
 				}
 				if (!isset($phraseSearchResult)){
 					$error='W bazie nie znaleziono produktów spełniających podane kryteria!';
+					$this ->output->renderProductError( $error );
 				} else {
 					$productPhraseSearch=($_GET['text']);
+					$this->output->productPhraseSearch( $phraseSearchResult, $productPhraseSearch );
 				}	
 			}
 		}
-		require_once $this->root_dir;
 	}
 
 	public function shortEdition(){
@@ -175,10 +178,11 @@ class ProductsController
 			if($product2->getReductionData($_GET['id'])!=0){
 				$productShortEdition['countReduction2']=$product2->countReduction($productShortEdition['price2'], $product2->getReductionData($_GET['id']));
 			}
+			$this->output->renderShortProductEdition('editionShortTemplate', $productShortEdition);
 		}catch (PODException $e){
 			$error='Błąd przy pobieraniu informacji o produkcie: ' . $e->getMessage();
+			$this->output->renderProductError( $error );
 		}
-		$this->output->renderView('editionShortTemplate', $productShortEdition);
 	}
 
 	public function completeEdition(){
@@ -234,50 +238,55 @@ class ProductsController
 			$tags[]=$tagName['name']; 
 			$completeTagNames=implode(", ", $tags);
 		}
-		require_once $this->root_dir;
+		$this->output->renderCompleteProductEdition( $editForm, $completeQueryResult, $categoryAndAuthorList, $completeTagNames, $selCategories );
 	}
 
 	public function updateShort(){
-		if ($_POST['text']==''){
+		if ( trim( $_POST['text']=='' )){
 			$error='Brak aktualnego wpisu: nazwa produktu!';
-		}elseif ($_POST['quantity']==''){
+			$this->output->renderProductError( $error );
+		}elseif ( trim( $_POST['quantity']=='' )){
 			$error='Brak aktualnego wpisu: nowa liczba produktu!';
-		}else try{
+			$this->output->renderProductError( $error );
+		}else try {
 			$product=$this->creator->createProduct('LinuxPl');
 			$newQuery = $product->updateBoth($_POST['id'], $_POST['nominalPriceNew'], $_POST['text'], $_POST['quantity']);
-			$outputOrderOrProduct1['first'] = $product->confirmation($_POST['id']);
+			$outputSingleProduct['first'] = $product->confirmation($_POST['id']);
 			$product2=$this->creator->createProduct('Ogicom');
 			$oldQuery = $product2->updateBoth($_POST['id'], $_POST['nominalPriceOld'], 
 			$_POST['text'], $_POST['quantity']);
-			$outputOrderOrProduct1['second'] = $product2->confirmation($_POST['id']);
-		}catch (PDOExceptioon $e){
+			$outputSingleProduct['second'] = $product2->confirmation($_POST['id']);
+			$this->output->renderSingleUpdate($outputSingleProduct);
+		}catch ( PDOExceptioon $e ){
 			$error='Aktualizacja danych nie powiodła się: ' . $e->getMessage();
+			$this->output->renderProductError( $error );
 		}
-		require_once $this->root_dir;
 	}
 
 	public function updateComplete(){
 		if ($_POST['text']==''){
 			$error='Musisz podać nazwę produktu!';
+			$this->output->renderProductError( $error );
 		}elseif ($_POST['quantity']==''){
 			$error='Musisz podać nową ilość produktu!';
+			$this->output->renderProductError( $error );
 		}elseif ($_POST['categories']==''){
 			$error='Nie znaleziono kategorii do zapisania!';
+			$this->output->renderProductError( $error );
 		}else try{
-			if($_GET['action']=='editcompleteformnew'){
+			if($_GET['detail']=='editcompleteformnew'){
 				$product1=$this->creator->createProduct('LinuxPl');
 				$product2=$this->creator->createProduct('Ogicom');
-				if ($change== "nameChange"){
+				if ( isset ($_POST['change']) AND $_POST['change'] == "nameChange"){
 					$oldQuery = $product2->insertModyfy($_POST['id'], $_POST['text']);
 				}
-			}elseif($_GET['action']=='editcompleteformold'){
+			}elseif($_GET['detail']=='editcompleteformold'){
 				$product1=$this->creator->createProduct('Ogicom');
 				$product2=$this->creator->createProduct('LinuxPl');
-				$priceNew=$newPrice;
-				$priceOld=$oldPrice;
-				$newPrice=$priceOld;
-				$oldPrice=$priceNew;
-				if ($_POST['change']== "nameChange"){
+				$temporary=$_POST['nominalPriceOld'];
+				$_POST['nominalPriceOld']=$_POST['nominalPriceNew'];
+				$_POST['nominalPriceNew']=$temporary;
+				if ( isset ($_POST['change']) AND $_POST['change'] == "nameChange"){
 					$oldQuery = $product1->insertModyfy($_POST['id'], $_POST['text']);
 				}
 			}
@@ -289,18 +298,18 @@ class ProductsController
 			if (isset($_POST['delete']) and $_POST['delete']== "deleteImages"){
 				$product1->deleteImage($_POST['id']);
 			}
-			$Query = $product1->updateDetailedBoth($_POST['id'], $_POST['newPrice'], 
+			$Query = $product1->updateDetailedBoth($_POST['id'], $_POST['nominalPriceNew'], 
 			$_POST['text'], $_POST['quantity'], $_POST['description'], 
-			$_POST['decriptionShort'], $_POST['metaTitle'], $_POST['metaDescription'], 
-			str_replace(" ","-", $link), $_POST['condition'], $_POST['active']);
-			$sth=str_replace(" ", "-", $link);
-			$Query = $product1->updateManufacturer($_POST['manufacturer'], $_POST['id']);
-			$Query = $product1->deleteCategory($id);
-			if(isset($category)){
-				$Query = $product1->insertCategory($_POST['category'], $_POST['id']);
+			$_POST['description_short'], $_POST['meta_title'], $_POST['meta_description'], 
+			str_replace(" ","-", $_POST['link']), $_POST['condition'], $_POST['active']);
+			$sth=str_replace(" ", "-", $_POST['link']);
+			if ( isset ( $_POST['author'] )){
+				$Query = $product1->updateManufacturer($_POST['author'], $_POST['id']);
 			}
+			$Query = $product1->deleteCategory($_POST['id']);
+			$Query = $product1->insertCategory($_POST['categories'], $_POST['id']);
 			$Query = $product1->deleteWholeTag($_POST['id']);
-			foreach (explode(", ", $tags) as $tagText){
+			foreach (explode(", ", $_POST['tagsText']) as $tagText){
 				$Query = $product1->checkIfTag($tagText);
 				$Query2 = $Query->fetch();
 				$checkedTagId= $Query2[0];
@@ -314,9 +323,10 @@ class ProductsController
 					$Query = $product1->insertTag($checkedTagId, $_POST['id']);
 				}
 			}
-			$outputOrderOrProduct1['first'] = $product1->confirmation($_POST['id']);
+			$updateDetails['first'] = $product1->confirmation($_POST['id']);
 		}catch (PDOExceptioon $e){
 			$error='Aktualizacja produktu w edytowanej bazie nie powiodła się: ' . $e->getMessage();
+			$this->output->renderProductError( $error );
 		}
 		if(!isset($error)){
 			if (isset($_POST['howManyBases'])and $_POST['howManyBases']== 'both'){
@@ -325,18 +335,18 @@ class ProductsController
 						$Query = $product2->deleteImage($_POST['id']);
 					}
 					$Query = $product2->updateDetailedBoth(
-						$_POST['id'], $_POST['newPrice'], $_POST['text'], 
-						$_POST['quantity'], $_POST['description'], $_POST['decriptionShort'], 
-						$_POST['metaTitle'], $_POST['metaDescription'], str_replace(" ","-", $link), 
+						$_POST['id'], $_POST['nominalPriceNew'], $_POST['text'], 
+						$_POST['quantity'], $_POST['description'], $_POST['description_short'], 
+						$_POST['meta_title'], $_POST['meta_description'], str_replace(" ","-", $_POST['link']), 
 						$_POST['condition'], $_POST['active']);
-					$Query = $product2->updateManufacturer($_POST['manufacturer'], $_POST['id']);
-					$outputOrderOrProduct1['second']=$product2->confirmation($_POST['id']);
-					$Query = $product2->deleteCategory($_POST['id']);
-					if(isset($category)){
-						$Query = $product2->insertDifferentCategory($_POST['category'], $_POST['id']);
+					if ( isset ( $_POST['author'] )){
+						$Query = $product2->updateManufacturer($_POST['author'], $_POST['id']);
 					}
+					$updateDetails['second']=$product2->confirmation($_POST['id']);
+					$Query = $product2->deleteCategory($_POST['id']);
+					$Query = $product2->insertDifferentCategory($_POST['categories'], $_POST['id']);
 					$Query = $product2->deleteWholeTag($_POST['id']);
-					foreach (explode(", ", $tags) as $tagText){
+					foreach (explode(", ", $_POST['tagsText']) as $tagText){
 						$Query = $product2->checkIfTag($tagText);
 						$Query2 = $Query->fetch();
 						$checkedTagId= $Query2[0];
@@ -349,13 +359,14 @@ class ProductsController
 							$checkedTagId= $Query2[0];
 							$Query = $product2->insertTag($checkedTagId, $_POST['id']);
 						}
-					}		 
-				}catch (PDOExceptioon $e){
+					}	
+					$this->output->renderSingleUpdate( $updateDetails );	 
+				} catch (PDOExceptioon $e){
 					$error='Aktualizacja produktu w drugiej bazie nie powiodła się: ' . $e->getMessage();
+					$this->output->renderProductError( $error );
 				}
 			}
 		}
-		require_once $this->root_dir;
 	}
 
 	public function deleteRow(){

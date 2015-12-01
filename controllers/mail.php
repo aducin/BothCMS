@@ -93,7 +93,15 @@ $headers .= 'From: ad9bis@gmail.com' . "\r\n";
 
 if(mail($to, $subject, $message, $headers)){
  	$outputOrderMail= 'Wiadomość została wysłana na adres: '.($_POST['email']).'.';
- 	require_once $root_dir.'/controllers/output.php'; 
+ 	$output = $twig->render('/messageConfirmation.html', array(
+		'result' => 'Poniżej znajduje się treść wysłana do Klienta:',
+		'message' => $message,
+		'confirmation' => $outputOrderMail,
+		)
+ 	);
+ 	echo $output;
 }else{
   	$error= 'Nie udało się wysłać wiadomości e-mail';
+  	$output = new ProductOutput();
+  	$output->renderError( $error );
 }

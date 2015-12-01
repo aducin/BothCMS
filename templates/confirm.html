@@ -1,9 +1,7 @@
 {% extends "searchTemplate.html" %}
 
 {% block menu %}
-  {% if not message.1 %}
-    <hr>
-  {% elseif  message.1 %}
+  {% if  message.1 %}
     {{ parent() }}
    {% endif %}
 {% endblock %}
@@ -26,5 +24,10 @@
       <h3 class="row1-3">{{ message.2 }}</h3>
     {% endif %}
   </fieldset>
-  <p class="finish"><a class="searchInput3" href="?controller=product">Nowe wyszukiwanie produktów</a></p>
+  <p class="finish"><a class="searchInput3" href="?controller={{ controller }}"
+  {% if  controller == 'product' %}
+  >Nowe wyszukiwanie produktów</a></p>
+   {% elseif  controller == 'order' %}
+  >Nowe wyszukiwanie zamówień</a></p>
+  {% endif %}
 {% endblock %}

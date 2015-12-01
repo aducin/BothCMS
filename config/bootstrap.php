@@ -1,8 +1,10 @@
 <?php
 
-require_once $root_dir.'/controllers/ProductsController.class.php';
+require_once $root_dir.'/controllers/AbstractOutput.class.php';
 require_once $root_dir.'/controllers/OrdersController.class.php';
-require_once $root_dir.'/controllers/Output.class.php';
+require_once $root_dir.'/controllers/OrderOutput.class.php';
+require_once $root_dir.'/controllers/ProductsController.class.php';
+require_once $root_dir.'/controllers/ProductOutput.class.php';
 require_once $root_dir.'/model/Creator/Creator.class.php';
 require_once $root_dir.'/model/Customer/Customer.class.php';
 require_once $root_dir.'/model/Helper/AbstractHelper.class.php';

@@ -16,14 +16,14 @@ class OrdersController
         $this->LinuxPlHandler=$firstDBHandler;
 		$this->LinuxPlOrder= new LinuxPlOrder($firstDBHandler);
 		$this->OgicomOrder= new OgicomOrder($secondDBHandler);
-        $this->output= new OutputController();
+        $this->output= new OrderOutput();
 		$this->root_dir = $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/controllers/output.php';
         if(isset($_POST['action'])){
         	require_once $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/controllers/mail.php';
         }elseif (isset($_GET['action'])){
             $this-> $_GET['action'] ();
         }else{
-            $this->output->renderStandardView();
+            $this->output->renderOrderStandardView();
         }
     }
 
@@ -60,7 +60,7 @@ class OrdersController
     	$ordedSearch=array('onstock'=>'Na stanie (NP)', 'ordered'=>'Zamówione (NP)', 'button1'=>'Kompletna edycja w NP', 'button2'=>'Wyrównaj ilość w starej bazie', 'button3'=>'Zmiana obu przez nowy panel', 'button4'=>'Uaktualnij ilości w starej bazie', 'form'=>'linuxPl', 'action'=>'BPSQO', 'orderNr'=>$_GET['neworder']);
     	if( $result==0 ){
 			$error = 'W bazie danych nie ma zamówienia o podanym numerze!';
-            $this->output->renderErrorInOrder( $error );
+            $this->output->renderOrderError( $error );
 		} else {
             $this->output->renderOrderSearch($result, $ordedSearch);
         }
@@ -74,7 +74,7 @@ class OrdersController
     	$ordedSearch=array('onstock'=>'Na stanie (SP)', 'ordered'=>'Zamówione (SP)', 'button1'=>'Kompletna edycja w SP', 'button2'=>'Wyrównaj ilość w nowej bazie', 'button3'=>'Zmiana obu przez stary panel', 'button4'=>'Uaktualnij ilości w nowej bazie','form'=>'ogicom', 'action'=>'BPSQN', 'orderNr'=>$_GET['oldorder']);
     	if( $result==0 ){
 			$error = 'W bazie danych nie ma zamówienia o podanym numerze!';
-            $this->output->renderErrorInOrder( $error );
+            $this->output->renderOrderError( $error );
 		} else {
             $this->output->renderOrderSearch($result, $ordedSearch);
         }
@@ -106,7 +106,7 @@ class OrdersController
 			}
     	}
         !isset($error) ? ($this->output->renderOrderExtraDetails('voucherSearchResult', $voucherNumber, $customerData)) :
-        ($this->output->renderErrorInOrder( $error ));
+        ($this->output->renderOrderError( $error ));
     }
 
     public function detailorder(){
@@ -117,7 +117,7 @@ class OrdersController
     	$sixthOrderDiscount['count'] = $detailsCount['COUNT(product_name)'];
     	if ( !isset($sixthOrderDiscount['total_paid']) ){
     		$error="W starej bazie nie ma zamówienia o podanym numerze!";
-            $this->output->renderErrorInOrder( $error );
+            $this->output->renderOrderError( $error );
     	} else {
             $sixthOrderDiscount['reducedTotal']=$sixthOrderDiscount['total_paid']*0.85;
     		$details = $this->OgicomOrder->getQueryDetails($_GET['detailorder']);
@@ -148,7 +148,7 @@ class OrdersController
     		}
     	}
         !isset($error) ? $this->output->renderOrderExtraDetails('undeliveredMailOrder', $confOrderDetails, $undeliveredOrderConf) :
-        ($this->output->renderErrorInOrder( $error ));
+        ($this->output->renderOrderError( $error ));
     }
 
     public function notification(){
@@ -162,7 +162,7 @@ class OrdersController
 			$error='W wybranej bazie danych brak zamówienia o podanym numerze!';
 		}
         !isset($error) ? $this->output->renderOrderExtraDetails('shipmentNotification', $orderTracking) :
-        ($this->output->renderErrorInOrder( $error ));
+        ($this->output->renderOrderError( $error ));
     }
 
     public function singleMerge(){
@@ -177,7 +177,7 @@ class OrdersController
             $this->output->renderSingleUpdate($outputSingleOrder);
         } catch (Exception $e) {
             $error='Nie udało się uaktualnić pojedynczego produktu!';
-            $this->output->renderErrorInOrder( $error );
+            $this->output->renderOrderError( $error );
         }
     }
 
@@ -217,7 +217,7 @@ class OrdersController
             $this->output->renderMultipleProductMerge( $mergeDetails, $mods );	
 		}catch (PDOExceptioon $e){
 			$error='Pobranie ilości w zamówieniu nie powiodło się: ' . $e->getMessage();
-            $this->output->renderErrorInOrder( $error );
+            $this->output->renderOrderError( $error );
 		}
     }
 

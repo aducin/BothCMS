@@ -10,4 +10,7 @@
 		</div>
 	</form>
 </fieldset>
+{% if message %}
+		{% include 'confirm.html' %}
+{% endif %}
 {% endblock %}
