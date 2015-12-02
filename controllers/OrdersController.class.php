@@ -4,6 +4,7 @@ class OrdersController extends Controller
 {
 	private $LinuxPlOrder;
 	private $LinuxPlHandler;
+    private $Mail;
 	private $OgicomOrder;
 	private $existingClient;
 
@@ -15,7 +16,8 @@ class OrdersController extends Controller
 		$this->OgicomOrder= new OgicomOrder($secondDBHandler);
         $this->output= new OrderOutput();
         if(isset($_POST['action'])){
-        	require_once $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS/controllers/mail.php';
+            $this->Mail= new MailController( $_POST['email'], $secondDBHandler );
+            $this->Mail-> $_POST['action'] ();
         }elseif (isset($_GET['action'])){
             $this-> $_GET['action'] ();
         }else{
