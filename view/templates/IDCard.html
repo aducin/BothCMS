@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8" />
+	<style>
+	#columns{
+		height: 130px;
+		vertical-align:top;
+	}
+	div:first-child{
+		padding-top: 22px;
+	}
+	.emptyColumn{
+		width:15px;
+	}
+	#emptyRow{
+		height:15px;
+	}
+	#firstRow{
+		width:67px;
+		padding-top:20px;
+	}
+	#footer{
+		text-align:right;
+		padding-bottom:15px;
+	}
+	#header{
+		background-color:#00FFFF;
+		font-size:18px;
+		 font-family: Arial;
+		color:white;
+		height: 30px;
+		text-align:center;
+	}
+	#name{
+		border: 1px solid;
+		font-size:14px;
+		padding-top:-2px;
+	}
+	#occupation{
+		font-style: italic;
+		font-size:12px;
+		text-align:center;
+	}
+	#secondRow{
+		width:100px;
+		text-align:center;
+		font-weight:bold;
+		padding-top:15px;
+	}
+	.table{
+		border: 1px solid;
+	}
+	#thirdRow{
+		width:85px;
+		padding-top:20px;
+	}
+	</style>
+</head>
+<body>
+	<table cellpadding="0" cellspacing="0" class="table">
+		<tr>
+			<td colspan="5" id="header">
+			Example Company
+			</td>
+		</tr>
+		<tr id="columns">
+			<td class="emptyColumn">
+			</td>
+			<td id="firstRow">
+				<table>
+					<tr>
+						<img src="client.jpg" height="67" width="67">
+					</tr>
+					<tr>
+						<td class="name">
+							John Doe
+						</td>
+					</tr>
+					<tr>
+						<td id="occupation">
+							Staff
+						</td>
+					</tr>
+				</table>
+			</td>
+			<td id="secondRow">
+				<div>AREA</div>
+				<div>52</div>
+			</td>
+			<td id="thirdRow">
+				<img src="images.png" height="95" width="85">
+			</td>
+			<td class="emptyColumn">
+			</td>
+		</tr>
+		<tr>
+			<td class="emptyColumn">
+			</td>
+			<td colspan="3" id="footer">
+				354-775-446-7896-4321
+			</td>
+			<td class="emptyColumn">
+			</td>
+		</tr>
+	</table>
+</body>

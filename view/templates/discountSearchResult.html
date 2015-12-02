@@ -1,0 +1,126 @@
+{% extends "searchTemplate.html" %}
+
+{% block title %}
+	Wyliczenie 15% rabatu dla zamówienia nr: {{ customerData.orderNumber }}
+{% endblock %}
+
+{% block result %}
+	<tr>
+		<th class="row">
+			Numer ID
+		</th>
+		<th class="row">
+			Nazwa
+		</th>
+		<th class="row">
+			Cena jednostkowa
+		</th>
+		<th class="row">
+			Zniżka
+		</th>
+		<th class="row">
+			Zamówiona ilość
+		</th>
+		<th class="row">
+			Suma
+		</th>
+		<th class="row">
+			Cena jedn. po rabacie
+		</th>
+		<th class="row">
+			Suma po rabacie
+		</th>
+	</tr>
+	{% for results in result %}
+		<tr>
+			<td class="row1">
+				{{ results.id }}
+			</td>
+			<td class="row1">
+				{{ results.name }}
+			</td>
+			<td class="row1">
+				{{ results.price }}zł
+			</td>
+			<td class="row1">
+				{% if results.reduction !='0.00' %}
+					<div class="fieldChanged">{{ results.reduction }}zł</div>
+				{% else %}
+				- -
+				{% endif %}
+			</td>
+			<td class="row1">
+				{{ results.quantity }}
+			</td>
+			<td class="row1">
+				{{ ((results.price-results.reduction)*results.quantity)|number_format(2, '.', ',') }}zł
+			</td>
+			<td class="row1">
+				{{ ((results.price-results.reduction)*0.85)|number_format(2, '.', ',') }}zł
+			</td>
+			<td class="row1">
+				{{ (results.quantity*(results.price-results.reduction)*0.85)|number_format(2, '.', ',') }}zł
+			</td>
+		</tr>
+	{% endfor %}
+</table>
+<table class="fieldChangedCentered">
+	<tr>
+		<td>
+			Suma wszystkich produktów:
+		</td>
+		<td>
+			{{ customerData.total_products }}zł
+		</td>
+	</tr>
+	<tr>
+		<td class="rowHeight">
+			Suma po rabacie:
+		</td>
+		<td class="rowHeight">
+			{{ customerData.reducedTotalProduct|number_format(2, '.', ',') }}zł
+		</td>
+	</tr>
+	<tr>
+		<td>
+			Suma produktów z wysyłką:
+		</td>
+		<td>
+			{{ customerData.total_paid }}zł
+		</td>
+	</tr>
+	<tr>
+		<td class="rowHeight">
+			Suma z wysyłką po rabacie:
+		</td>
+		<td class="rowHeight">
+			{{ customerData.reducedTotal|number_format(2, '.', ',') }}zł
+		</td>
+	</tr>
+</table>
+<table class="fieldset">
+	<tr>
+		<form method="post">
+			<td>
+				<input type="hidden" name="action" value="discount">
+				<input type="hidden" name="totalBeforeDiscount" value="{{ customerData.total_paid }}">
+				<input type="hidden" name="totalWithDiscount" value="{{ customerData.reducedTotal|number_format(2, '.', ',') }}">
+				<input type="hidden" name="email" value="{{ customerData.email }}">
+				<input type="hidden" name="referenceNumber" value="{{ customerData.reference }}">
+				<input type="hidden" name="paymentOption" value="{{ customerData.payment }}">
+				<input type="hidden" name="customerFirstName" value="{{ customerData.firstname }}">
+				<input type="hidden" name="customerLastName" value="{{ customerData.lastname }}">
+				<input type="hidden" name="rowCount" value="{{ customerData.count }}">
+				<input type="submit" id="emailAdress" name="sendDiscountMessage" value="Poinformuj Klienta o przyznaniu rabatu">
+			</td>
+			<td>
+				Wiadomość email zostanie wysłana na adres: {{ customerData.email }}
+			</td>
+		</form>
+	</tr>
+</table>
+{% endblock %}
+
+{% block finish %}
+	<p class="finish"><a href="?controller=order">Nowe wyszukiwanie</a></p>
+{% endblock %}

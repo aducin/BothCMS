@@ -1,0 +1,77 @@
+{% extends "searchTemplate.html" %}
+
+{% block title %}
+	<h1 class="finish1">Zarządzanie zamówieniami obu sklepów</h1>
+{% endblock %}
+
+{% block result %}
+	<form action="?" method="get">
+		<input type="hidden" name="controller" value="order" />
+		<input type="hidden" name="action" value="orderSearch" />
+		<h2>Wyświetl zamówienie spełniające następujące kryteria:</h2>
+		<tr>
+			<td class="row1000-2px">
+				Numer Zamówienia NP:
+			</td>
+			<td class="row1000-2px">
+				<input type="text" size="11" name="neworder" id="orderNumber">
+			</td>
+		</tr>
+		<tr>
+			<td class="row1000-2px">
+				Numer Zamówienia SP:
+			</td>
+			<td class="row1000-2px">
+				<input type="text" size="11" name="oldorder" id="orderNumber">
+			</td>
+		</tr>
+		<tr>
+			<td class="row1000-2px">
+				Sprawdź kupon dla zamówienia:
+			</td>
+			<td class="row1000-2px">
+				<input type="text" size="11" name="orderVoucher" id="orderNumber">
+			</td>
+		</tr>
+		<tr>
+			<td class="row1000-2px">
+				Oblicz 15% rabat - tylko SP:
+			</td>
+			<td class="row1000-2px">
+				<input type="text" size="11" name="detailorder" id="orderNumber">
+			</td class="row1000-2px">
+		</tr>
+		<tr>
+			<td class="row1000-2px">
+				Niedostarczony mail - potwierdzenie zamówienia (SP):
+			</td>
+			<td class="row1000-2px">
+				<input type="text" size="11" name="undeliveredConfirmation" id="orderNumber">
+			</td class="row1000-2px">
+		</tr>
+		<tr>
+			<td class="row1000-2px">
+				Prześlij link do przesyłki:
+			</td>
+			<td class="row1000-2px">
+				<input type="text" size="11" name="notification" id="orderNumber">
+			</td>
+		</tr>
+		<tr>
+			<td class="row1000-2px">
+				<input type="radio" name="send" value="ogicom" checked="checked">
+				Stary panel</input>
+			</td>
+			<td class="row1000-2px">
+				<input type="radio" name="send" value="linuxPl" >
+				Nowy panel</input>
+			</td>
+		</tr>
+		<tr>
+			<td colspan=2 class="row">
+				<input id="searchInput" type="submit" value="Wyszukaj">
+			</td>
+		</tr>
+	</form>
+{% endblock %}
+

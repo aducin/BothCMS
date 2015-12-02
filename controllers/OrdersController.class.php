@@ -1,12 +1,10 @@
 <?php
 
-class OrdersController
+class OrdersController extends Controller
 {
-	private $creator;
 	private $LinuxPlOrder;
 	private $LinuxPlHandler;
 	private $OgicomOrder;
-    private $output;
 	private $existingClient;
 
 	public function __construct($firstDBHandler, $secondDBHandler) {

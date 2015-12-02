@@ -3,7 +3,7 @@
 $root_dir = $_SERVER['DOCUMENT_ROOT'].'/Ad9bisCMS';
 $vendor_dir = $root_dir.'/vendor';
 $cache_dir = $root_dir.'/cache'; // remember to `chmod 777 cache` (make this directory writable)
-$templates_dir = $root_dir.'/templates';
+$templates_dir = $root_dir.'/view/templates';
 $mail_dir = $templates_dir.'/mails';
 
 $twig_lib = $vendor_dir.'/Twig/lib/Twig';

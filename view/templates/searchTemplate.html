@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	{% block headTitle %}
+	{% endblock %}
+	
+	<link rel="shortcut icon" href="ad9bis.ico"/>
+	<link rel="stylesheet" href="/Ad9bisCMS/assets/styles.css" type="text/css" />
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+	<script src="/Ad9bisCMS/assets/jquery.js" ></script>
+	<script src="/Ad9bisCMS/assets/jscript.js"></script>
+	<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+</head>
+{% block body %}
+<body>
+{% endblock %}
+{% block menu %}
+	{% include 'menu.html' %}
+{% endblock %}
+
+{% block fieldset %}
+	{% if  message %}
+			{% include 'confirm.html' %}
+	{% endif %}
+	<fieldset class="fieldset">
+		<table id="table">
+			<h1 class="finish1">
+			{% block title %}
+			{% endblock %}
+			</h1>
+			
+			{% block result %}	
+			{% endblock %}
+
+		</table>
+	</fieldset>
+{% endblock %}
+
+{% block finish %}
+{% endblock %}
+</body>

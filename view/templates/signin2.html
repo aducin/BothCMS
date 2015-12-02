@@ -1,0 +1,163 @@
+<?php 
+session_start(); ?>
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+	<title>Panel Ad9BIS - logowanie</title>
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="/Ad9bisCMS/assets/styles.css" type="text/css">
+	<style>
+	*{
+		margin:0;
+		padding:0;
+	}
+	#field{
+		background-color: #3366CC;
+		width: 800px;text-align:center;
+		border-radius: 6px;
+		float:center;
+		margin-left:213px;
+	}
+	#gebruiker{
+		margin: auto;
+		float: center;padding: 0;
+		border-radius: 6px; text-align:center; width:400px;height:73px;
+		background-color: #bb9967;font-size: 18px;
+	}
+	#inLoggen{
+		text-align:center;
+		margin-top:-30px;
+	}
+	#legend{
+		width: 798px;
+		font-size:25px;
+		font-style:italic;
+		background-color: #ECECEC;
+		border-radius: 6px inset;
+		text-align:center;
+	}
+	#logIn{
+		font-size:16px;
+		margin-top:5px;
+	}
+	#loginP{
+		background-color: #CCCC99; 
+		width:600px; 
+		border: 3px inset;
+		margin-top: 7px;
+		margin-left: 100px;
+	}
+	#loginPicture{
+		margin-left: 273px;
+		margin-top: 32px;
+		margin-bottom: 3px;
+		float:left;
+		border: 2px inset;
+	}
+	#searchInput{
+		padding-top: 3px;padding-bottom: 3px;margin-bottom:10px;margin-top:30px;
+		padding-left: 10px; font-size:13pt; font-style:italic; padding-right: 12px;
+		border: 3px outset;
+	}
+	#next{
+		height: 120px;
+		width:120px;
+		position: absolute;
+		top:600px;
+		bottom:0;
+		right:0;
+		margin: auto 152px;
+		z-index:1000;
+		opacity:0.5;
+	}
+	#previous{
+		height: 120px;
+		width: 120px;
+		position: absolute;
+		top:600px;
+		bottom:0;
+		margin: auto 153px;
+		z-index:1000;
+		opacity:0.5;
+	}
+	#wees{
+		width:800px;
+		height:30px;
+		padding-bottom:9px;
+		border-radius: 6px;
+		float:center;
+		margin-left:213px;
+		text-align:center;
+		background-color:black;
+		color: #5d665b;
+	}
+	</style>
+	<script type="text/javascript" src="/Ad9bisCMS/assets/jquery-2.1.4.min.js"></script>
+	<script type="text/javascript" src="/Ad9bisCMS/assets/cycle2.js"></script>
+	<script type="text/javascript" src="/Ad9bisCMS/assets/jscript.js"></script>
+</head>
+<body onload="countdown();">
+	<fieldset id="wees">
+		<h1>Wees niet zo snel!</h1>
+	</fieldset>
+	<fieldset id="field">
+		<legend id="legend">Welkom op de nieuwe CMS van beide Modele-ad9bis.pl paneel</legend>
+		<b><div id="timer"></div></b>
+		<h2 id="loginP">Je hebt de verkeerde of onvolledige gegevens ingevuld!</h2>
+		<h3>Typ jouw juiste wachtwoord en login in en alleen dan wil ik met nederlands stoppen...</h3>
+		<h3>Anders - tot ziens!</h3>
+		<form name="log" action="../index.php" method="post" onsubmit="wyswietlAlert()">
+			<div id="gebruiker">
+				<table>
+					<tr>
+						<td id="width">
+							<b>Gebruikersnaam: </b>
+						</td>
+						<td id="width"><input type="text" id="logIn" size=15 name="login" onload="focus();">
+						</td>
+					</tr>
+					<tr>
+						<td id="width">
+							<b>Wachtwoord  : </b>
+						</td>
+						<td id="width"><input type="password" id="logIn" size=15 name="password"><br><br>
+						</td>
+					</tr>
+				</table>
+			</div>
+			<div id="inLoggen">
+				<input type="hidden" name="attemp" value="Inloggen">
+				<input type="submit" id="searchInput" value="Inloggen">
+			</div>
+		</form>
+	</fieldset>
+	<div id="container">
+		<div id="slideshow" class="cycle-slideshow" 
+		data-cycle-fx=fade
+		data-cycle-speed= "600"
+		data-cycle-timeout="3000"
+		data-cycle-pager="#pager"
+		data-cycle-pager-template ="<a herf='#''><img src='{{src}}' height=100 width=120 />"
+		data-cycle-next= "#next"
+		data-cycle-prev= "#previous"
+		data-cycle-manual-fx = "scrollHorz"
+		data-cycle-manual-speed = "400"
+		>
+			<img src="/Ad9bisCMS/assets/img0.jpg" border="0" alt="Ad9bis-photos slider -1" />
+			<img src="/Ad9bisCMS/assets/img1.jpg" border="0" alt="Ad9bis-photos slider -2" />
+			<img src="/Ad9bisCMS/assets/img2.jpg" border="0" alt="Ad9bis-photos slider -3" />
+			<img src="/Ad9bisCMS/assets/img3.jpg" border="0" alt="Ad9bis-photos slider -4" />
+			<img src="/Ad9bisCMS/assets/img4.jpg" border="0" alt="Ad9bis-photos slider -5" />
+			<img src="/Ad9bisCMS/assets/img5.jpg" border="0" alt="Ad9bis-photos slider -6" />
+			<img src="/Ad9bisCMS/assets/img6.jpg" border="0" alt="Ad9bis-photos slider -7" />
+			<img src="/Ad9bisCMS/assets/img7.jpg" border="0" alt="Ad9bis-photos slider -8" />
+		</div>
+		<div id="pager"></div>
+		<img id="previous" src="/Ad9bisCMS/assets/previous.jpg" 
+		onmouseover='opacityUp();' onmouseout='opacityDown();'/>
+		<img id="next" src="/Ad9bisCMS/assets/next.jpg" 
+		onmouseover='opacityUp();' onmouseout='opacityDown();'/>
+	</div>
+	<h1 align="center">Ad9bis - INTERNETOWY SKLEP MODELARSTWA KOLEJOWEGO</h1>
+</body>
+</html>

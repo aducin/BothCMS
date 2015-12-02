@@ -1,10 +1,8 @@
 <?php
 
-class ProductsController
+class ProductsController extends Controller
 {
-	private $creator;
 	private $helper;
-	private $output;
 
 	public function __construct($firstDBHandler, $secondDBHandler) {
         
@@ -372,5 +370,3 @@ class ProductsController
 		$this->getHelpers();
 	}
 }
-
-	
