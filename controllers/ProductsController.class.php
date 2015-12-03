@@ -66,6 +66,9 @@ class ProductsController extends Controller
 			$error='Nie chcesz chyba wypisywać wszystkich produktów z bazy...? Zaznacz chociaż z 1 kryterium wyszukiwania!';
 			$this ->output->renderProductError( $error );
 		}else{
+			if ( $_GET['category'] ==2 ){
+				$_GET['category'] = 6;
+			}
 			$params[]=array(
 				'text'=>$_GET['text'],
 				'category'=>$_GET['category'],
@@ -273,15 +276,16 @@ class ProductsController extends Controller
 			if($_GET['detail']=='editcompleteformnew'){
 				$product1=$this->creator->createProduct('LinuxPl');
 				$product2=$this->creator->createProduct('Ogicom');
+				$firstPrice = $_POST['nominalPriceNew'];
+				$secondPrice = $_POST['nominalPriceOld'];
 				if ( isset ($_POST['change']) AND $_POST['change'] == "nameChange"){
 					$oldQuery = $product2->insertModyfy($_POST['id'], $_POST['text']);
 				}
 			}elseif($_GET['detail']=='editcompleteformold'){
 				$product1=$this->creator->createProduct('Ogicom');
 				$product2=$this->creator->createProduct('LinuxPl');
-				$temporary=$_POST['nominalPriceOld'];
-				$_POST['nominalPriceOld']=$_POST['nominalPriceNew'];
-				$_POST['nominalPriceNew']=$temporary;
+				$firstPrice = $_POST['nominalPriceOld'];
+				$secondPrice = $_POST['nominalPriceNew'];
 				if ( isset ($_POST['change']) AND $_POST['change'] == "nameChange"){
 					$oldQuery = $product1->insertModyfy($_POST['id'], $_POST['text']);
 				}
@@ -294,7 +298,7 @@ class ProductsController extends Controller
 			if (isset($_POST['delete']) and $_POST['delete']== "deleteImages"){
 				$product1->deleteImage($_POST['id']);
 			}
-			$Query = $product1->updateDetailedBoth($_POST['id'], $_POST['nominalPriceNew'], 
+			$Query = $product1->updateDetailedBoth($_POST['id'], $firstPrice, 
 			$_POST['text'], $_POST['quantity'], $_POST['description'], 
 			$_POST['description_short'], $_POST['meta_title'], $_POST['meta_description'], 
 			str_replace(" ","-", $_POST['link']), $_POST['condition'], $_POST['active']);
@@ -331,7 +335,7 @@ class ProductsController extends Controller
 						$Query = $product2->deleteImage($_POST['id']);
 					}
 					$Query = $product2->updateDetailedBoth(
-						$_POST['id'], $_POST['nominalPriceNew'], $_POST['text'], 
+						$_POST['id'], $secondPrice, $_POST['text'], 
 						$_POST['quantity'], $_POST['description'], $_POST['description_short'], 
 						$_POST['meta_title'], $_POST['meta_description'], str_replace(" ","-", $_POST['link']), 
 						$_POST['condition'], $_POST['active']);

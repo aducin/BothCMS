@@ -170,8 +170,8 @@ class OrdersController extends Controller
             } elseif (isset($_GET['BPSQN'])){
                 $product= $this->creator->createProduct('LinuxPl');
             }
-            $Query = $product->updateQuantity($_GET['quantity'], $_GET['id']);
-            $outputSingleOrder['first'] = $product->confirmation($_GET['id']);
+            $Query = $product->updateQuantity( $_GET['id'], $_GET['quantity'] );
+            $outputSingleOrder['first'] = $product->confirmation( $_GET['id'] );
             $this->output->renderSingleUpdate($outputSingleOrder);
         } catch (Exception $e) {
             $error='Nie udało się uaktualnić pojedynczego produktu!';
@@ -181,29 +181,29 @@ class OrdersController extends Controller
 
     public function orderMerge(){
     	try{
-			if($_GET['mergeQuantities']== 'Uaktualnij ilości w nowej bazie'){
+			if( $_GET['mergeQuantities']== 'Uaktualnij ilości w nowej bazie' ){
 				$mergeDetails=array(
-                    'idOrder'=>$_GET['id_number'].' w nowym panelu', 
+                    'idOrder'=>$_GET['id_number'].' (ze starego panelu)', 
                     'base'=>'Ilość w SP', 
-                    'current'=>'Obecna ilość (NP)', 
+                    'current'=>'Dotychczasowa ilość (NP)', 
                     'changed'=>'Ilość po modyfikacji (NP)'
                 );
 				$product= $this->creator->createProduct('LinuxPl');
-				$Queries = $this->OgicomOrder->selectOrderQuantity($_GET['id_number']);
-			}elseif ($_GET['mergeQuantities']== 'Uaktualnij ilości w starej bazie'){
+				$Queries = $this->OgicomOrder->selectOrderQuantity( $_GET['id_number'] );
+			}elseif ( $_GET['mergeQuantities']== 'Uaktualnij ilości w starej bazie' ){
 				$mergeDetails=array(
-                    'idOrder'=>$_GET['id_number'].' w nowym panelu', 
-                    'base'=>'Ilość w SP', 
-                    'current'=>'Obecna ilość (NP)', 
-                    'changed'=>'Ilość po modyfikacji (NP)'
+                    'idOrder'=>$_GET['id_number'].' (z nowego panelu)', 
+                    'base'=>'Ilość w NP', 
+                    'current'=>'Dotychczasowa ilość (SP)', 
+                    'changed'=>'Ilość po modyfikacji (SP)'
                 );
 				$product= $this->creator->createProduct('Ogicom');
-				$Queries = $this->LinuxPlOrder->selectOrderQuantity($_GET['id_number']);
+				$Queries = $this->LinuxPlOrder->selectOrderQuantity( $_GET['id_number'] );
 			}	
-			foreach ($Queries as $Query){
-				$oldQuantity=$product->getQuantity($Query['product_id']);
-				$quantityUpdate=$product->updateQuantity($Query['quantity'], $Query['product_id']);
-				$finalQuantity=$product->getQuantity($Query['product_id']);
+			foreach ( $Queries as $Query ){
+				$oldQuantity=$product->getQuantity( $Query['product_id'] );
+				$quantityUpdate=$product->updateQuantity( $Query['product_id'], $Query['quantity'] );
+				$finalQuantity=$product->getQuantity( $Query['product_id'] );
 				$mods[]=array(
                     'quantity'=>$Query['quantity'], 
                     'product_id'=>$Query['product_id'], 
