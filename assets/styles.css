@@ -529,6 +529,12 @@ ul.autoSuggest li:hover{
 	background-color:#8A8A8A; 
 	text-align:center;
 }
+#option3{
+	padding-top:43px;
+	padding-bottom:43px;
+	background-color:#8A8A8A; 
+	text-align:center;
+}
 #orderNumber{
 	border-radius:10px;
 	text-align:center;
