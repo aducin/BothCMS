@@ -41,7 +41,7 @@ class ProductsController extends Controller
 	}
 	function idSearch(){
 		$product=$this->creator->createProduct('LinuxPl');
-		$productIdSearch = $product->getProductDetailedData($_GET['idnr']);
+		$productIdSearch = $product->getProductDetailedData(intval($_GET['idnr']));
 		$productIdSearch['price']=number_format($productIdSearch['price'], 2,'.','');
 		if($product->getReductionData($_GET['idnr'])!=''){
 			$productIdSearch['reduct']=$product->countRealPrice($newQueryResult['price'],$product->getReductionData($idNumber));
@@ -237,7 +237,21 @@ class ProductsController extends Controller
 			$tags[]=$tagName['name']; 
 			$completeTagNames=implode(", ", $tags);
 		}
-		$this->output->renderCompleteProductEdition( $editForm, $completeQueryResult, $categoryAndAuthorList, $completeTagNames, $selCategories );
+		if ( isset( $_GET['linux'] )){
+			$imageNumber['single'] = $product2->image($_GET['id']);
+			$imageNumber['all'] = $product2->allImage($_GET['id']);
+		} else {
+			$imageNumber['single'] = $product1->image($_GET['id']);
+			$imageNumber['all'] = $product1->allImage($_GET['id']);
+		}
+		//var_dump($imageNumber);exit();
+		$this->output->renderCompleteProductEdition( 
+			$editForm, 
+			$completeQueryResult, 
+			$categoryAndAuthorList, 
+			$completeTagNames, 
+			$selCategories,
+			$imageNumber );
 	}
 
 	public function updateShort(){

@@ -14,6 +14,7 @@
 {% endblock %}
 
 {% block result %}
+
 	<form name="form" action="?action=updateComplete&detail={{ editForm }}" method="post" onsubmit="wyswietlAlert()">
 		<tr>
 			<td class="row1">
@@ -253,11 +254,19 @@
 		</tr>
 	</table>
 	<table class="fieldset">
-		<th id="table">
+		<input id="pressIn" type="button" name="fadeIn" value="Pokaż wszystkie kategorie" style="
+		border: 2px solid; 
+		border-radius: 5px;
+		font-weight: bolder;">
+		<input class="listOfCategories" id="pressOut" type="button" name="fadeOut" value="Ukryj wszystkie kategorie" style="
+		border: 2px solid; 
+		border-radius: 5px;
+		font-weight: bolder;">
+		<th  class="listOfCategories" id="table">
 			<h2>Kategorie aktywne dla tego produktu:</h2>
 		</th>
 		{% for allCats in completeCatNames %}
-			<tr>
+			<tr class="listOfCategories">
 				<td class="row1">
 					<label for="category{{ allCats.id }}">
 					<input type="checkbox" name="categories[]" value="{{ allCats.id }}"
@@ -268,6 +277,35 @@
 			</tr>
 		{% endfor %}
 	</table>
+		<input id="photoIn" type="button" name="fadeIn" value="Pokaż wszystkie zdjęcia" style="
+		border: 2px solid; 
+		border-radius: 5px;
+		font-weight: bolder;">
+		<input id="photoOut" type="button" name="fadeOut" value="Ukryj wszystkie zdjęcia" style="
+		border: 2px solid; 
+		border-radius: 5px;
+		font-weight: bolder;">
+	<div  id="photoGallery">
+		<table style="border: 2px solid; border-radius: 5px;">
+			<h3>Zdjęcia produktu (stary panel):</h3>
+			<tr>
+			{% for image in imageNumber %}
+				<th class="row-1">
+					<img style="
+					border-style: double; 
+					{% if image.number == singleNumber %}
+					border-width: 8px; 
+					{% else %}
+					border-width: 3px;
+					{% endif %} 
+					width: 150px; 
+					height: 150px;
+					" src="http://modele-ad9bis.pl/img/p/{{ image.number }}-thickbox.jpg" />
+				</th>
+			{% endfor %}
+			</tr>
+		</table>
+	</div>
 	</form>
 {% endblock %}
 		

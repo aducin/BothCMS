@@ -363,6 +363,19 @@ abstract class Product
 		return ($coverImage);
 	}
 
+	public function allImage($id){
+		$sql='SELECT id_image FROM ps_image
+		WHERE id_product= :id';
+		$s=$this->pdo->prepare($sql);
+		$s->bindValue(':id', $id);
+		$s->execute();
+		foreach ($s as $singleImage)
+		{
+			$image[]=array( 'number'=>$id.'-'.$singleImage['id_image'] );
+		}
+		return ($image);
+	}
+
 	public function getWholeImages($id){
 		$sql='SELECT id_image FROM ps_image
 		WHERE id_product= :id';

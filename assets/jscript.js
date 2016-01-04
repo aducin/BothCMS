@@ -208,11 +208,13 @@ function autoSuggestNew(){
 }
 
 $(document).ready(function(){
+
 	$('img')
     .wrap('<span style="display:inline-block"></span>')
     .css('display', 'block')
     .parent()
     .zoom();
+    
 	$('input').focus(function(){
 		$(this).css("background-color","#abeeed");
 	});
@@ -220,3 +222,36 @@ $(document).ready(function(){
 		$(this).css("background-color","#ffffff")
 	});
 });
+
+
+$(document).ready(function(){
+
+	$('.listOfCategories').hide();
+	$('#photoOut').hide();
+	$('#photoGallery').hide();
+
+    $('#pressIn').click(function() {
+   		$('#pressIn').fadeOut( "slow" );
+    	$('.listOfCategories').fadeIn( "slow" );
+    });
+
+    $('#pressOut').click(function() {
+   		$('#pressOut').fadeOut( "slow" );
+   		$('#pressIn').fadeIn( "slow" );
+   		$('#pressIn').text( "Pokaż wszystkie kategorie" );
+    	$('.listOfCategories').fadeOut( "slow" );
+    });
+
+    $('#photoIn').click(function() {
+   		$('#photoIn').fadeOut( "slow" );
+   		$('#photoOut').fadeIn( "slow" );
+    	$('#photoGallery').fadeIn( "slow" );
+    });
+
+    $('#photoOut').click(function() {
+    	$('#photoOut').fadeOut( "slow" );
+    	$('#photoIn').fadeIn( "slow" );
+    	$('#photoGallery').fadeOut( "slow" );
+    });
+});
+

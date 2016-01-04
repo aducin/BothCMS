@@ -52,7 +52,13 @@ class ProductOutput extends OutputController{
 		echo $output;
 	}
 
-	public function renderCompleteProductEdition( $editForm, $completeQueryResult, $categoryAndAuthorList, $completeTagNames, $selCategories ){
+	public function renderCompleteProductEdition( 
+		$editForm, 
+		$completeQueryResult, 
+		$categoryAndAuthorList, 
+		$completeTagNames, 
+		$selCategories,
+		$imageNumber ){
 		$indexArray = array 
 			('1'=>array('indexed'=>'0','activeness'=>'Nieaktywny'),
 			'2'=>array('indexed'=>'1','activeness'=>'Aktywny')
@@ -70,7 +76,9 @@ class ProductOutput extends OutputController{
 			'completeCatNames'=>$categoryAndAuthorList[0],
 			'selCategories'=>$selCategories,
 			'indexArray'=>$indexArray,
-			'condArray'=>$condArray,)
+			'condArray'=>$condArray,
+			'imageNumber'=>$imageNumber['all'],
+			'singleNumber'=>$imageNumber['single'],)
 		);
 		echo $output;
 	}
